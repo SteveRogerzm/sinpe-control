@@ -26,41 +26,43 @@ try {
     $mimeType = mime_content_type($tmpPath) ?: 'image/jpeg';
     $base64Image = base64_encode(file_get_contents($tmpPath));
 
-    // Configuración SSL para peticiones HTTPS en Vercel
+    // Configuración SSL para peticiones HTTPS
     $sslOptions = [
         "ssl" => [
             "verify_peer" => false,
             "verify_peer_name" => false
         ]
     ];
-    $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" . trim($geminiKey);
 
-$promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica y responde ÚNICAMENTE con un objeto JSON válido sin bloques markdown. Formato: {"monto": float, "numero_referencia": "string", "fecha_transferencia": "string", "nombre_emisor": "string", "telefono_emisor": "string"}';
+    // MODELO CORREGIDO: gemini-1.5-flash
+    $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . trim($geminiKey);
 
-$payloadGemini = json_encode([
-    "contents" => [[
-        "parts" => [
-            ["text" => $promptText],
-            ["inline_data" => ["mime_type" => $mimeType, "data" => $base64Image]]
+    $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica y responde ÚNICAMENTE con un objeto JSON válido sin bloques markdown. Formato: {"monto": float, "numero_referencia": "string", "fecha_transferencia": "string", "nombre_emisor": "string", "telefono_emisor": "string"}';
+
+    $payloadGemini = json_encode([
+        "contents" => [[
+            "parts" => [
+                ["text" => $promptText],
+                ["inline_data" => ["mime_type" => $mimeType, "data" => $base64Image]]
+            ]
+        ]]
+    ]);
+
+    $optsGemini = [
+        'ssl' => [
+            'verify_peer' => false,
+            'verify_peer_name' => false
+        ],
+        'http' => [
+            'method'  => 'POST',
+            'header'  => "Content-Type: application/json\r\n",
+            'content' => $payloadGemini,
+            'ignore_errors' => true
         ]
-    ]]
-]);
+    ];
 
-$optsGemini = [
-    'ssl' => [
-        'verify_peer' => false,
-        'verify_peer_name' => false
-    ],
-    'http' => [
-        'method'  => 'POST',
-        'header'  => "Content-Type: application/json\r\n",
-        'content' => $payloadGemini,
-        'ignore_errors' => true
-    ]
-];
-
-$contextGemini = stream_context_create($optsGemini);
-$responseGemini = @file_get_contents($geminiUrl, false, $contextGemini);
+    $contextGemini = stream_context_create($optsGemini);
+    $responseGemini = @file_get_contents($geminiUrl, false, $contextGemini);
     $jsonGemini = json_decode($responseGemini, true);
 
     if (!isset($jsonGemini['candidates'][0]['content']['parts'][0]['text'])) {
