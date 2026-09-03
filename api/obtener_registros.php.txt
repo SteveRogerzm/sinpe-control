@@ -1,18 +1,26 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
+ini_set('display_errors', '0');
 
 $supabaseUrl = getenv('SUPABASE_URL');
 $supabaseKey = getenv('SUPABASE_SERVICE_ROLE_KEY');
 
-$dbUrl = $supabaseUrl . "/rest/v1/sinpes?select=*&order=created_at.desc";
+if (!$supabaseUrl || !$supabaseKey) {
+    echo json_encode([]);
+    exit;
+}
 
-$ch = curl_init($dbUrl);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-    'apikey: ' . $supabaseKey,
-    'Authorization: Bearer ' . $supabaseKey
-]);
-$response = curl_exec($ch);
-curl_close($ch);
+$dbUrl = rtrim($supabaseUrl, '/') . "/rest/v1/sinpes?select=*&order=created_at.desc";
 
-echo $response;
+$opts = [
+    'http' => [
+        'method' => 'GET',
+        'header' => "apikey: {$supabaseKey}\r\nAuthorization: Bearer {$supabaseKey}\r\n",
+        'ignore_errors' => true
+    ]
+];
+
+$context = stream_context_create($opts);
+$response = file_get_contents($dbUrl, false, $context);
+
+echo $response ?: json_encode([]);
