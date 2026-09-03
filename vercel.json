@@ -6,11 +6,11 @@
   },
   "routes": [
     {
-      "src": "/api/procesar.php",
+      "src": "/api/procesar",
       "dest": "/api/procesar.php"
     },
     {
-      "src": "/api/obtener_registros.php",
+      "src": "/api/obtener_registros",
       "dest": "/api/obtener_registros.php"
     },
     {
