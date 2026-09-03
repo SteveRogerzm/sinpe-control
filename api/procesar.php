@@ -1,5 +1,4 @@
 <?php
-// Desactivar despliegue de errores HTML en pantalla
 ini_set('display_errors', '0');
 error_reporting(0);
 header('Content-Type: application/json; charset=utf-8');
@@ -10,7 +9,7 @@ try {
     $geminiKey   = getenv('GEMINI_API_KEY');
 
     if (!$supabaseUrl || !$supabaseKey || !$geminiKey) {
-        throw new Exception("Faltan variables de entorno en Vercel. Revisa SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY y GEMINI_API_KEY.");
+        throw new Exception("Faltan variables de entorno en Vercel (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY o GEMINI_API_KEY).");
     }
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -18,7 +17,7 @@ try {
     }
 
     if (!isset($_FILES['comprobante']) || $_FILES['comprobante']['error'] !== UPLOAD_ERR_OK) {
-        throw new Exception("No se recibió una imagen válida o el archivo supera el tamaño permitido.");
+        throw new Exception("No se recibió un archivo de imagen válido.");
     }
 
     $tmpPath     = $_FILES['comprobante']['tmp_name'];
@@ -26,18 +25,28 @@ try {
     $mimeType    = mime_content_type($tmpPath) ?: 'image/jpeg';
     $base64Image = base64_encode(file_get_contents($tmpPath));
 
-    // 1. Petición cURL a Google Gemini API
+    // 1. Llamada a la API de Google Gemini (v1beta gemini-1.5-flash)
     $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . trim($geminiKey);
 
-    $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica y responde ÚNICAMENTE con un objeto JSON válido sin bloques markdown. Formato: {"monto": float, "numero_referencia": "string", "fecha_transferencia": "string", "nombre_emisor": "string", "telefono_emisor": "string"}';
+    $promptText = 'Extrae la información de este comprobante SINPE Móvil de Costa Rica. Responde en formato JSON con la siguiente estructura exacta: {"monto": float, "numero_referencia": "string", "fecha_transferencia": "string", "nombre_emisor": "string", "telefono_emisor": "string"}';
 
     $payloadGemini = json_encode([
-        "contents" => [[
-            "parts" => [
-                ["text" => $promptText],
-                ["inline_data" => ["mime_type" => $mimeType, "data" => $base64Image]]
+        "contents" => [
+            [
+                "parts" => [
+                    ["text" => $promptText],
+                    [
+                        "inline_data" => [
+                            "mime_type" => $mimeType,
+                            "data"      => $base64Image
+                        ]
+                    ]
+                ]
             ]
-        ]]
+        ],
+        "generationConfig" => [
+            "response_mime_type" => "application/json"
+        ]
     ]);
 
     $ch = curl_init($geminiUrl);
@@ -55,25 +64,29 @@ try {
     curl_close($ch);
 
     if ($responseGemini === false) {
-        throw new Exception("Error de conexión cURL con Gemini: " . $curlError);
+        throw new Exception("Error cURL conectando con Gemini: " . $curlError);
     }
 
     $jsonGemini = json_decode($responseGemini, true);
 
+    // Manejo de errores devueltos por Google API
+    if (isset($jsonGemini['error'])) {
+        $errDetail = is_array($jsonGemini['error']) ? ($jsonGemini['error']['message'] ?? json_encode($jsonGemini['error'])) : $jsonGemini['error'];
+        throw new Exception("Google Gemini Error: " . $errDetail);
+    }
+
     if (!isset($jsonGemini['candidates'][0]['content']['parts'][0]['text'])) {
-        $msgErr = $jsonGemini['error']['message'] ?? json_encode($jsonGemini);
-        throw new Exception("Error Gemini: " . $msgErr);
+        throw new Exception("Gemini no devolvió texto en la respuesta: " . json_encode($jsonGemini));
     }
 
     $rawText = trim($jsonGemini['candidates'][0]['content']['parts'][0]['text']);
-    $rawText = preg_replace('/^```json\s*|\s*```$/', '', $rawText);
     $extractedData = json_decode($rawText, true);
 
     if (!$extractedData || !isset($extractedData['numero_referencia'])) {
-        throw new Exception("La IA no logró detectar un número de referencia en la imagen.");
+        throw new Exception("La IA no logró extraer un número de referencia válido.");
     }
 
-    // 2. Subir Imagen a Supabase Storage mediante cURL
+    // 2. Subir imagen a Supabase Storage
     $cleanBaseUrl    = rtrim(trim($supabaseUrl), '/');
     $storageFileName = time() . '_' . preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $fileName);
     $storageUrl      = $cleanBaseUrl . "/storage/v1/object/comprobantes/" . $storageFileName;
@@ -93,7 +106,7 @@ try {
 
     $publicImageUrl = $cleanBaseUrl . "/storage/v1/object/public/comprobantes/" . $storageFileName;
 
-    // 3. Guardar registro en Supabase DB mediante cURL
+    // 3. Insertar registro en Supabase Database
     $dbUrl     = $cleanBaseUrl . "/rest/v1/sinpes";
     $dbPayload = json_encode([
         "numero_referencia"   => (string)$extractedData['numero_referencia'],
@@ -121,7 +134,7 @@ try {
     curl_close($chDb);
 
     if (strpos($responseDb, '23505') !== false || strpos($responseDb, 'duplicate key') !== false) {
-        throw new Exception("El comprobante Ref: {$extractedData['numero_referencia']} ya existe en la base de datos.");
+        throw new Exception("El comprobante con Ref: {$extractedData['numero_referencia']} ya existe en la base de datos.");
     }
 
     echo json_encode(['success' => true, 'data' => $extractedData, 'imagen_url' => $publicImageUrl]);
