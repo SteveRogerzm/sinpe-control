@@ -21,20 +21,12 @@ try {
         throw new Exception("No se recibió una imagen válida o el archivo supera el tamaño permitido.");
     }
 
-    $tmpPath = $_FILES['comprobante']['tmp_name'];
-    $fileName = $_FILES['comprobante']['name'];
-    $mimeType = mime_content_type($tmpPath) ?: 'image/jpeg';
+    $tmpPath     = $_FILES['comprobante']['tmp_name'];
+    $fileName    = $_FILES['comprobante']['name'];
+    $mimeType    = mime_content_type($tmpPath) ?: 'image/jpeg';
     $base64Image = base64_encode(file_get_contents($tmpPath));
 
-    // Configuración SSL para peticiones HTTPS
-    $sslOptions = [
-        "ssl" => [
-            "verify_peer" => false,
-            "verify_peer_name" => false
-        ]
-    ];
-
-    // MODELO CORREGIDO: gemini-1.5-flash
+    // 1. Petición cURL a Google Gemini API
     $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . trim($geminiKey);
 
     $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica y responde ÚNICAMENTE con un objeto JSON válido sin bloques markdown. Formato: {"monto": float, "numero_referencia": "string", "fecha_transferencia": "string", "nombre_emisor": "string", "telefono_emisor": "string"}';
@@ -48,25 +40,28 @@ try {
         ]]
     ]);
 
-    $optsGemini = [
-        'ssl' => [
-            'verify_peer' => false,
-            'verify_peer_name' => false
-        ],
-        'http' => [
-            'method'  => 'POST',
-            'header'  => "Content-Type: application/json\r\n",
-            'content' => $payloadGemini,
-            'ignore_errors' => true
-        ]
-    ];
+    $ch = curl_init($geminiUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payloadGemini);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json'
+    ]);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
-    $contextGemini = stream_context_create($optsGemini);
-    $responseGemini = @file_get_contents($geminiUrl, false, $contextGemini);
+    $responseGemini = curl_exec($ch);
+    $curlError      = curl_error($ch);
+    curl_close($ch);
+
+    if ($responseGemini === false) {
+        throw new Exception("Error de conexión cURL con Gemini: " . $curlError);
+    }
+
     $jsonGemini = json_decode($responseGemini, true);
 
     if (!isset($jsonGemini['candidates'][0]['content']['parts'][0]['text'])) {
-        $msgErr = $jsonGemini['error']['message'] ?? 'Gemini no pudo procesar la foto.';
+        $msgErr = $jsonGemini['error']['message'] ?? json_encode($jsonGemini);
         throw new Exception("Error Gemini: " . $msgErr);
     }
 
@@ -78,27 +73,28 @@ try {
         throw new Exception("La IA no logró detectar un número de referencia en la imagen.");
     }
 
-    // 2. Subir Imagen a Supabase Storage
-    $cleanBaseUrl = rtrim(trim($supabaseUrl), '/');
+    // 2. Subir Imagen a Supabase Storage mediante cURL
+    $cleanBaseUrl    = rtrim(trim($supabaseUrl), '/');
     $storageFileName = time() . '_' . preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $fileName);
-    $storageUrl = $cleanBaseUrl . "/storage/v1/object/comprobantes/" . $storageFileName;
+    $storageUrl      = $cleanBaseUrl . "/storage/v1/object/comprobantes/" . $storageFileName;
 
-    $optsStorage = array_merge_recursive($sslOptions, [
-        'http' => [
-            'method'  => 'POST',
-            'header'  => "Authorization: Bearer " . trim($supabaseKey) . "\r\nContent-Type: {$mimeType}\r\n",
-            'content' => file_get_contents($tmpPath),
-            'ignore_errors' => true
-        ]
+    $chStorage = curl_init($storageUrl);
+    curl_setopt($chStorage, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($chStorage, CURLOPT_POST, true);
+    curl_setopt($chStorage, CURLOPT_POSTFIELDS, file_get_contents($tmpPath));
+    curl_setopt($chStorage, CURLOPT_HTTPHEADER, [
+        "Authorization: Bearer " . trim($supabaseKey),
+        "Content-Type: {$mimeType}"
     ]);
-
-    $contextStorage = stream_context_create($optsStorage);
-    @file_get_contents($storageUrl, false, $contextStorage);
+    curl_setopt($chStorage, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($chStorage, CURLOPT_SSL_VERIFYHOST, false);
+    curl_exec($chStorage);
+    curl_close($chStorage);
 
     $publicImageUrl = $cleanBaseUrl . "/storage/v1/object/public/comprobantes/" . $storageFileName;
 
-    // 3. Guardar registro en Supabase DB
-    $dbUrl = $cleanBaseUrl . "/rest/v1/sinpes";
+    // 3. Guardar registro en Supabase DB mediante cURL
+    $dbUrl     = $cleanBaseUrl . "/rest/v1/sinpes";
     $dbPayload = json_encode([
         "numero_referencia"   => (string)$extractedData['numero_referencia'],
         "monto"               => floatval($extractedData['monto'] ?? 0),
@@ -108,17 +104,21 @@ try {
         "imagen_url"          => $publicImageUrl
     ]);
 
-    $optsDb = array_merge_recursive($sslOptions, [
-        'http' => [
-            'method'  => 'POST',
-            'header'  => "apikey: " . trim($supabaseKey) . "\r\nAuthorization: Bearer " . trim($supabaseKey) . "\r\nContent-Type: application/json\r\nPrefer: return=representation\r\n",
-            'content' => $dbPayload,
-            'ignore_errors' => true
-        ]
+    $chDb = curl_init($dbUrl);
+    curl_setopt($chDb, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($chDb, CURLOPT_POST, true);
+    curl_setopt($chDb, CURLOPT_POSTFIELDS, $dbPayload);
+    curl_setopt($chDb, CURLOPT_HTTPHEADER, [
+        "apikey: " . trim($supabaseKey),
+        "Authorization: Bearer " . trim($supabaseKey),
+        "Content-Type: application/json",
+        "Prefer: return=representation"
     ]);
+    curl_setopt($chDb, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($chDb, CURLOPT_SSL_VERIFYHOST, false);
 
-    $contextDb = stream_context_create($optsDb);
-    $responseDb = @file_get_contents($dbUrl, false, $contextDb);
+    $responseDb = curl_exec($chDb);
+    curl_close($chDb);
 
     if (strpos($responseDb, '23505') !== false || strpos($responseDb, 'duplicate key') !== false) {
         throw new Exception("El comprobante Ref: {$extractedData['numero_referencia']} ya existe en la base de datos.");
