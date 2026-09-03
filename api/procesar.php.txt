@@ -1,5 +1,7 @@
 <?php
+// Permitir respuestas JSON e ignorar advertencias HTML
 header('Content-Type: application/json; charset=utf-8');
+ini_set('display_errors', '0');
 
 $supabaseUrl = getenv('SUPABASE_URL');
 $supabaseKey = getenv('SUPABASE_SERVICE_ROLE_KEY');
@@ -15,36 +17,44 @@ if (!isset($_FILES['comprobante']) || $_FILES['comprobante']['error'] !== UPLOAD
     exit;
 }
 
-$tmpPath = $_FILES['comprobante']['tmp_name'];
-$fileName = $_FILES['comprobante']['name'];
-$mimeType = mime_content_type($tmpPath);
-$base64Image = base64_encode(file_get_contents($tmpPath));
-
 try {
-    // 1. Gemini Vision API
-    $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . $geminiKey;
-    $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica y responde ÚNICAMENTE con un objeto JSON sin bloques markdown ni texto adicional. Formato: {"monto": float, "numero_referencia": "string", "fecha_transferencia": "string", "nombre_emisor": "string", "telefono_emisor": "string"}';
+    if (!$supabaseUrl || !$supabaseKey || !$geminiKey) {
+        throw new Exception("Faltan variables de entorno en Vercel (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY o GEMINI_API_KEY).");
+    }
 
-    $payloadGemini = [
+    $tmpPath = $_FILES['comprobante']['tmp_name'];
+    $fileName = $_FILES['comprobante']['name'];
+    $mimeType = mime_content_type($tmpPath) ?: 'image/jpeg';
+    $base64Image = base64_encode(file_get_contents($tmpPath));
+
+    // 1. Petición a Gemini AI Studio
+    $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . $geminiKey;
+    $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica y responde ÚNICAMENTE con un objeto JSON válido sin bloques markdown ni texto adicional. Formato obligatorio: {"monto": float, "numero_referencia": "string", "fecha_transferencia": "string", "nombre_emisor": "string", "telefono_emisor": "string"}';
+
+    $payloadGemini = json_encode([
         "contents" => [[
             "parts" => [
                 ["text" => $promptText],
                 ["inline_data" => ["mime_type" => $mimeType, "data" => $base64Image]]
             ]
         ]]
+    ]);
+
+    $optsGemini = [
+        'http' => [
+            'method'  => 'POST',
+            'header'  => "Content-Type: application/json\r\n",
+            'content' => $payloadGemini,
+            'ignore_errors' => true
+        ]
     ];
 
-    $ch = curl_init($geminiUrl);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payloadGemini));
-    $responseGemini = curl_exec($ch);
-    curl_close($ch);
-
+    $contextGemini = stream_context_create($optsGemini);
+    $responseGemini = file_get_contents($geminiUrl, false, $contextGemini);
     $jsonGemini = json_decode($responseGemini, true);
+
     if (!isset($jsonGemini['candidates'][0]['content']['parts'][0]['text'])) {
-        throw new Exception("Error en la lectura del comprobante con la IA.");
+        throw new Exception("Error al procesar la imagen con Gemini: " . ($jsonGemini['error']['message'] ?? 'Respuesta inválida'));
     }
 
     $rawText = trim($jsonGemini['candidates'][0]['content']['parts'][0]['text']);
@@ -55,49 +65,48 @@ try {
         throw new Exception("No se pudo interpretar el comprobante SINPE.");
     }
 
-    // 2. Upload a Supabase Storage
+    // 2. Subir imagen a Supabase Storage
     $storageFileName = time() . '_' . preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $fileName);
-    $storageUrl = $supabaseUrl . "/storage/v1/object/comprobantes/" . $storageFileName;
+    $storageUrl = rtrim($supabaseUrl, '/') . "/storage/v1/object/comprobantes/" . $storageFileName;
 
-    $chStorage = curl_init($storageUrl);
-    curl_setopt($chStorage, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($chStorage, CURLOPT_POST, true);
-    curl_setopt($chStorage, CURLOPT_HTTPHEADER, [
-        'Authorization: Bearer ' . $supabaseKey,
-        'Content-Type: ' . $mimeType
-    ]);
-    curl_setopt($chStorage, CURLOPT_POSTFIELDS, file_get_contents($tmpPath));
-    curl_exec($chStorage);
-    curl_close($chStorage);
-
-    $publicImageUrl = $supabaseUrl . "/storage/v1/object/public/comprobantes/" . $storageFileName;
-
-    // 3. Insertar en Supabase Database
-    $dbUrl = $supabaseUrl . "/rest/v1/sinpes";
-    $dbPayload = [
-        "numero_referencia"  => (string)$extractedData['numero_referencia'],
-        "monto"              => floatval($extractedData['monto'] ?? 0),
-        "fecha_transferencia" => (string)($extractedData['fecha_transferencia'] ?? ''),
-        "nombre_emisor"      => (string)($extractedData['nombre_emisor'] ?? ''),
-        "telefono_emisor"    => (string)($extractedData['telefono_emisor'] ?? ''),
-        "imagen_url"         => $publicImageUrl
+    $optsStorage = [
+        'http' => [
+            'method'  => 'POST',
+            'header'  => "Authorization: Bearer {$supabaseKey}\r\nContent-Type: {$mimeType}\r\n",
+            'content' => file_get_contents($tmpPath),
+            'ignore_errors' => true
+        ]
     ];
 
-    $chDb = curl_init($dbUrl);
-    curl_setopt($chDb, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($chDb, CURLOPT_POST, true);
-    curl_setopt($chDb, CURLOPT_HTTPHEADER, [
-        'apikey: ' . $supabaseKey,
-        'Authorization: Bearer ' . $supabaseKey,
-        'Content-Type: application/json',
-        'Prefer: return=representation'
-    ]);
-    curl_setopt($chDb, CURLOPT_POSTFIELDS, json_encode($dbPayload));
-    $responseDb = curl_exec($chDb);
-    $httpCode = curl_getinfo($chDb, CURLINFO_HTTP_CODE);
-    curl_close($chDb);
+    $contextStorage = stream_context_create($optsStorage);
+    file_get_contents($storageUrl, false, $contextStorage);
 
-    if ($httpCode === 409 || strpos($responseDb, '23505') !== false) {
+    $publicImageUrl = rtrim($supabaseUrl, '/') . "/storage/v1/object/public/comprobantes/" . $storageFileName;
+
+    // 3. Guardar en Base de Datos Supabase
+    $dbUrl = rtrim($supabaseUrl, '/') . "/rest/v1/sinpes";
+    $dbPayload = json_encode([
+        "numero_referencia"   => (string)$extractedData['numero_referencia'],
+        "monto"               => floatval($extractedData['monto'] ?? 0),
+        "fecha_transferencia" => (string)($extractedData['fecha_transferencia'] ?? ''),
+        "nombre_emisor"       => (string)($extractedData['nombre_emisor'] ?? ''),
+        "telefono_emisor"     => (string)($extractedData['telefono_emisor'] ?? ''),
+        "imagen_url"          => $publicImageUrl
+    ]);
+
+    $optsDb = [
+        'http' => [
+            'method'  => 'POST',
+            'header'  => "apikey: {$supabaseKey}\r\nAuthorization: Bearer {$supabaseKey}\r\nContent-Type: application/json\r\nPrefer: return=representation\r\n",
+            'content' => $dbPayload,
+            'ignore_errors' => true
+        ]
+    ];
+
+    $contextDb = stream_context_create($optsDb);
+    $responseDb = file_get_contents($dbUrl, false, $contextDb);
+
+    if (strpos($responseDb, '23505') !== false || strpos($responseDb, 'duplicate key') !== false) {
         throw new Exception("El comprobante Ref: {$extractedData['numero_referencia']} ya está registrado.");
     }
 
