@@ -1,0 +1,21 @@
+{
+  "functions": {
+    "api/*.php": {
+      "runtime": "vercel-php@0.6.0"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/procesar",
+      "dest": "/api/procesar.php"
+    },
+    {
+      "src": "/api/obtener_registros",
+      "dest": "/api/obtener_registros.php"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/public/$1"
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+<?php
+header('Content-Type: application/json; charset=utf-8');
+
+$supabaseUrl = getenv('SUPABASE_URL');
+$supabaseKey = getenv('SUPABASE_SERVICE_ROLE_KEY');
+$geminiKey   = getenv('GEMINI_API_KEY');
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(['success' => false, 'error' => 'Método no permitido']);
+    exit;
+}
+
+if (!isset($_FILES['comprobante']) || $_FILES['comprobante']['error'] !== UPLOAD_ERR_OK) {
+    echo json_encode(['success' => false, 'error' => 'No se recibió una imagen válida']);
+    exit;
+}
+
+$tmpPath = $_FILES['comprobante']['tmp_name'];
+$fileName = $_FILES['comprobante']['name'];
+$mimeType = mime_content_type($tmpPath);
+$base64Image = base64_encode(file_get_contents($tmpPath));
+
+try {
+    // 1. Gemini Vision API
+    $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . $geminiKey;
+    $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica y responde ÚNICAMENTE con un objeto JSON sin bloques markdown ni texto adicional. Formato: {"monto": float, "numero_referencia": "string", "fecha_transferencia": "string", "nombre_emisor": "string", "telefono_emisor": "string"}';
+
+    $payloadGemini = [
+        "contents" => [[
+            "parts" => [
+                ["text" => $promptText],
+                ["inline_data" => ["mime_type" => $mimeType, "data" => $base64Image]]
+            ]
+        ]]
+    ];
+
+    $ch = curl_init($geminiUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payloadGemini));
+    $responseGemini = curl_exec($ch);
+    curl_close($ch);
+
+    $jsonGemini = json_decode($responseGemini, true);
+    if (!isset($jsonGemini['candidates'][0]['content']['parts'][0]['text'])) {
+        throw new Exception("Error en la lectura del comprobante con la IA.");
+    }
+
+    $rawText = trim($jsonGemini['candidates'][0]['content']['parts'][0]['text']);
+    $rawText = preg_replace('/^```json\s*|\s*```$/', '', $rawText);
+    $extractedData = json_decode($rawText, true);
+
+    if (!$extractedData || !isset($extractedData['numero_referencia'])) {
+        throw new Exception("No se pudo interpretar el comprobante SINPE.");
+    }
+
+    // 2. Upload a Supabase Storage
+    $storageFileName = time() . '_' . preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $fileName);
+    $storageUrl = $supabaseUrl . "/storage/v1/object/comprobantes/" . $storageFileName;
+
+    $chStorage = curl_init($storageUrl);
+    curl_setopt($chStorage, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($chStorage, CURLOPT_POST, true);
+    curl_setopt($chStorage, CURLOPT_HTTPHEADER, [
+        'Authorization: Bearer ' . $supabaseKey,
+        'Content-Type: ' . $mimeType
+    ]);
+    curl_setopt($chStorage, CURLOPT_POSTFIELDS, file_get_contents($tmpPath));
+    curl_exec($chStorage);
+    curl_close($chStorage);
+
+    $publicImageUrl = $supabaseUrl . "/storage/v1/object/public/comprobantes/" . $storageFileName;
+
+    // 3. Insertar en Supabase Database
+    $dbUrl = $supabaseUrl . "/rest/v1/sinpes";
+    $dbPayload = [
+        "numero_referencia"  => (string)$extractedData['numero_referencia'],
+        "monto"              => floatval($extractedData['monto'] ?? 0),
+        "fecha_transferencia" => (string)($extractedData['fecha_transferencia'] ?? ''),
+        "nombre_emisor"      => (string)($extractedData['nombre_emisor'] ?? ''),
+        "telefono_emisor"    => (string)($extractedData['telefono_emisor'] ?? ''),
+        "imagen_url"         => $publicImageUrl
+    ];
+
+    $chDb = curl_init($dbUrl);
+    curl_setopt($chDb, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($chDb, CURLOPT_POST, true);
+    curl_setopt($chDb, CURLOPT_HTTPHEADER, [
+        'apikey: ' . $supabaseKey,
+        'Authorization: Bearer ' . $supabaseKey,
+        'Content-Type: application/json',
+        'Prefer: return=representation'
+    ]);
+    curl_setopt($chDb, CURLOPT_POSTFIELDS, json_encode($dbPayload));
+    $responseDb = curl_exec($chDb);
+    $httpCode = curl_getinfo($chDb, CURLINFO_HTTP_CODE);
+    curl_close($chDb);
+
+    if ($httpCode === 409 || strpos($responseDb, '23505') !== false) {
+        throw new Exception("El comprobante Ref: {$extractedData['numero_referencia']} ya está registrado.");
+    }
+
+    echo json_encode(['success' => true, 'data' => $extractedData, 'imagen_url' => $publicImageUrl]);
+
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+}

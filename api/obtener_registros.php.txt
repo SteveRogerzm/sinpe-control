@@ -1,0 +1,18 @@
+<?php
+header('Content-Type: application/json; charset=utf-8');
+
+$supabaseUrl = getenv('SUPABASE_URL');
+$supabaseKey = getenv('SUPABASE_SERVICE_ROLE_KEY');
+
+$dbUrl = $supabaseUrl . "/rest/v1/sinpes?select=*&order=created_at.desc";
+
+$ch = curl_init($dbUrl);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'apikey: ' . $supabaseKey,
+    'Authorization: Bearer ' . $supabaseKey
+]);
+$response = curl_exec($ch);
+curl_close($ch);
+
+echo $response;
