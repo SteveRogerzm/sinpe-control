@@ -19,7 +19,12 @@ function verificarAcceso() {
         exit;
     }
 
-    $payload = json_decode(base64_decode(str_replace(['-', '_'], ['+', '/'], $tokenParts[1])), true);
+    $payloadBase64 = str_replace(['-', '_'], ['+', '/'], $tokenParts[1]);
+    $padding = strlen($payloadBase64) % 4;
+    if ($padding) {
+        $payloadBase64 .= str_repeat('=', 4 - $padding);
+    }
+    $payload = json_decode(base64_decode($payloadBase64), true);
     $email = $payload['email'] ?? '';
 
     if (!in_array(strtolower($email), array_map('strtolower', $allowedEmails))) {
