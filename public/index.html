@@ -191,6 +191,16 @@
     const createdFilter = document.getElementById('createdFilter');
     const txFilter = document.getElementById('txFilter');
 
+    function showAlert(message, type = 'success') {
+      alertBox.innerText = message;
+      alertBox.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-emerald-100', 'text-emerald-700');
+    
+      if (type === 'error') {
+        alertBox.classList.add('bg-red-100', 'text-red-700');
+      } else {
+        alertBox.classList.add('bg-emerald-100', 'text-emerald-700');
+      }
+    }
     async function initAuth() {
       if (window.location.hash && window.location.hash.includes('access_token')) {
         const { data: { session } } = await supabaseClient.auth.getSession();
