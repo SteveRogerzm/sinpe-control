@@ -25,10 +25,9 @@ try {
     $tmpPath   = $_FILES['comprobante']['tmp_name'];
     $fileName  = $_FILES['comprobante']['name'];
     
-    // Obtener y validar el MimeType real del archivo enviado
+    // Validar MimeType real
     $mimeType  = mime_content_type($tmpPath) ?: $_FILES['comprobante']['type'];
 
-    // Lista de tipos de archivo permitidos (Imágenes y PDF)
     $allowedTypes = [
         'image/jpeg', 
         'image/png', 
@@ -41,12 +40,10 @@ try {
         throw new Exception("Formato no soportado ({$mimeType}). Solo se admiten imágenes o archivos PDF.");
     }
 
-    // Normalizar la URL de Supabase para remover /rest/v1 si venía incluido en la variable de entorno
     $cleanBaseUrl = preg_replace('/\/rest\/v1\/?$/', '', rtrim(trim($rawSupabaseUrl), '/'));
+    $base64Data   = base64_encode(file_get_contents($tmpPath));
 
-    $base64Data = base64_encode(file_get_contents($tmpPath));
-
-    // 1. Procesar con Gemini API mediante Fallback con Modelos Vigentes
+    // 1. Prompt estructurado para Gemini
     $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica (imagen o PDF). '
         . 'Identifica el banco/entidad financiera de origen (ej: BAC, Banco Nacional, BCR, Davivienda, etc.) como "banco_emisor", '
         . 'y la persona que envía el dinero como "cliente". '
@@ -65,11 +62,10 @@ try {
         "generationConfig" => ["response_mime_type" => "application/json"]
     ]);
 
-    // Arreglo de modelos de la familia Flash según tu panel de cuotas de Google AI Studio
+    // Arreglo ordenado por volumen/capacidad gratuita disponible
     $modelsToTry = [
         "gemini-3.5-flash-lite",
         "gemini-3.1-flash-lite",
-
         "gemini-3.8-flash",
         "gemini-3.7-flash",
         "gemini-3.6-flash",
@@ -81,69 +77,44 @@ try {
         "gemma-4-26b"
     ];
 
-    $jsonGemini = null;
+    $jsonGemini   = null;
     $lastErrorMsg = '';
-    $success = false;
+    $success      = false;
 
     foreach ($modelsToTry as $model) {
         $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
         
-        $maxAttempts = 2;
-        $attempt = 0;
+        $ch = curl_init($geminiUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payloadGemini);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 6); // Evitar consumir el timeout de 10-15s de Vercel
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'x-goog-api-key: ' . trim($geminiKey)
+        ]);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        
+        $responseGemini = curl_exec($ch);
+        $httpCode       = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
 
-        while ($attempt < $maxAttempts) {
-            $attempt++;
-            
-            $ch = curl_init($geminiUrl);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $payloadGemini);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json',
-                'x-goog-api-key: ' . trim($geminiKey)
-            ]);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            $responseGemini = curl_exec($ch);
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
+        $jsonGemini = json_decode($responseGemini, true);
 
-            $jsonGemini = json_decode($responseGemini, true);
-
-            // Si la respuesta fue exitosa salimos del loop inmediatamente
-            if ($httpCode === 200 && !isset($jsonGemini['error'])) {
-                $success = true;
-                break 2; // Salir del while y del foreach
-            }
-
-            $errMsg = $jsonGemini['error']['message'] ?? '';
-            $lastErrorMsg = "[{$model}] " . $errMsg;
-
-            $isQuotaOrDeprecated = (
-                $httpCode === 429 || 
-                $httpCode === 404 ||
-                $httpCode === 503 || 
-                strpos(strtolower($errMsg), 'quota') !== false || 
-                strpos(strtolower($errMsg), 'resource_exhausted') !== false ||
-                strpos(strtolower($errMsg), 'no longer available') !== false ||
-                strpos(strtolower($errMsg), 'high demand') !== false
-            );
-
-            // Si el modelo agotó cuota o ya no existe, pasamos directamente al siguiente modelo del array
-            if ($isQuotaOrDeprecated) {
-                break;
-            }
-
-            if ($attempt < $maxAttempts) {
-                usleep(1000000); // Esperar 1 segundo antes de reintentar en el mismo modelo
-            }
+        if ($httpCode === 200 && !isset($jsonGemini['error'])) {
+            $success = true;
+            break;
         }
+
+        $errMsg       = $jsonGemini['error']['message'] ?? '';
+        $lastErrorMsg = "[{$model}] " . $errMsg;
     }
 
     if (!$success) {
         throw new Exception("Google Gemini Error (Fallback agotado): " . $lastErrorMsg);
     }
 
-    $rawText = trim($jsonGemini['candidates'][0]['content']['parts'][0]['text'] ?? '');
+    $rawText       = trim($jsonGemini['candidates'][0]['content']['parts'][0]['text'] ?? '');
     $extractedData = json_decode($rawText, true);
 
     if (!$extractedData || !isset($extractedData['numero_referencia'])) {
@@ -172,10 +143,10 @@ try {
         throw new Exception("Error al subir archivo a Storage (HTTP {$httpCodeStorage}): " . $responseStorage);
     }
 
-    $publicImageUrl = $cleanBaseUrl . "/storage/v1/object/public/comprobantes/" . $storageFileName;
+    $publicImageUrl    = $cleanBaseUrl . "/storage/v1/object/public/comprobantes/" . $storageFileName;
     $comentarioInicial = $_POST['comentario'] ?? null;
     
-    // 3. Insertar Registro en la BD
+    // 3. Insertar Registro en BD
     $dbUrl     = $cleanBaseUrl . "/rest/v1/sinpes";
     $dbPayload = json_encode([
         "numero_referencia"   => (string)$extractedData['numero_referencia'],
