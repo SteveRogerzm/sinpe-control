@@ -7,7 +7,7 @@
   "routes": [
     {
       "src": "/api/procesar",
-      "dest": "/api/test_gemini.php"
+      "dest": "/api/procesar.php"
     },
     {
       "src": "/api/obtener_registros",
