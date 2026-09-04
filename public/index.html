@@ -7,6 +7,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Driver.js CSS y JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css"/>
+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; }
@@ -25,6 +28,9 @@
       
       <div class="flex items-center gap-3" id="authNav">
         <span id="userEmail" class="text-xs font-medium text-slate-600 hidden sm:inline"></span>
+        <button id="startDemoBtn" onclick="iniciarDemoGuiada()" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold px-3 py-1.5 rounded-lg border border-emerald-200 transition-all flex items-center gap-1.5">
+          <i class="fa-solid fa-play text-xs"></i> Ver Demo
+        </button>
         <button id="logoutBtn" class="hidden text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-1.5 rounded-lg transition-all">
           <i class="fa-solid fa-right-from-bracket mr-1"></i> Salir
         </button>
@@ -532,7 +538,70 @@
         console.error('Error al guardar comentario:', err);
       }
     }
+    function iniciarDemoGuiada() {
+  const driver = window.driver.js.driver;
 
+  const driverObj = driver({
+    showProgress: true,
+    animate: true,
+    nextBtnText: 'Siguiente →',
+    prevBtnText: '← Anterior',
+    doneBtnText: '¡Entendido!',
+    steps: [
+      {
+        element: '#uploadForm',
+        popover: {
+          title: '1. Carga de Comprobantes',
+          description: 'Arrastra o selecciona la foto/PDF de tu SINPE Móvil aquí. Se comprimirá automáticamente para optimizar el envío.',
+          side: "right",
+          align: 'start'
+        }
+      },
+      {
+        element: '#initialComment',
+        popover: {
+          title: '2. Comentarios Previos',
+          description: 'Puedes vincular una nota rápida (ej. "Pedido #1042") antes de procesar el pago.',
+          side: "top"
+        }
+      },
+      {
+        element: '#submitBtn',
+        popover: {
+          title: '3. Procesamiento con IA',
+          description: 'Al hacer clic, Google Gemini analiza la imagen, extracta el monto, banco emisor, cliente y número de referencia.',
+          side: "bottom"
+        }
+      },
+      {
+        element: '.grid.grid-cols-1.sm\\:grid-cols-2.gap-4', // Tarjetas estadísticas
+        popover: {
+          title: '4. Métricas en Tiempo Real',
+          description: 'Monitorea el total acumulado en colones y el volumen de comprobantes leídos al instante.',
+          side: "bottom"
+        }
+      },
+      {
+        element: '#searchFilter',
+        popover: {
+          title: '5. Filtros Inteligentes',
+          description: 'Busca por cliente, referencia o filtra según el banco emisor y estado de la transacción.',
+          side: "top"
+        }
+      },
+      {
+        element: '#recordsTable',
+        popover: {
+          title: '6. Histórico y Validación',
+          description: 'Aquí ves los datos extraídos por la IA. Puedes aprobar, rechazar o abrir el modal para ver la imagen original.',
+          side: "top"
+        }
+      }
+    ]
+  });
+
+  driverObj.drive();
+}
     [searchFilter, bankFilter, statusFilter, createdFilter, txFilter].forEach(el => el.addEventListener('input', renderTable));
     document.getElementById('refreshBtn').addEventListener('click', loadRecords);
 
