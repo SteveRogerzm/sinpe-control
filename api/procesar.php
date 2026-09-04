@@ -4,6 +4,7 @@ error_reporting(0);
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/auth_check.php'; 
 verificarAcceso();
+
 try {
     $rawSupabaseUrl = getenv('SUPABASE_URL');
     $supabaseKey    = getenv('SUPABASE_SERVICE_ROLE_KEY');
@@ -18,23 +19,39 @@ try {
     }
 
     if (!isset($_FILES['comprobante']) || $_FILES['comprobante']['error'] !== UPLOAD_ERR_OK) {
-        throw new Exception("No se recibió un archivo de imagen válido.");
+        throw new Exception("No se recibió un archivo válido.");
+    }
+
+    $tmpPath   = $_FILES['comprobante']['tmp_name'];
+    $fileName  = $_FILES['comprobante']['name'];
+    
+    // Obtener y validar el MimeType real del archivo enviado
+    $mimeType  = mime_content_type($tmpPath) ?: $_FILES['comprobante']['type'];
+
+    // Lista de tipos de archivo permitidos (Imágenes y PDF)
+    $allowedTypes = [
+        'image/jpeg', 
+        'image/png', 
+        'image/webp', 
+        'image/heic', 
+        'application/pdf'
+    ];
+
+    if (!in_array($mimeType, $allowedTypes)) {
+        throw new Exception("Formato no soportado ({$mimeType}). Solo se admiten imágenes o archivos PDF.");
     }
 
     // Normalizar la URL de Supabase para remover /rest/v1 si venía incluido en la variable de entorno
     $cleanBaseUrl = preg_replace('/\/rest\/v1\/?$/', '', rtrim(trim($rawSupabaseUrl), '/'));
 
-    $tmpPath    = $_FILES['comprobante']['tmp_name'];
-    $fileName   = $_FILES['comprobante']['name'];
-    $mimeType   = mime_content_type($tmpPath) ?: 'image/jpeg';
     $base64Data = base64_encode(file_get_contents($tmpPath));
 
     // 1. Procesar con Gemini API (con reintentos automáticos si hay alta demanda)
     $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
-    $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica. '
+    $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica (imagen o PDF). '
         . 'Identifica el banco/entidad financiera de origen (ej: BAC, Banco Nacional, BCR, Davivienda, etc.) como "banco_emisor", '
         . 'y la persona que envía el dinero como "cliente". '
-        . 'Responde estrictamente en formato JSON: '
+        . 'Responde strictly en formato JSON: '
         . '{"monto": float, "numero_referencia": "string", "fecha_transferencia": "string", "cliente": "string", "banco_emisor": "string", "telefono_emisor": "string"}';
 
     $payloadGemini = json_encode([
@@ -52,7 +69,6 @@ try {
     $maxAttempts = 3;
     $attempt = 0;
     $jsonGemini = null;
-    $responseGemini = null;
 
     while ($attempt < $maxAttempts) {
         $attempt++;
@@ -92,7 +108,6 @@ try {
             continue;
         }
 
-        // Si no fue error de demanda o ya agotamos intentos, lanzamos la excepción
         if (isset($jsonGemini['error'])) {
             throw new Exception("Google Gemini Error: " . ($jsonGemini['error']['message'] ?? json_encode($jsonGemini['error'])));
         }
@@ -105,7 +120,7 @@ try {
         throw new Exception("La IA no logró extraer los datos del comprobante.");
     }
 
-    // 2. Subir Archivo a Supabase Storage
+    // 2. Subir Archivo a Supabase Storage (se envía con su respectivo MimeType)
     $storageFileName = time() . '_' . preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $fileName);
     $storageUrl      = $cleanBaseUrl . "/storage/v1/object/comprobantes/" . $storageFileName;
 
@@ -124,14 +139,13 @@ try {
     curl_close($chStorage);
 
     if ($httpCodeStorage >= 400) {
-        throw new Exception("Error al subir imagen a Storage (HTTP {$httpCodeStorage}): " . $responseStorage);
+        throw new Exception("Error al subir archivo a Storage (HTTP {$httpCodeStorage}): " . $responseStorage);
     }
 
     $publicImageUrl = $cleanBaseUrl . "/storage/v1/object/public/comprobantes/" . $storageFileName;
     $comentarioInicial = $_POST['comentario'] ?? null;
     
-    // 3. Insertar Registro en la BD (Mapeando Banco Emisor en "nombre_emisor" y Nombre de la persona en "cliente")
-    $dbUrl     = $cleanBaseUrl . "/rest/v1/sinpes";
+    // 3. Insertar Registro en la BD
     $dbUrl     = $cleanBaseUrl . "/rest/v1/sinpes";
     $dbPayload = json_encode([
         "numero_referencia"   => (string)$extractedData['numero_referencia'],
