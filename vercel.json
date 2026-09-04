@@ -14,8 +14,8 @@
       "dest": "/api/obtener_registros.php"
     },
      {
-      "src": "/api/actualizar_registo",
-      "dest": "/api/actualizar_registo.php"
+      "src": "/api/actualizar_registro",
+      "dest": "/api/actualizar_registro.php"
     },
     {
       "src": "/(.*)",
