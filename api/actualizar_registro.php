@@ -13,7 +13,14 @@ try {
         throw new Exception("Faltan variables de entorno.");
     }
 
-    $input = json_decode(file_get_contents('php_input'), true) ?? $_POST;
+    // CORRECCIÓN AQUÍ: Usar 'php://input' con los dos puntos
+    $jsonContent = file_get_contents('php://input');
+    $input = json_decode($jsonContent, true);
+
+    if (!$input) {
+        $input = $_POST;
+    }
+
     $id = $input['id'] ?? null;
 
     if (!$id) {
@@ -26,6 +33,10 @@ try {
     $updateData = [];
     if (isset($input['estado'])) $updateData['estado'] = $input['estado'];
     if (isset($input['comentario'])) $updateData['comentario'] = $input['comentario'];
+
+    if (empty($updateData)) {
+        throw new Exception("No hay datos para actualizar.");
+    }
 
     $ch = curl_init($dbUrl);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -44,11 +55,12 @@ try {
     curl_close($ch);
 
     if ($httpCode >= 400) {
-        throw new Exception("Error al actualizar registro.");
+        throw new Exception("Error Supabase (HTTP $httpCode): " . $response);
     }
 
     echo json_encode(['success' => true, 'data' => json_decode($response, true)]);
 
 } catch (Exception $e) {
+    http_response_code(400);
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
