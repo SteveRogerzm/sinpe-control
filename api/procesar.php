@@ -46,7 +46,7 @@ try {
 
     $base64Data = base64_encode(file_get_contents($tmpPath));
 
-    // 1. Procesar con Gemini API mediante Fallback de Modelos
+    // 1. Procesar con Gemini API mediante Fallback con Modelos Vigentes
     $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica (imagen o PDF). '
         . 'Identifica el banco/entidad financiera de origen (ej: BAC, Banco Nacional, BCR, Davivienda, etc.) como "banco_emisor", '
         . 'y la persona que envía el dinero como "cliente". '
@@ -65,12 +65,16 @@ try {
         "generationConfig" => ["response_mime_type" => "application/json"]
     ]);
 
-    // Lista de modelos a intentar en orden de preferencia si se agota la cuota
+    // Arreglo de modelos de la familia Flash según tu panel de cuotas de Google AI Studio
     $modelsToTry = [
+        "gemini-3.8-flash",
+        "gemini-3.7-flash",
+        "gemini-3.6-flash",
+        "gemini-3.5-flash",
+        "gemini-3.5-flash-lite",
+        "gemini-3.0-flash",
         "gemini-2.5-flash",
-        "gemini-2.5-flash-lite",
-        "gemini-1.5-flash",
-        "gemini-2.0-flash"
+        "gemini-2.5-flash-lite"
     ];
 
     $jsonGemini = null;
@@ -101,37 +105,38 @@ try {
 
             $jsonGemini = json_decode($responseGemini, true);
 
-            // Si la respuesta fue exitosa
+            // Si la respuesta fue exitosa salimos del loop inmediatamente
             if ($httpCode === 200 && !isset($jsonGemini['error'])) {
                 $success = true;
-                break 2; // Salir de ambos loops (intento y modelos)
+                break 2; // Salir del while y del foreach
             }
 
             $errMsg = $jsonGemini['error']['message'] ?? '';
-            $lastErrorMsg = $errMsg;
+            $lastErrorMsg = "[{$model}] " . $errMsg;
 
-            $isQuotaExceeded = (
+            $isQuotaOrDeprecated = (
                 $httpCode === 429 || 
+                $httpCode === 404 ||
                 $httpCode === 503 || 
                 strpos(strtolower($errMsg), 'quota') !== false || 
                 strpos(strtolower($errMsg), 'resource_exhausted') !== false ||
+                strpos(strtolower($errMsg), 'no longer available') !== false ||
                 strpos(strtolower($errMsg), 'high demand') !== false
             );
 
-            // Si el modelo agotó su cuota, rompemos el ciclo interno para saltar al siguiente modelo del array
-            if ($isQuotaExceeded) {
+            // Si el modelo agotó cuota o ya no existe, pasamos directamente al siguiente modelo del array
+            if ($isQuotaOrDeprecated) {
                 break;
             }
 
-            // Si fue un error leve de saturación puntual en el mismo modelo, reintentamos una vez
             if ($attempt < $maxAttempts) {
-                usleep(1000000); // 1 segundo
+                usleep(1000000); // Esperar 1 segundo antes de reintentar en el mismo modelo
             }
         }
     }
 
     if (!$success) {
-        throw new Exception("Google Gemini Error (Cuota agotada en modelos de respaldo): " . $lastErrorMsg);
+        throw new Exception("Google Gemini Error (Fallback agotado): " . $lastErrorMsg);
     }
 
     $rawText = trim($jsonGemini['candidates'][0]['content']['parts'][0]['text'] ?? '');
