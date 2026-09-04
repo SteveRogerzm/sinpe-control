@@ -14,7 +14,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
 
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="bg-emerald-600 text-white p-2 rounded-xl">
@@ -61,15 +61,17 @@
               <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-400 mb-2"></i>
               <p class="text-sm font-medium text-slate-700">Haz clic para elegir la foto o PDF</p>
             </div>
-           <div id="previewContainer" class="hidden">
+
+            <div id="previewContainer" class="hidden">
               <img id="imagePreview" src="" class="w-full h-48 object-cover rounded-xl border border-slate-200 hidden">
               <div id="pdfPreview" class="hidden flex items-center justify-center gap-3 p-4 bg-slate-100 rounded-xl border border-slate-200">
                 <i class="fa-solid fa-file-pdf text-red-500 text-3xl"></i>
                 <span id="pdfFileName" class="text-xs font-semibold text-slate-700 truncate max-w-[200px]"></span>
               </div>
             </div>
+
             <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Comentario Previos (Opcional)</label>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Comentario Previo (Opcional)</label>
               <textarea id="initialComment" name="comentario" rows="2" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-emerald-500" placeholder="Ej: Pago de pedido #1234..."></textarea>
             </div>
 
@@ -162,6 +164,27 @@
     </div>
   </main>
 
+  <!-- MODAL PARA VER EL COMPROBANTE EN LA MISMA APP -->
+  <div id="viewerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+      <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <h3 class="font-bold text-slate-800 text-sm"><i class="fa-solid fa-file-invoice text-emerald-600 mr-2"></i>Vista Previa del Comprobante</h3>
+        <div class="flex items-center gap-2">
+          <a id="modalExternalLink" href="#" target="_blank" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-2.5 py-1.5 rounded-lg">
+            <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Abrir Original
+          </a>
+          <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+      </div>
+      <div class="p-4 flex-1 overflow-auto bg-slate-100 flex items-center justify-center min-h-[300px]">
+        <img id="modalImage" src="" class="max-w-full max-h-[70vh] object-contain rounded-lg shadow-sm hidden">
+        <iframe id="modalPdf" src="" class="w-full h-[70vh] rounded-lg hidden border-0"></iframe>
+      </div>
+    </div>
+  </div>
+
   <script>
     const SUPABASE_URL = "https://mxmufexoistlgnwycbiz.supabase.co"; 
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14bXVmZXhvaXN0bGdud3ljYml6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0NTI4MDcsImV4cCI6MjEwNDAyODgwN30.eQYkVAgpsd4XVc5YkFl85FuDE5YvjTxMgj0gX25wB0w"; 
@@ -172,7 +195,7 @@
     let currentSession = null;
     let rawRecordsData = [];
 
-    // DOM
+    // DOM Elements
     const loginScreen = document.getElementById('loginScreen');
     const appScreen = document.getElementById('appScreen');
     const userEmail = document.getElementById('userEmail');
@@ -192,16 +215,18 @@
     const createdFilter = document.getElementById('createdFilter');
     const txFilter = document.getElementById('txFilter');
 
+    // Modal
+    const viewerModal = document.getElementById('viewerModal');
+    const modalImage = document.getElementById('modalImage');
+    const modalPdf = document.getElementById('modalPdf');
+    const modalExternalLink = document.getElementById('modalExternalLink');
+
     function showAlert(message, type = 'success') {
       alertBox.innerText = message;
       alertBox.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-emerald-100', 'text-emerald-700');
-    
-      if (type === 'error') {
-        alertBox.classList.add('bg-red-100', 'text-red-700');
-      } else {
-        alertBox.classList.add('bg-emerald-100', 'text-emerald-700');
-      }
+      alertBox.classList.add(type === 'error' ? 'bg-red-100' : 'bg-emerald-100', type === 'error' ? 'text-red-700' : 'text-emerald-700');
     }
+
     async function initAuth() {
       if (window.location.hash && window.location.hash.includes('access_token')) {
         const { data: { session } } = await supabaseClient.auth.getSession();
@@ -248,9 +273,9 @@
         const imagePreview = document.getElementById('imagePreview');
         const pdfPreview = document.getElementById('pdfPreview');
         const pdfFileName = document.getElementById('pdfFileName');
-    
+        
         previewContainer.classList.remove('hidden');
-    
+        
         if (file.type === 'application/pdf') {
           imagePreview.classList.add('hidden');
           pdfPreview.classList.remove('hidden');
@@ -263,21 +288,69 @@
       }
     });
 
+    // Función para optimizar imágenes en el navegador antes de subir
+    async function compressImage(file) {
+      if (file.type === 'application/pdf') return file;
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (e) => {
+          const img = new Image();
+          img.src = e.target.result;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+            const maxDimension = 1280;
+
+            if (width > maxDimension || height > maxDimension) {
+              if (width > height) {
+                height = Math.round((height * maxDimension) / width);
+                width = maxDimension;
+              } else {
+                width = Math.round((width * maxDimension) / height);
+                maxDimension;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            canvas.toBlob((blob) => {
+              const compressedFile = new File([blob], file.name, {
+                type: 'image/jpeg',
+                lastModified: Date.now()
+              });
+              resolve(compressedFile);
+            }, 'image/jpeg', 0.75);
+          };
+        };
+      });
+    }
+
     uploadForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!fileInput.files[0]) return showAlert('Selecciona una imagen primero.', 'error');
+      const rawFile = fileInput.files[0];
+      if (!rawFile) return showAlert('Selecciona un archivo primero.', 'error');
       if (!currentSession) return showAlert('Debes iniciar sesión.', 'error');
 
-      const formData = new FormData(uploadForm);
       submitBtn.disabled = true;
       submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Procesando...`;
 
       try {
+        const compressedFile = await compressImage(rawFile);
+        const formData = new FormData();
+        formData.append('comprobante', compressedFile);
+        formData.append('comentario', document.getElementById('initialComment').value);
+
         const response = await fetch('/api/procesar', { 
           method: 'POST', 
           headers: { 'Authorization': `Bearer ${currentSession.access_token}` },
           body: formData 
         });
+
         const result = await response.json();
         if (!result.success) throw new Error(result.error);
 
@@ -322,37 +395,36 @@
       const status = statusFilter.value;
       const created = createdFilter.value;
       const txDate = txFilter.value;
-    
+      
       const filtered = rawRecordsData.filter(row => {
         const matchesSearch = !search || 
           (row.cliente && row.cliente.toLowerCase().includes(search)) ||
           (row.numero_referencia && row.numero_referencia.toLowerCase().includes(search)) ||
           (row.monto && row.monto.toString().includes(search));
-    
+        
         const matchesBank = !bank || row.nombre_emisor === bank;
         const matchesStatus = !status || (row.estado || 'Pendiente') === status;
         const matchesCreated = !created || (row.created_at && row.created_at.startsWith(created));
         const matchesTx = !txDate || (row.fecha_transferencia && row.fecha_transferencia.includes(txDate));
-    
+        
         return matchesSearch && matchesBank && matchesStatus && matchesCreated && matchesTx;
       });
-    
+      
       recordsTable.innerHTML = '';
       let totalMonto = 0;
-    
+      
       if (filtered.length > 0) {
         filtered.forEach(row => {
           totalMonto += parseFloat(row.monto || 0);
           const currentStatus = row.estado || 'Pendiente';
-    
+        
           let statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-100 text-amber-700 font-semibold inline-block">Pendiente</span>`;
           if (currentStatus === 'Aprobado') statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-emerald-100 text-emerald-700 font-semibold inline-block">Aprobado</span>`;
           if (currentStatus === 'Rechazado') statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-red-100 text-red-700 font-semibold inline-block">Rechazado</span>`;
-    
+        
           const tr = document.createElement('tr');
           tr.className = "hover:bg-slate-50 transition-colors border-b border-slate-100";
           tr.innerHTML = `
-            <!-- CELDA CON SALTOS DE LÍNEA ORDENADOS (flex-col) -->
             <td class="p-4">
               <div class="flex flex-col gap-1">
                 <div class="flex items-center justify-between gap-2">
@@ -361,11 +433,9 @@
                   </span>
                   ${statusBadge}
                 </div>
-                
                 <div class="font-black text-slate-900 text-base">
                   ₡${Number(row.monto || 0).toLocaleString('es-CR', { minimumFractionDigits: 2 })}
                 </div>
-                
                 <div class="flex items-center gap-2">
                   <span class="font-mono text-[11px] text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
                     Ref: ${row.numero_referencia || 'N/A'}
@@ -374,28 +444,24 @@
                 </div>
               </div>
             </td>
-    
             <td class="p-4 text-xs font-semibold text-slate-700 whitespace-nowrap">
               ${row.nombre_emisor || 'N/A'}
             </td>
-    
             <td class="p-4 text-[11px] text-slate-500 whitespace-nowrap">
               <div class="flex flex-col gap-0.5">
                 <div><strong class="text-slate-600">Tx:</strong> ${row.fecha_transferencia || 'N/A'}</div>
                 <div class="text-slate-400"><strong class="text-slate-400">Reg:</strong> ${row.created_at ? row.created_at.substring(0,10) : 'N/A'}</div>
               </div>
             </td>
-    
             <td class="p-4 min-w-[180px]">
               <input type="text" value="${row.comentario || ''}" placeholder="Añadir comentario..." 
                 onchange="updateComment('${row.id}', this.value)" 
                 class="w-full text-xs p-2 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500 bg-slate-50/50">
             </td>
-    
             <td class="p-4 text-center whitespace-nowrap space-x-1">
               <button onclick="updateStatus('${row.id}', 'Aprobado')" class="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="Aprobar"><i class="fa-solid fa-check"></i></button>
               <button onclick="updateStatus('${row.id}', 'Rechazado')" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Rechazar"><i class="fa-solid fa-xmark"></i></button>
-              ${row.imagen_url ? `<a href="${row.imagen_url}" target="_blank" class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg inline-block transition-colors" title="Ver Comprobante"><i class="fa-solid fa-eye"></i></a>` : ''}
+              ${row.imagen_url ? `<button onclick="openModal('${row.imagen_url}')" class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg inline-block transition-colors" title="Ver Comprobante"><i class="fa-solid fa-eye"></i></button>` : ''}
             </td>
           `;
           recordsTable.appendChild(tr);
@@ -403,9 +469,30 @@
       } else {
         recordsTable.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400 text-sm">No se encontraron registros.</td></tr>`;
       }
-    
+      
       document.getElementById('totalCount').innerText = filtered.length;
       document.getElementById('totalAmount').innerText = `₡${totalMonto.toLocaleString('es-CR', { minimumFractionDigits: 2 })}`;
+    }
+
+    // Funciones del Modal
+    function openModal(url) {
+      modalExternalLink.href = url;
+      if (url.toLowerCase().endsWith('.pdf')) {
+        modalImage.classList.add('hidden');
+        modalPdf.src = url;
+        modalPdf.classList.remove('hidden');
+      } else {
+        modalPdf.classList.add('hidden');
+        modalImage.src = url;
+        modalImage.classList.remove('hidden');
+      }
+      viewerModal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      viewerModal.classList.add('hidden');
+      modalImage.src = '';
+      modalPdf.src = '';
     }
 
     async function updateStatus(id, estado) {
@@ -419,25 +506,21 @@
           },
           body: JSON.stringify({ id, estado })
         });
-    
+        
         const result = await response.json();
-        if (!result.success) {
-          showAlert(`⚠️ No se pudo actualizar el estado: ${result.error}`, 'error');
-          return;
-        }
-    
+        if (!result.success) return showAlert(`⚠️ Error: ${result.error}`, 'error');
+        
         showAlert(`✅ Estado actualizado a ${estado}`, 'success');
         loadRecords();
       } catch (err) {
-        console.error('Error al actualizar estado:', err);
-        showAlert('⚠️ Error de conexión al actualizar registro.', 'error');
+        showAlert('⚠️ Error de conexión al actualizar.', 'error');
       }
     }
     
     async function updateComment(id, comentario) {
       if (!currentSession) return;
       try {
-        const response = await fetch('/api/actualizar_registro', {
+        await fetch('/api/actualizar_registro', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -445,17 +528,11 @@
           },
           body: JSON.stringify({ id, comentario })
         });
-    
-        const result = await response.json();
-        if (!result.success) {
-          console.error('Error guardando comentario:', result.error);
-        }
       } catch (err) {
         console.error('Error al guardar comentario:', err);
       }
     }
 
-    // Escuchar eventos de los filtros
     [searchFilter, bankFilter, statusFilter, createdFilter, txFilter].forEach(el => el.addEventListener('input', renderTable));
     document.getElementById('refreshBtn').addEventListener('click', loadRecords);
 
