@@ -128,8 +128,10 @@ try {
     }
 
     $publicImageUrl = $cleanBaseUrl . "/storage/v1/object/public/comprobantes/" . $storageFileName;
-
+    $comentarioInicial = $_POST['comentario'] ?? null;
+    
     // 3. Insertar Registro en la BD (Mapeando Banco Emisor en "nombre_emisor" y Nombre de la persona en "cliente")
+    $dbUrl     = $cleanBaseUrl . "/rest/v1/sinpes";
     $dbUrl     = $cleanBaseUrl . "/rest/v1/sinpes";
     $dbPayload = json_encode([
         "numero_referencia"   => (string)$extractedData['numero_referencia'],
@@ -138,7 +140,9 @@ try {
         "nombre_emisor"       => (string)($extractedData['banco_emisor'] ?? $extractedData['nombre_emisor'] ?? ''),
         "cliente"             => (string)($extractedData['cliente'] ?? ''),
         "telefono_emisor"     => (string)($extractedData['telefono_emisor'] ?? ''),
-        "imagen_url"          => $publicImageUrl
+        "imagen_url"          => $publicImageUrl,
+        "estado"              => 'Pendiente',
+        "comentario"          => $comentarioInicial
     ]);
 
     $chDb = curl_init($dbUrl);
