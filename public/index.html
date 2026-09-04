@@ -142,39 +142,51 @@
     });
 
     async function loadRecords() {
-      try {
-        const res = await fetch('/api/obtener_registros');
-        const data = await res.json();
+  try {
+    const res = await fetch('/api/obtener_registros');
+    const data = await res.json();
 
-        recordsTable.innerHTML = '';
-        let totalMonto = 0;
+    recordsTable.innerHTML = '';
+    let totalMonto = 0;
 
-        if (Array.isArray(data)) {
-          data.forEach(row => {
-            totalMonto += parseFloat(row.monto || 0);
-            const tr = document.createElement('tr');
-            tr.className = "hover:bg-slate-50 transition-colors";
-            tr.innerHTML = `
-              <td class="p-4 font-bold text-slate-900">₡${Number(row.monto).toLocaleString('es-CR')}</td>
-              <td class="p-4 font-mono text-xs text-slate-600">${row.numero_referencia}</td>
-              <td class="p-4 text-slate-700">${row.nombre_emisor || 'N/A'}</td>
-              <td class="p-4 text-xs text-slate-500">${row.fecha_transferencia || row.created_at}</td>
-              <td class="p-4 text-center">
-                <a href="${row.imagen_url}" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-medium text-xs">
-                  <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver
-                </a>
-              </td>
-            `;
-            recordsTable.appendChild(tr);
-          });
+    if (Array.isArray(data) && data.length > 0) {
+      data.forEach(row => {
+        totalMonto += parseFloat(row.monto || 0);
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition-colors";
+        tr.innerHTML = `
+          <td class="p-4 font-bold text-slate-900">₡${Number(row.monto || 0).toLocaleString('es-CR', { minimumFractionDigits: 2 })}</td>
+          <td class="p-4 font-mono text-xs text-slate-600">${row.numero_referencia || 'N/A'}</td>
+          <td class="p-4 text-slate-700">${row.nombre_emisor || 'N/A'}</td>
+          <td class="p-4 text-xs text-slate-500">${row.fecha_transferencia || row.created_at || 'N/A'}</td>
+          <td class="p-4 text-center">
+            ${row.imagen_url ? `
+              <a href="${row.imagen_url}" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-medium text-xs inline-flex items-center gap-1">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver
+              </a>
+            ` : '<span class="text-slate-400 text-xs">Sin foto</span>'}
+          </td>
+        `;
+        recordsTable.appendChild(tr);
+      });
 
-          document.getElementById('totalCount').innerText = data.length;
-          document.getElementById('totalAmount').innerText = `₡${totalMonto.toLocaleString('es-CR', { minimumFractionDigits: 2 })}`;
-        }
-      } catch (e) {
-        console.error('Error cargando tabla:', e);
-      }
+      document.getElementById('totalCount').innerText = data.length;
+      document.getElementById('totalAmount').innerText = `₡${totalMonto.toLocaleString('es-CR', { minimumFractionDigits: 2 })}`;
+    } else {
+      recordsTable.innerHTML = `
+        <tr>
+          <td colspan="5" class="p-8 text-center text-slate-400 text-sm">
+            No hay transacciones registradas aún.
+          </td>
+        </tr>
+      `;
+      document.getElementById('totalCount').innerText = '0';
+      document.getElementById('totalAmount').innerText = '₡0.00';
     }
+  } catch (e) {
+    console.error('Error cargando tabla:', e);
+  }
+}
 
     function showAlert(msg, type) {
       alertBox.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'bg-emerald-50', 'text-emerald-700');
