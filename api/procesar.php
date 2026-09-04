@@ -17,18 +17,20 @@ try {
     }
 
     if (!isset($_FILES['comprobante']) || $_FILES['comprobante']['error'] !== UPLOAD_ERR_OK) {
-        throw new Exception("No se recibió un archivo de imagen válido.");
+        throw new Exception("No se recibió un archivo de imagen o PDF válido.");
     }
 
     $tmpPath     = $_FILES['comprobante']['tmp_name'];
     $fileName    = $_FILES['comprobante']['name'];
     $mimeType    = mime_content_type($tmpPath) ?: 'image/jpeg';
-    $base64Image = base64_encode(file_get_contents($tmpPath));
+    
+    // Convertimos la imagen / PDF directamente a Base64 para que Gemini la procese
+    $base64Data  = base64_encode(file_get_contents($tmpPath));
 
-    // 1. Llamada a la API de Google Gemini (v1beta gemini-1.5-flash)
-    $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . trim($geminiKey);
+    // 1. Endpoint con alias del modelo (gemini-1.5-flash-latest)
+    $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" . trim($geminiKey);
 
-    $promptText = 'Extrae la información de este comprobante SINPE Móvil de Costa Rica. Responde en formato JSON con la siguiente estructura exacta: {"monto": float, "numero_referencia": "string", "fecha_transferencia": "string", "nombre_emisor": "string", "telefono_emisor": "string"}';
+    $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica. Responde en formato JSON con la siguiente estructura exacta: {"monto": float, "numero_referencia": "string", "fecha_transferencia": "string", "nombre_emisor": "string", "telefono_emisor": "string"}';
 
     $payloadGemini = json_encode([
         "contents" => [
@@ -38,7 +40,7 @@ try {
                     [
                         "inline_data" => [
                             "mime_type" => $mimeType,
-                            "data"      => $base64Image
+                            "data"      => $base64Data
                         ]
                     ]
                 ]
