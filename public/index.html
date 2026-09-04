@@ -149,7 +149,7 @@
   const recordsTable = document.getElementById('recordsTable');
   
   try {
-    const res = await fetch('/api/obtener_registros.php');
+    const res = await fetch('/api/obtener_registros');
     const data = await res.json();
 
     recordsTable.innerHTML = '';
