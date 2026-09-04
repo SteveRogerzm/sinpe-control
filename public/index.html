@@ -145,9 +145,7 @@
             <table class="w-full text-left border-collapse">
               <thead>
                 <tr class="bg-slate-100 text-slate-600 uppercase text-xs tracking-wider border-b border-slate-200">
-                  <th class="p-4">Estado</th>
-                  <th class="p-4">Monto / Ref</th>
-                  <th class="p-4">Cliente / Tel</th>
+                  <th class="p-4">Detalle del SINPE</th>
                   <th class="p-4">Banco</th>
                   <th class="p-4">Fechas</th>
                   <th class="p-4">Comentarios</th>
@@ -299,67 +297,83 @@
       const status = statusFilter.value;
       const created = createdFilter.value;
       const txDate = txFilter.value;
-
+    
       const filtered = rawRecordsData.filter(row => {
         const matchesSearch = !search || 
           (row.cliente && row.cliente.toLowerCase().includes(search)) ||
           (row.numero_referencia && row.numero_referencia.toLowerCase().includes(search)) ||
           (row.monto && row.monto.toString().includes(search));
-
+    
         const matchesBank = !bank || row.nombre_emisor === bank;
         const matchesStatus = !status || (row.estado || 'Pendiente') === status;
         const matchesCreated = !created || (row.created_at && row.created_at.startsWith(created));
         const matchesTx = !txDate || (row.fecha_transferencia && row.fecha_transferencia.includes(txDate));
-
+    
         return matchesSearch && matchesBank && matchesStatus && matchesCreated && matchesTx;
       });
-
+    
       recordsTable.innerHTML = '';
       let totalMonto = 0;
-
+    
       if (filtered.length > 0) {
         filtered.forEach(row => {
           totalMonto += parseFloat(row.monto || 0);
           const currentStatus = row.estado || 'Pendiente';
-
-          let statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-100 text-amber-700 font-semibold">Pendiente</span>`;
-          if (currentStatus === 'Aprobado') statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-emerald-100 text-emerald-700 font-semibold">Aprobado</span>`;
-          if (currentStatus === 'Rechazado') statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-red-100 text-red-700 font-semibold">Rechazado</span>`;
-
+    
+          // Configuración del Badge según el Estado
+          let statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-100 text-amber-700 font-semibold inline-block">Pendiente</span>`;
+          if (currentStatus === 'Aprobado') statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-emerald-100 text-emerald-700 font-semibold inline-block">Aprobado</span>`;
+          if (currentStatus === 'Rechazado') statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-red-100 text-red-700 font-semibold inline-block">Rechazado</span>`;
+    
           const tr = document.createElement('tr');
-          tr.className = "hover:bg-slate-50 transition-colors";
+          tr.className = "hover:bg-slate-50 transition-colors border-b border-slate-100";
           tr.innerHTML = `
-            <td class="p-4 whitespace-nowrap">${statusBadge}</td>
-            <td class="p-4">
-              <div class="font-bold text-slate-900">₡${Number(row.monto || 0).toLocaleString('es-CR', { minimumFractionDigits: 2 })}</div>
-              <div class="font-mono text-xs text-slate-500">${row.numero_referencia || 'N/A'}</div>
+            <!-- CELDA UNIFICADA: Estado, Cliente, Monto y Referencia -->
+            <td class="p-4 space-y-1">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-bold text-slate-800 text-sm truncate max-w-[200px]" title="${row.cliente || 'Sin nombre'}">
+                  ${row.cliente || 'Cliente no identificado'}
+                </span>
+                ${statusBadge}
+              </div>
+              <div class="flex items-baseline justify-between gap-2">
+                <div class="font-black text-slate-900 text-base">
+                  ₡${Number(row.monto || 0).toLocaleString('es-CR', { minimumFractionDigits: 2 })}
+                </div>
+                <div class="font-mono text-[11px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                  Ref: ${row.numero_referencia || 'N/A'}
+                </div>
+              </div>
+              ${row.telefono_emisor ? `<div class="text-[11px] text-slate-400 font-mono"><i class="fa-solid fa-phone text-[9px] mr-1"></i>${row.telefono_emisor}</div>` : ''}
             </td>
-            <td class="p-4">
-              <div class="font-medium text-slate-800">${row.cliente || 'N/A'}</div>
-              <div class="font-mono text-xs text-slate-500">${row.telefono_emisor || ''}</div>
+    
+            <td class="p-4 text-xs font-semibold text-slate-700 whitespace-nowrap">
+              ${row.nombre_emisor || 'N/A'}
             </td>
-            <td class="p-4 text-xs font-semibold text-slate-700">${row.nombre_emisor || 'N/A'}</td>
-            <td class="p-4 text-[11px] text-slate-500">
-              <div>Tx: ${row.fecha_transferencia || 'N/A'}</div>
-              <div class="text-slate-400">Reg: ${row.created_at ? row.created_at.substring(0,10) : 'N/A'}</div>
+    
+            <td class="p-4 text-[11px] text-slate-500 whitespace-nowrap">
+              <div><strong class="text-slate-600">Tx:</strong> ${row.fecha_transferencia || 'N/A'}</div>
+              <div class="text-slate-400"><strong class="text-slate-400">Reg:</strong> ${row.created_at ? row.created_at.substring(0,10) : 'N/A'}</div>
             </td>
-            <td class="p-4">
+    
+            <td class="p-4 min-w-[180px]">
               <input type="text" value="${row.comentario || ''}" placeholder="Añadir comentario..." 
                 onchange="updateComment('${row.id}', this.value)" 
-                class="w-full text-xs p-1.5 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500">
+                class="w-full text-xs p-2 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500 bg-slate-50/50">
             </td>
+    
             <td class="p-4 text-center whitespace-nowrap space-x-1">
-              <button onclick="updateStatus('${row.id}', 'Aprobado')" class="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg" title="Aprobar"><i class="fa-solid fa-check"></i></button>
-              <button onclick="updateStatus('${row.id}', 'Rechazado')" class="p-1.5 text-red-600 hover:bg-red-50 rounded-lg" title="Rechazar"><i class="fa-solid fa-xmark"></i></button>
-              ${row.imagen_url ? `<a href="${row.imagen_url}" target="_blank" class="p-1.5 text-slate-500 hover:bg-slate-100 rounded-lg inline-block"><i class="fa-solid fa-eye"></i></a>` : ''}
+              <button onclick="updateStatus('${row.id}', 'Aprobado')" class="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="Aprobar"><i class="fa-solid fa-check"></i></button>
+              <button onclick="updateStatus('${row.id}', 'Rechazado')" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Rechazar"><i class="fa-solid fa-xmark"></i></button>
+              ${row.imagen_url ? `<a href="${row.imagen_url}" target="_blank" class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg inline-block transition-colors" title="Ver Comprobante"><i class="fa-solid fa-eye"></i></a>` : ''}
             </td>
           `;
           recordsTable.appendChild(tr);
         });
       } else {
-        recordsTable.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400 text-sm">No se encontraron registros.</td></tr>`;
+        recordsTable.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400 text-sm">No se encontraron registros.</td></tr>`;
       }
-
+    
       document.getElementById('totalCount').innerText = filtered.length;
       document.getElementById('totalAmount').innerText = `₡${totalMonto.toLocaleString('es-CR', { minimumFractionDigits: 2 })}`;
     }
