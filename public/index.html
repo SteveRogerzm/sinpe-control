@@ -76,19 +76,23 @@
           </div>
 
           <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-sm">
-              <thead>
-                <tr class="bg-slate-50 text-slate-500 font-medium border-b border-slate-200">
-                  <th class="p-4">Monto</th>
-                  <th class="p-4">Referencia</th>
-                  <th class="p-4">Emisor</th>
-                  <th class="p-4">Fecha</th>
-                  <th class="p-4 text-center">Comprobante</th>
-                </tr>
-              </thead>
-              <tbody id="recordsTable" class="divide-y divide-slate-100"></tbody>
-            </table>
-          </div>
+  <table class="w-full text-left border-collapse">
+    <thead>
+      <tr class="bg-slate-100 text-slate-600 uppercase text-xs tracking-wider border-b border-slate-200">
+        <th class="p-4">Monto</th>
+        <th class="p-4">Referencia</th>
+        <th class="p-4">Cliente</th>
+        <th class="p-4">Banco Emisor</th>
+        <th class="p-4">Teléfono</th>
+        <th class="p-4">Fecha Transacción</th>
+        <th class="p-4 text-center">Comprobante</th>
+      </tr>
+    </thead>
+    <tbody id="recordsTable" class="divide-y divide-slate-100 text-sm">
+
+    </tbody>
+  </table>
+</div>
         </div>
       </section>
 
@@ -142,8 +146,10 @@
     });
 
     async function loadRecords() {
+  const recordsTable = document.getElementById('recordsTable');
+  
   try {
-    const res = await fetch('/api/obtener_registros');
+    const res = await fetch('/api/obtener_registros.php');
     const data = await res.json();
 
     recordsTable.innerHTML = '';
@@ -155,11 +161,25 @@
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 transition-colors";
         tr.innerHTML = `
-          <td class="p-4 font-bold text-slate-900">₡${Number(row.monto || 0).toLocaleString('es-CR', { minimumFractionDigits: 2 })}</td>
-          <td class="p-4 font-mono text-xs text-slate-600">${row.numero_referencia || 'N/A'}</td>
-          <td class="p-4 text-slate-700">${row.nombre_emisor || 'N/A'}</td>
-          <td class="p-4 text-xs text-slate-500">${row.fecha_transferencia || row.created_at || 'N/A'}</td>
-          <td class="p-4 text-center">
+          <td class="p-4 font-bold text-slate-900 whitespace-nowrap">
+            ₡${Number(row.monto || 0).toLocaleString('es-CR', { minimumFractionDigits: 2 })}
+          </td>
+          <td class="p-4 font-mono text-xs text-slate-600 whitespace-nowrap">
+            ${row.numero_referencia || 'N/A'}
+          </td>
+          <td class="p-4 font-medium text-slate-800">
+            ${row.cliente || 'N/A'}
+          </td>
+          <td class="p-4 text-slate-700">
+            ${row.nombre_emisor || 'N/A'}
+          </td>
+          <td class="p-4 font-mono text-xs text-slate-600">
+            ${row.telefono_emisor || 'N/A'}
+          </td>
+          <td class="p-4 text-xs text-slate-500 whitespace-nowrap">
+            ${row.fecha_transferencia || row.created_at || 'N/A'}
+          </td>
+          <td class="p-4 text-center whitespace-nowrap">
             ${row.imagen_url ? `
               <a href="${row.imagen_url}" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-medium text-xs inline-flex items-center gap-1">
                 <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver
@@ -175,7 +195,7 @@
     } else {
       recordsTable.innerHTML = `
         <tr>
-          <td colspan="5" class="p-8 text-center text-slate-400 text-sm">
+          <td colspan="7" class="p-8 text-center text-slate-400 text-sm">
             No hay transacciones registradas aún.
           </td>
         </tr>
