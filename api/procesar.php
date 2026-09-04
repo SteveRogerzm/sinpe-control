@@ -46,8 +46,7 @@ try {
 
     $base64Data = base64_encode(file_get_contents($tmpPath));
 
-    // 1. Procesar con Gemini API (con reintentos automáticos si hay alta demanda)
-    $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
+    // 1. Procesar con Gemini API mediante Fallback de Modelos
     $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica (imagen o PDF). '
         . 'Identifica el banco/entidad financiera de origen (ej: BAC, Banco Nacional, BCR, Davivienda, etc.) como "banco_emisor", '
         . 'y la persona que envía el dinero como "cliente". '
@@ -66,51 +65,73 @@ try {
         "generationConfig" => ["response_mime_type" => "application/json"]
     ]);
 
-    $maxAttempts = 3;
-    $attempt = 0;
+    // Lista de modelos a intentar en orden de preferencia si se agota la cuota
+    $modelsToTry = [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-1.5-flash",
+        "gemini-2.0-flash"
+    ];
+
     $jsonGemini = null;
+    $lastErrorMsg = '';
+    $success = false;
 
-    while ($attempt < $maxAttempts) {
-        $attempt++;
+    foreach ($modelsToTry as $model) {
+        $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent";
         
-        $ch = curl_init($geminiUrl);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $payloadGemini);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'x-goog-api-key: ' . trim($geminiKey)
-        ]);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        $responseGemini = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        $maxAttempts = 2;
+        $attempt = 0;
 
-        $jsonGemini = json_decode($responseGemini, true);
+        while ($attempt < $maxAttempts) {
+            $attempt++;
+            
+            $ch = curl_init($geminiUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $payloadGemini);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'x-goog-api-key: ' . trim($geminiKey)
+            ]);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            $responseGemini = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
 
-        // Si la respuesta fue exitosa o no fue por saturación/demanda, salimos del loop
-        if ($httpCode === 200 && !isset($jsonGemini['error'])) {
-            break;
+            $jsonGemini = json_decode($responseGemini, true);
+
+            // Si la respuesta fue exitosa
+            if ($httpCode === 200 && !isset($jsonGemini['error'])) {
+                $success = true;
+                break 2; // Salir de ambos loops (intento y modelos)
+            }
+
+            $errMsg = $jsonGemini['error']['message'] ?? '';
+            $lastErrorMsg = $errMsg;
+
+            $isQuotaExceeded = (
+                $httpCode === 429 || 
+                $httpCode === 503 || 
+                strpos(strtolower($errMsg), 'quota') !== false || 
+                strpos(strtolower($errMsg), 'resource_exhausted') !== false ||
+                strpos(strtolower($errMsg), 'high demand') !== false
+            );
+
+            // Si el modelo agotó su cuota, rompemos el ciclo interno para saltar al siguiente modelo del array
+            if ($isQuotaExceeded) {
+                break;
+            }
+
+            // Si fue un error leve de saturación puntual en el mismo modelo, reintentamos una vez
+            if ($attempt < $maxAttempts) {
+                usleep(1000000); // 1 segundo
+            }
         }
+    }
 
-        $errMsg = $jsonGemini['error']['message'] ?? '';
-        $isHighDemand = (
-            $httpCode === 429 || 
-            $httpCode === 503 || 
-            strpos(strtolower($errMsg), 'high demand') !== false || 
-            strpos(strtolower($errMsg), 'unavailable') !== false ||
-            strpos(strtolower($errMsg), 'resource_exhausted') !== false
-        );
-
-        // Si es un error de alta demanda y nos quedan intentos, esperamos 1.5 segundos y reintentamos
-        if ($isHighDemand && $attempt < $maxAttempts) {
-            usleep(1500000); // 1.5 segundos
-            continue;
-        }
-
-        if (isset($jsonGemini['error'])) {
-            throw new Exception("Google Gemini Error: " . ($jsonGemini['error']['message'] ?? json_encode($jsonGemini['error'])));
-        }
+    if (!$success) {
+        throw new Exception("Google Gemini Error (Cuota agotada en modelos de respaldo): " . $lastErrorMsg);
     }
 
     $rawText = trim($jsonGemini['candidates'][0]['content']['parts'][0]['text'] ?? '');
@@ -120,7 +141,7 @@ try {
         throw new Exception("La IA no logró extraer los datos del comprobante.");
     }
 
-    // 2. Subir Archivo a Supabase Storage (se envía con su respectivo MimeType)
+    // 2. Subir Archivo a Supabase Storage
     $storageFileName = time() . '_' . preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $fileName);
     $storageUrl      = $cleanBaseUrl . "/storage/v1/object/comprobantes/" . $storageFileName;
 
