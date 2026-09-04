@@ -59,7 +59,7 @@
       <section class="lg:col-span-4 space-y-6">
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
           <h2 class="text-lg font-bold text-slate-900 mb-1">Registrar Comprobante</h2>
-          <p class="text-sm text-slate-500 mb-6">Sube la foto del SINPE para procesarla con IA.</p>
+          <p class="text-sm text-slate-500 mb-6">Sube la foto del comprobante para procesarla.</p>
           
           <form id="uploadForm" class="space-y-4">
             <div id="dropzone" class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-emerald-500 transition-colors cursor-pointer bg-slate-50">
@@ -539,69 +539,69 @@
       }
     }
     function iniciarDemoGuiada() {
-  const driver = window.driver.js.driver;
-
-  const driverObj = driver({
-    showProgress: true,
-    animate: true,
-    nextBtnText: 'Siguiente →',
-    prevBtnText: '← Anterior',
-    doneBtnText: '¡Entendido!',
-    steps: [
-      {
-        element: '#uploadForm',
-        popover: {
-          title: '1. Carga de Comprobantes',
-          description: 'Arrastra o selecciona la foto/PDF de tu SINPE Móvil aquí. Se comprimirá automáticamente para optimizar el envío.',
-          side: "right",
-          align: 'start'
-        }
-      },
-      {
-        element: '#initialComment',
-        popover: {
-          title: '2. Comentarios Previos',
-          description: 'Puedes vincular una nota rápida (ej. "Pedido #1042") antes de procesar el pago.',
-          side: "top"
-        }
-      },
-      {
-        element: '#submitBtn',
-        popover: {
-          title: '3. Procesamiento con IA',
-          description: 'Al hacer clic, Google Gemini analiza la imagen, extracta el monto, banco emisor, cliente y número de referencia.',
-          side: "bottom"
-        }
-      },
-      {
-        element: '.grid.grid-cols-1.sm\\:grid-cols-2.gap-4', // Tarjetas estadísticas
-        popover: {
-          title: '4. Métricas en Tiempo Real',
-          description: 'Monitorea el total acumulado en colones y el volumen de comprobantes leídos al instante.',
-          side: "bottom"
-        }
-      },
-      {
-        element: '#searchFilter',
-        popover: {
-          title: '5. Filtros Inteligentes',
-          description: 'Busca por cliente, referencia o filtra según el banco emisor y estado de la transacción.',
-          side: "top"
-        }
-      },
-      {
-        element: '#recordsTable',
-        popover: {
-          title: '6. Histórico y Validación',
-          description: 'Aquí ves los datos extraídos por la IA. Puedes aprobar, rechazar o abrir el modal para ver la imagen original.',
-          side: "top"
-        }
-      }
-    ]
-  });
-
-  driverObj.drive();
-}
+      const driver = window.driver.js.driver;
+    
+      const driverObj = driver({
+        showProgress: true,
+        animate: true,
+        nextBtnText: 'Siguiente →',
+        prevBtnText: '← Anterior',
+        doneBtnText: '¡Entendido!',
+        steps: [
+          {
+            element: '#uploadForm',
+            popover: {
+              title: '1. Carga de Comprobantes',
+              description: 'Arrastra o selecciona la foto/PDF de tu SINPE Móvil aquí. El sistema optimizará el archivo automáticamente.',
+              side: "right",
+              align: 'start'
+            }
+          },
+          {
+            element: '#initialComment',
+            popover: {
+              title: '2. Comentarios Previos',
+              description: 'Puedes vincular una nota rápida (ej. "Pedido #1042") antes de guardar la transacción.',
+              side: "top"
+            }
+          },
+          {
+            element: '#submitBtn',
+            popover: {
+              title: '3. Procesamiento Automático',
+              description: 'Al hacer clic, la plataforma analiza la imagen y extrae el monto, banco emisor, cliente y número de referencia de forma inmediata.',
+              side: "bottom"
+            }
+          },
+          {
+            element: '.grid.grid-cols-1.sm\\:grid-cols-2.gap-4',
+            popover: {
+              title: '4. Métricas en Tiempo Real',
+              description: 'Monitorea el total acumulado en colones y el volumen general de comprobantes ingresados al instante.',
+              side: "bottom"
+            }
+          },
+          {
+            element: '#searchFilter',
+            popover: {
+              title: '5. Filtros y Búsqueda',
+              description: 'Busca por cliente, referencia o filtra según el banco emisor, fecha y estado de la transacción.',
+              side: "top"
+            }
+          },
+          {
+            element: '#recordsTable',
+            popover: {
+              title: '6. Histórico y Validación',
+              description: 'Consulta los datos registrados. Puedes aprobar, rechazar o visualizar el comprobante original en pantalla.',
+              side: "top"
+            }
+          }
+        ]
+      });
+    
+      driverObj.drive();
+    }
     [searchFilter, bankFilter, statusFilter, createdFilter, txFilter].forEach(el => el.addEventListener('input', renderTable));
     document.getElementById('refreshBtn').addEventListener('click', loadRecords);
 
