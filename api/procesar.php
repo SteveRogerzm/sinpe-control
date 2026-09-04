@@ -28,9 +28,13 @@ try {
     $mimeType   = mime_content_type($tmpPath) ?: 'image/jpeg';
     $base64Data = base64_encode(file_get_contents($tmpPath));
 
-    // 1. Procesar con Gemini API
+    // 1. Procesar con Gemini API (con reintentos automáticos si hay alta demanda)
     $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
-    $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica. Responde estrictamente en formato JSON: {"monto": float, "numero_referencia": "string", "fecha_transferencia": "string", "nombre_emisor": "string", "telefono_emisor": "string"}';
+    $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica. '
+        . 'Identifica el banco/entidad financiera de origen (ej: BAC, Banco Nacional, BCR, Davivienda, etc.) como "banco_emisor", '
+        . 'y la persona que envía el dinero como "cliente". '
+        . 'Responde estrictamente en formato JSON: '
+        . '{"monto": float, "numero_referencia": "string", "fecha_transferencia": "string", "cliente": "string", "banco_emisor": "string", "telefono_emisor": "string"}';
 
     $payloadGemini = json_encode([
         "contents" => [
@@ -44,21 +48,53 @@ try {
         "generationConfig" => ["response_mime_type" => "application/json"]
     ]);
 
-    $ch = curl_init($geminiUrl);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $payloadGemini);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        'x-goog-api-key: ' . trim($geminiKey)
-    ]);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    $responseGemini = curl_exec($ch);
-    curl_close($ch);
+    $maxAttempts = 3;
+    $attempt = 0;
+    $jsonGemini = null;
+    $responseGemini = null;
 
-    $jsonGemini = json_decode($responseGemini, true);
-    if (isset($jsonGemini['error'])) {
-        throw new Exception("Google Gemini Error: " . ($jsonGemini['error']['message'] ?? json_encode($jsonGemini['error'])));
+    while ($attempt < $maxAttempts) {
+        $attempt++;
+        
+        $ch = curl_init($geminiUrl);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payloadGemini);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'x-goog-api-key: ' . trim($geminiKey)
+        ]);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $responseGemini = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        $jsonGemini = json_decode($responseGemini, true);
+
+        // Si la respuesta fue exitosa o no fue por saturación/demanda, salimos del loop
+        if ($httpCode === 200 && !isset($jsonGemini['error'])) {
+            break;
+        }
+
+        $errMsg = $jsonGemini['error']['message'] ?? '';
+        $isHighDemand = (
+            $httpCode === 429 || 
+            $httpCode === 503 || 
+            strpos(strtolower($errMsg), 'high demand') !== false || 
+            strpos(strtolower($errMsg), 'unavailable') !== false ||
+            strpos(strtolower($errMsg), 'resource_exhausted') !== false
+        );
+
+        // Si es un error de alta demanda y nos quedan intentos, esperamos 1.5 segundos y reintentamos
+        if ($isHighDemand && $attempt < $maxAttempts) {
+            usleep(1500000); // 1.5 segundos
+            continue;
+        }
+
+        // Si no fue error de demanda o ya agotamos intentos, lanzamos la excepción
+        if (isset($jsonGemini['error'])) {
+            throw new Exception("Google Gemini Error: " . ($jsonGemini['error']['message'] ?? json_encode($jsonGemini['error'])));
+        }
     }
 
     $rawText = trim($jsonGemini['candidates'][0]['content']['parts'][0]['text'] ?? '');
@@ -92,13 +128,14 @@ try {
 
     $publicImageUrl = $cleanBaseUrl . "/storage/v1/object/public/comprobantes/" . $storageFileName;
 
-    // 3. Insertar Registro en la BD
+    // 3. Insertar Registro en la BD (Mapeando Banco Emisor en "nombre_emisor" y Nombre de la persona en "cliente")
     $dbUrl     = $cleanBaseUrl . "/rest/v1/sinpes";
     $dbPayload = json_encode([
         "numero_referencia"   => (string)$extractedData['numero_referencia'],
         "monto"               => floatval($extractedData['monto'] ?? 0),
         "fecha_transferencia" => (string)($extractedData['fecha_transferencia'] ?? ''),
-        "nombre_emisor"       => (string)($extractedData['nombre_emisor'] ?? ''),
+        "nombre_emisor"       => (string)($extractedData['banco_emisor'] ?? $extractedData['nombre_emisor'] ?? ''),
+        "cliente"             => (string)($extractedData['cliente'] ?? ''),
         "telefono_emisor"     => (string)($extractedData['telefono_emisor'] ?? ''),
         "imagen_url"          => $publicImageUrl
     ]);
