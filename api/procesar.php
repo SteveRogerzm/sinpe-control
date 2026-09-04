@@ -107,7 +107,7 @@ try {
 
     $publicImageUrl = $cleanBaseUrl . "/storage/v1/object/public/comprobantes/" . $storageFileName;
 
-    // 3. Guardar registro en la base de datos de Supabase
+    // 3. Insertar registro en Supabase Database
     $dbUrl     = $cleanBaseUrl . "/rest/v1/sinpes";
     $dbPayload = json_encode([
         "numero_referencia"   => (string)$extractedData['numero_referencia'],
@@ -132,7 +132,18 @@ try {
     curl_setopt($chDb, CURLOPT_SSL_VERIFYHOST, false);
 
     $responseDb = curl_exec($chDb);
+    $httpCodeDb = curl_getinfo($chDb, CURLINFO_HTTP_CODE);
     curl_close($chDb);
+
+    // Validar respuesta de Supabase
+    if ($httpCodeDb >= 400) {
+        if (strpos($responseDb, '23505') !== false || strpos($responseDb, 'duplicate key') !== false) {
+            throw new Exception("El comprobante con Ref: {$extractedData['numero_referencia']} ya existe en la base de datos.");
+        }
+        throw new Exception("Error al insertar en Supabase (HTTP {$httpCodeDb}): " . $responseDb);
+    }
+
+    echo json_encode(['success' => true, 'data' => $extractedData, 'imagen_url' => $publicImageUrl]);
 
     if (strpos($responseDb, '23505') !== false || strpos($responseDb, 'duplicate key') !== false) {
         throw new Exception("El comprobante con Ref: {$extractedData['numero_referencia']} ya existe en la base de datos.");
