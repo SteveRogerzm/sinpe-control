@@ -6,6 +6,8 @@
   <title>Gestor de SINPE Móvil</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- CDN de Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; }
@@ -21,19 +23,38 @@
         </div>
         <h1 class="text-xl font-bold text-slate-900 tracking-tight">SINPE<span class="text-emerald-600">Control</span></h1>
       </div>
-      <div class="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700">
-        ● Vercel Serverless
+      
+      <!-- Zona del usuario / Login -->
+      <div class="flex items-center gap-3" id="authNav">
+        <span id="userEmail" class="text-xs font-medium text-slate-600 hidden sm:inline"></span>
+        <button id="logoutBtn" class="hidden text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-1.5 rounded-lg transition-all">
+          <i class="fa-solid fa-right-from-bracket mr-1"></i> Salir
+        </button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Contenedor Pantalla de Login (Si no hay sesión) -->
+  <div id="loginScreen" class="hidden max-w-md mx-auto mt-20 p-6 bg-white rounded-2xl shadow-sm border border-slate-200 text-center">
+    <div class="bg-emerald-100 text-emerald-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+      <i class="fa-solid fa-lock text-2xl"></i>
+    </div>
+    <h2 class="text-xl font-bold text-slate-900 mb-2">Acceso Restringido</h2>
+    <p class="text-sm text-slate-500 mb-6">Debes iniciar sesión con tu cuenta autorizada de Google para gestionar los comprobantes.</p>
+    <button id="loginBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-3">
+      <i class="fa-brands fa-google text-lg"></i>
+      <span>Continuar con Google</span>
+    </button>
+  </div>
+
+  <!-- Contenedor Principal (Si la sesión está activa) -->
+  <main id="appScreen" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       
       <section class="lg:col-span-4 space-y-6">
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
           <h2 class="text-lg font-bold text-slate-900 mb-1">Registrar Comprobante</h2>
-          <p class="text-sm text-slate-500 mb-6">Sube la foto del SINPE para procesarla.</p>
+          <p class="text-sm text-slate-500 mb-6">Sube la foto del SINPE para procesarla con IA.</p>
           
           <form id="uploadForm" class="space-y-4">
             <div id="dropzone" class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-emerald-500 transition-colors cursor-pointer bg-slate-50">
@@ -76,23 +97,22 @@
           </div>
 
           <div class="overflow-x-auto">
-  <table class="w-full text-left border-collapse">
-    <thead>
-      <tr class="bg-slate-100 text-slate-600 uppercase text-xs tracking-wider border-b border-slate-200">
-        <th class="p-4">Monto</th>
-        <th class="p-4">Referencia</th>
-        <th class="p-4">Cliente</th>
-        <th class="p-4">Banco Emisor</th>
-        <th class="p-4">Teléfono</th>
-        <th class="p-4">Fecha Transacción</th>
-        <th class="p-4 text-center">Comprobante</th>
-      </tr>
-    </thead>
-    <tbody id="recordsTable" class="divide-y divide-slate-100 text-sm">
-
-    </tbody>
-  </table>
-</div>
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-100 text-slate-600 uppercase text-xs tracking-wider border-b border-slate-200">
+                  <th class="p-4">Monto</th>
+                  <th class="p-4">Referencia</th>
+                  <th class="p-4">Cliente</th>
+                  <th class="p-4">Banco Emisor</th>
+                  <th class="p-4">Teléfono</th>
+                  <th class="p-4">Fecha Transacción</th>
+                  <th class="p-4 text-center">Comprobante</th>
+                </tr>
+              </thead>
+              <tbody id="recordsTable" class="divide-y divide-slate-100 text-sm">
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -100,6 +120,20 @@
   </main>
 
   <script>
+    // Configuración de Supabase Frontend
+    const SUPABASE_URL = "https://mxmufexoistlgnwycbiz.supabase.co"; 
+    const SUPABASE_ANON_KEY = "TU_SUPABASE_ANON_KEY_AQUI"; // Pega aquí tu Anon Key pública de Supabase
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let currentSession = null;
+
+    // Elementos DOM
+    const loginScreen = document.getElementById('loginScreen');
+    const appScreen = document.getElementById('appScreen');
+    const userEmail = document.getElementById('userEmail');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const loginBtn = document.getElementById('loginBtn');
+
     const dropzone = document.getElementById('dropzone');
     const fileInput = document.getElementById('fileInput');
     const uploadForm = document.getElementById('uploadForm');
@@ -107,6 +141,45 @@
     const alertBox = document.getElementById('alertBox');
     const recordsTable = document.getElementById('recordsTable');
 
+    // Inicializar estado de autenticación
+    async function initAuth() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      handleSession(session);
+
+      supabaseClient.auth.onAuthStateChange((_event, session) => {
+        handleSession(session);
+      });
+    }
+
+    function handleSession(session) {
+      currentSession = session;
+      if (session) {
+        userEmail.innerText = session.user.email;
+        userEmail.classList.remove('hidden');
+        logoutBtn.classList.remove('hidden');
+        loginScreen.classList.add('hidden');
+        appScreen.classList.remove('hidden');
+        loadRecords();
+      } else {
+        userEmail.classList.add('hidden');
+        logoutBtn.classList.add('hidden');
+        loginScreen.classList.remove('hidden');
+        appScreen.classList.add('hidden');
+      }
+    }
+
+    loginBtn.addEventListener('click', async () => {
+      await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin }
+      });
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+    });
+
+    // Gestión de Drag & Drop e Imagen
     dropzone.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
@@ -116,9 +189,11 @@
       }
     });
 
+    // Subida y Procesamiento con Bearer Token
     uploadForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!fileInput.files[0]) return showAlert('Selecciona una imagen primero.', 'error');
+      if (!currentSession) return showAlert('Debes iniciar sesión.', 'error');
 
       const formData = new FormData();
       formData.append('comprobante', fileInput.files[0]);
@@ -127,7 +202,14 @@
       submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Procesando con IA...`;
 
       try {
-        const response = await fetch('/api/procesar', { method: 'POST', body: formData });
+        const response = await fetch('/api/procesar', { 
+          method: 'POST', 
+          headers: {
+            'Authorization': `Bearer ${currentSession.access_token}`
+          },
+          body: formData 
+        });
+        
         const result = await response.json();
 
         if (!result.success) throw new Error(result.error);
@@ -145,68 +227,78 @@
       }
     });
 
+    // Obtener Registros cargando el Bearer Token
     async function loadRecords() {
-  const recordsTable = document.getElementById('recordsTable');
-  
-  try {
-    const res = await fetch('/api/obtener_registros');
-    const data = await res.json();
+      if (!currentSession) return;
 
-    recordsTable.innerHTML = '';
-    let totalMonto = 0;
+      try {
+        const res = await fetch('/api/obtener_registros', {
+          headers: {
+            'Authorization': `Bearer ${currentSession.access_token}`
+          }
+        });
+        const data = await res.json();
 
-    if (Array.isArray(data) && data.length > 0) {
-      data.forEach(row => {
-        totalMonto += parseFloat(row.monto || 0);
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 transition-colors";
-        tr.innerHTML = `
-          <td class="p-4 font-bold text-slate-900 whitespace-nowrap">
-            ₡${Number(row.monto || 0).toLocaleString('es-CR', { minimumFractionDigits: 2 })}
-          </td>
-          <td class="p-4 font-mono text-xs text-slate-600 whitespace-nowrap">
-            ${row.numero_referencia || 'N/A'}
-          </td>
-          <td class="p-4 font-medium text-slate-800">
-            ${row.cliente || 'N/A'}
-          </td>
-          <td class="p-4 text-slate-700">
-            ${row.nombre_emisor || 'N/A'}
-          </td>
-          <td class="p-4 font-mono text-xs text-slate-600">
-            ${row.telefono_emisor || 'N/A'}
-          </td>
-          <td class="p-4 text-xs text-slate-500 whitespace-nowrap">
-            ${row.fecha_transferencia || row.created_at || 'N/A'}
-          </td>
-          <td class="p-4 text-center whitespace-nowrap">
-            ${row.imagen_url ? `
-              <a href="${row.imagen_url}" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-medium text-xs inline-flex items-center gap-1">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver
-              </a>
-            ` : '<span class="text-slate-400 text-xs">Sin foto</span>'}
-          </td>
-        `;
-        recordsTable.appendChild(tr);
-      });
+        if (data.error) {
+          showAlert(`⚠️ ${data.error}`, 'error');
+          return;
+        }
 
-      document.getElementById('totalCount').innerText = data.length;
-      document.getElementById('totalAmount').innerText = `₡${totalMonto.toLocaleString('es-CR', { minimumFractionDigits: 2 })}`;
-    } else {
-      recordsTable.innerHTML = `
-        <tr>
-          <td colspan="7" class="p-8 text-center text-slate-400 text-sm">
-            No hay transacciones registradas aún.
-          </td>
-        </tr>
-      `;
-      document.getElementById('totalCount').innerText = '0';
-      document.getElementById('totalAmount').innerText = '₡0.00';
+        recordsTable.innerHTML = '';
+        let totalMonto = 0;
+
+        if (Array.isArray(data) && data.length > 0) {
+          data.forEach(row => {
+            totalMonto += parseFloat(row.monto || 0);
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50 transition-colors";
+            tr.innerHTML = `
+              <td class="p-4 font-bold text-slate-900 whitespace-nowrap">
+                ₡${Number(row.monto || 0).toLocaleString('es-CR', { minimumFractionDigits: 2 })}
+              </td>
+              <td class="p-4 font-mono text-xs text-slate-600 whitespace-nowrap">
+                ${row.numero_referencia || 'N/A'}
+              </td>
+              <td class="p-4 font-medium text-slate-800">
+                ${row.cliente || 'N/A'}
+              </td>
+              <td class="p-4 text-slate-700">
+                ${row.nombre_emisor || 'N/A'}
+              </td>
+              <td class="p-4 font-mono text-xs text-slate-600">
+                ${row.telefono_emisor || 'N/A'}
+              </td>
+              <td class="p-4 text-xs text-slate-500 whitespace-nowrap">
+                ${row.fecha_transferencia || row.created_at || 'N/A'}
+              </td>
+              <td class="p-4 text-center whitespace-nowrap">
+                ${row.imagen_url ? `
+                  <a href="${row.imagen_url}" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-medium text-xs inline-flex items-center gap-1">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver
+                  </a>
+                ` : '<span class="text-slate-400 text-xs">Sin foto</span>'}
+              </td>
+            `;
+            recordsTable.appendChild(tr);
+          });
+
+          document.getElementById('totalCount').innerText = data.length;
+          document.getElementById('totalAmount').innerText = `₡${totalMonto.toLocaleString('es-CR', { minimumFractionDigits: 2 })}`;
+        } else {
+          recordsTable.innerHTML = `
+            <tr>
+              <td colspan="7" class="p-8 text-center text-slate-400 text-sm">
+                No hay transacciones registradas aún.
+              </td>
+            </tr>
+          `;
+          document.getElementById('totalCount').innerText = '0';
+          document.getElementById('totalAmount').innerText = '₡0.00';
+        }
+      } catch (e) {
+        console.error('Error cargando tabla:', e);
+      }
     }
-  } catch (e) {
-    console.error('Error cargando tabla:', e);
-  }
-}
 
     function showAlert(msg, type) {
       alertBox.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'bg-emerald-50', 'text-emerald-700');
@@ -215,7 +307,9 @@
     }
 
     document.getElementById('refreshBtn').addEventListener('click', loadRecords);
-    loadRecords();
+
+    // Arrancar Auth
+    initAuth();
   </script>
 </body>
 </html>
