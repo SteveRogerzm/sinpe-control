@@ -395,7 +395,7 @@
 
     async function updateStatus(id, estado) {
       if (!currentSession) return;
-      await fetch('/api/actualizar_registro.php', {
+      await fetch('/api/actualizar_registro', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -408,7 +408,7 @@
     
     async function updateComment(id, comentario) {
       if (!currentSession) return;
-      await fetch('/api/actualizar_registro.php', {
+      await fetch('/api/actualizar_registro', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
