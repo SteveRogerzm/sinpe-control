@@ -142,14 +142,31 @@
     const recordsTable = document.getElementById('recordsTable');
 
     // Inicializar estado de autenticación
-    async function initAuth() {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      handleSession(session);
-
-      supabaseClient.auth.onAuthStateChange((_event, session) => {
+   async function initAuth() {
+    // 1. Verificar si hay token en la URL (#access_token)
+    if (window.location.hash && window.location.hash.includes('access_token')) {
+      const { data: { session }, error } = await supabaseClient.auth.getSession();
+      if (session) {
+        // Limpiar el hash feo de la URL para dejar el dominio limpio
+        window.history.replaceState(null, null, window.location.pathname);
         handleSession(session);
-      });
+        return;
+      }
     }
+  
+    // 2. Si no viene en el hash, obtener sesión en almacenamiento local
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    handleSession(session);
+  
+    // 3. Escuchar cambios de estado en tiempo real
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        handleSession(session);
+      } else if (event === 'SIGNED_OUT') {
+        handleSession(null);
+      }
+    });
+  }
 
     function handleSession(session) {
       currentSession = session;
