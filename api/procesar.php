@@ -23,14 +23,12 @@ try {
     $tmpPath     = $_FILES['comprobante']['tmp_name'];
     $fileName    = $_FILES['comprobante']['name'];
     $mimeType    = mime_content_type($tmpPath) ?: 'image/jpeg';
-    
-    // Convertimos la imagen / PDF directamente a Base64 para que Gemini la procese
     $base64Data  = base64_encode(file_get_contents($tmpPath));
 
-    // 1. Endpoint con alias del modelo (gemini-1.5-flash-latest)
-    $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" . trim($geminiKey);
+    // 1. Endpoint oficial según la documentación de Google
+    $geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
 
-    $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica. Responde en formato JSON con la siguiente estructura exacta: {"monto": float, "numero_referencia": "string", "fecha_transferencia": "string", "nombre_emisor": "string", "telefono_emisor": "string"}';
+    $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica. Responde estrictamente en formato JSON con la siguiente estructura exacta: {"monto": float, "numero_referencia": "string", "fecha_transferencia": "string", "nombre_emisor": "string", "telefono_emisor": "string"}';
 
     $payloadGemini = json_encode([
         "contents" => [
@@ -56,7 +54,8 @@ try {
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payloadGemini);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json'
+        'Content-Type: application/json',
+        'x-goog-api-key: ' . trim($geminiKey)
     ]);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -71,7 +70,7 @@ try {
 
     $jsonGemini = json_decode($responseGemini, true);
 
-    // Manejo de errores devueltos por Google API
+    // Manejo de errores devueltos por la API de Google
     if (isset($jsonGemini['error'])) {
         $errDetail = is_array($jsonGemini['error']) ? ($jsonGemini['error']['message'] ?? json_encode($jsonGemini['error'])) : $jsonGemini['error'];
         throw new Exception("Google Gemini Error: " . $errDetail);
@@ -88,7 +87,7 @@ try {
         throw new Exception("La IA no logró extraer un número de referencia válido.");
     }
 
-    // 2. Subir imagen a Supabase Storage
+    // 2. Subir archivo a Supabase Storage
     $cleanBaseUrl    = rtrim(trim($supabaseUrl), '/');
     $storageFileName = time() . '_' . preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $fileName);
     $storageUrl      = $cleanBaseUrl . "/storage/v1/object/comprobantes/" . $storageFileName;
@@ -108,7 +107,7 @@ try {
 
     $publicImageUrl = $cleanBaseUrl . "/storage/v1/object/public/comprobantes/" . $storageFileName;
 
-    // 3. Insertar registro en Supabase Database
+    // 3. Guardar registro en la base de datos de Supabase
     $dbUrl     = $cleanBaseUrl . "/rest/v1/sinpes";
     $dbPayload = json_encode([
         "numero_referencia"   => (string)$extractedData['numero_referencia'],
