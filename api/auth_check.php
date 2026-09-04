@@ -1,6 +1,6 @@
 <?php
 function verificarAcceso() {
-    $allowedEmails = ['tu-correo@gmail.com', 'otro-permitido@gmail.com'];
+    $allowedEmails = ['rogerzunig3@gmail.com', 'otro-permitido@gmail.com'];
 
     $headers = getallheaders();
     $authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? '';
