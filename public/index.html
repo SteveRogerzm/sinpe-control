@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -54,11 +54,11 @@
     </button>
   </div>
 
-  <!-- App Main Screen (Ancho expandido a 1600px) -->
+  <!-- App Main Screen -->
   <main id="appScreen" class="hidden max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
       
-      <!-- Panel de Carga (Reducido a 3 columnas en pantallas grandes) -->
+      <!-- Panel de Carga -->
       <section class="lg:col-span-3 space-y-6">
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
           <h2 class="text-base font-bold text-slate-900 mb-1">Registrar Comprobante</h2>
@@ -93,7 +93,7 @@
         </div>
       </section>
 
-      <!-- Panel de Registros y Filtros (Ampliado a 9 columnas) -->
+      <!-- Panel de Registros y Filtros -->
       <section class="lg:col-span-9 space-y-6">
         
         <!-- Tarjetas Estadísticas -->
@@ -113,17 +113,17 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label class="text-[10px] font-bold uppercase text-slate-400">Búsqueda Global</label>
-              <input type="text" id="searchFilter" placeholder="Cliente, ref, monto..." class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none focus:border-emerald-500">
+              <input type="text" id="searchFilter" placeholder="Cliente, ref, monto..." class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none focus:border-emerald-500" oninput="renderTable()">
             </div>
             <div>
               <label class="text-[10px] font-bold uppercase text-slate-400">Banco Emisor</label>
-              <select id="bankFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none focus:border-emerald-500">
+              <select id="bankFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none focus:border-emerald-500" onchange="renderTable()">
                 <option value="">Todos los Bancos</option>
               </select>
             </div>
             <div>
               <label class="text-[10px] font-bold uppercase text-slate-400">Estado</label>
-              <select id="statusFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none focus:border-emerald-500">
+              <select id="statusFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none focus:border-emerald-500" onchange="renderTable()">
                 <option value="">Todos los Estados</option>
                 <option value="Pendiente">Pendiente</option>
                 <option value="Aprobado">Aprobado</option>
@@ -135,11 +135,11 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
             <div>
               <label class="text-[10px] font-bold uppercase text-slate-400">Fecha de Creación (BD)</label>
-              <input type="date" id="createdFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none">
+              <input type="date" id="createdFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none" onchange="renderTable()">
             </div>
             <div>
               <label class="text-[10px] font-bold uppercase text-slate-400">Fecha de Transacción</label>
-              <input type="date" id="txFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none">
+              <input type="date" id="txFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none" onchange="renderTable()">
             </div>
           </div>
         </div>
@@ -148,7 +148,7 @@
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <div class="p-4 border-b border-slate-200 flex items-center justify-between">
             <h3 class="font-bold text-slate-900 text-sm">Histórico de Transacciones</h3>
-            <button id="refreshBtn" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-lg">
+            <button id="refreshBtn" onclick="loadRecords()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-lg">
               <i class="fa-solid fa-rotate-right mr-1"></i> Actualizar
             </button>
           </div>
@@ -419,7 +419,7 @@
         loadRecords();
       } catch (err) {
         showAlert(`⚠️ Error: ${err.message}`, 'error');
-      } font-medium {
+      } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = `<i class="fa-solid fa-bolt"></i> <span>Procesar SINPE</span>`;
       }
@@ -618,7 +618,6 @@
     async function toggleFacturado(id, actualFacturado, estado) {
       if (!currentSession) return;
       
-      // Validación: solo se puede facturar si está Aprobado
       if (estado !== 'Aprobado') {
         return showAlert('⚠️ Solo se pueden facturar comprobantes con estado Aprobado.', 'error');
       }
@@ -634,18 +633,15 @@
           },
           body: JSON.stringify({ id, fecha_facturacion: nuevaFecha })
         });
-        
-        const result = await response.json();
-        if (!result.success) return showAlert(`⚠️ Error: ${result.error}`, 'error');
-        
-        showAlert(nuevaFecha ? '✅ Comprobante marcado como facturado.' : 'ℹ️ Marca de facturación eliminada.', 'success');
+        const res = await response.json();
+        if (res.error) throw new Error(res.error);
         loadRecords();
       } catch (err) {
-        showAlert('⚠️ Error de conexión al actualizar facturación.', 'error');
+        showAlert(`⚠️ Error actualizando estado de facturación: ${err.message}`, 'error');
       }
     }
 
-    async function updateStatus(id, estado) {
+    async function updateStatus(id, nuevoEstado) {
       if (!currentSession) return;
       try {
         const response = await fetch('/api/actualizar_registro', {
@@ -654,23 +650,20 @@
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${currentSession.access_token}` 
           },
-          body: JSON.stringify({ id, estado })
+          body: JSON.stringify({ id, estado: nuevoEstado })
         });
-        
-        const result = await response.json();
-        if (!result.success) return showAlert(`⚠️ Error: ${result.error}`, 'error');
-        
-        showAlert(`✅ Estado actualizado a ${estado}`, 'success');
+        const res = await response.json();
+        if (res.error) throw new Error(res.error);
         loadRecords();
       } catch (err) {
-        showAlert('⚠️ Error de conexión al actualizar.', 'error');
+        showAlert(`⚠️ Error actualizando el estado: ${err.message}`, 'error');
       }
     }
-    
+
     async function updateComment(id, comentario) {
       if (!currentSession) return;
       try {
-        await fetch('/api/actualizar_registro', {
+        const response = await fetch('/api/actualizar_registro', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -678,80 +671,29 @@
           },
           body: JSON.stringify({ id, comentario })
         });
+        const res = await response.json();
+        if (res.error) throw new Error(res.error);
       } catch (err) {
-        console.error('Error al guardar comentario:', err);
+        showAlert(`⚠️ Error al guardar el comentario: ${err.message}`, 'error');
       }
     }
 
     function iniciarDemoGuiada() {
       const driver = window.driver.js.driver;
-    
       const driverObj = driver({
         showProgress: true,
-        animate: true,
-        nextBtnText: 'Siguiente →',
-        prevBtnText: '← Anterior',
-        doneBtnText: '¡Entendido!',
         steps: [
-          {
-            element: '#uploadForm',
-            popover: {
-              title: '1. Carga de Comprobantes',
-              description: 'Arrastra o selecciona la foto/PDF de tu SINPE Móvil aquí. El sistema optimización el archivo automáticamente.',
-              side: "right",
-              align: 'start'
-            }
-          },
-          {
-            element: '#initialComment',
-            popover: {
-              title: '2. Comentarios Previos',
-              description: 'Puedes vincular una nota rápida (ej. "Pedido #1042") antes de guardar la transacción.',
-              side: "top"
-            }
-          },
-          {
-            element: '#submitBtn',
-            popover: {
-              title: '3. Procesamiento Automático',
-              description: 'Al hacer clic, la plataforma analiza la imagen y extrae el monto, banco emisor, cliente y número de referencia de forma inmediata.',
-              side: "bottom"
-            }
-          },
-          {
-            element: '#cierreBtn',
-            popover: {
-              title: '4. Cierre Diario',
-              description: 'Consulta los comprobantes marcados como facturados en la fecha que elijas y revisa los totales acumulados.',
-              side: "bottom"
-            }
-          },
-          {
-            element: '#searchFilter',
-            popover: {
-              title: '5. Filtros y Búsqueda',
-              description: 'Busca por cliente, referencia o filtra según el banco emisor, fecha y estado de la transacción.',
-              side: "top"
-            }
-          },
-          {
-            element: '#recordsTable',
-            popover: {
-              title: '6. Histórico y Validación',
-              description: 'Consulta los datos registrados. Puedes marcar como facturado (solo si está Aprobado), aprobar, rechazar o visualizar el comprobante original.',
-              side: "top"
-            }
-          }
+          { element: '#uploadForm', popover: { title: 'Registrar Comprobante', description: 'Carga aquí tus capturas de pantalla o PDFs de SINPE Móvil.' } },
+          { element: '#searchFilter', popover: { title: 'Filtros Rápidos', description: 'Busca por cliente, referencia o monto en tiempo real.' } },
+          { element: '#recordsTable', popover: { title: 'Historial', description: 'Administra tus transacciones, cambia estados y marca comprobantes como facturados.' } },
+          { element: '#cierreBtn', popover: { title: 'Cierre Diario', description: 'Genera el balance acumulado del día según lo facturado.' } }
         ]
       });
-    
       driverObj.drive();
     }
 
-    [searchFilter, bankFilter, statusFilter, createdFilter, txFilter].forEach(el => el.addEventListener('input', renderTable));
-    document.getElementById('refreshBtn').addEventListener('click', loadRecords);
-
-    initAuth();
+    // Inicializar autenticación al cargar el documento
+    document.addEventListener('DOMContentLoaded', initAuth);
   </script>
 </body>
 </html>
