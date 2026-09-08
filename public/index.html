@@ -1,15 +1,10 @@
 <!DOCTYPE html>
-<html lang="es" class="light">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestor de SINPE Móvil</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-    }
-  </script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Driver.js CSS y JS -->
@@ -20,33 +15,23 @@
     body { font-family: 'Inter', sans-serif; }
   </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200">
+<body class="bg-slate-50 text-slate-800 min-h-screen">
 
-  <!-- Header -->
-  <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-40 transition-colors">
-    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="bg-emerald-600 text-white p-2 rounded-xl">
           <i class="fa-solid fa-wallet text-xl"></i>
         </div>
-        <h1 class="text-xl font-bold text-slate-900 dark:text-white tracking-tight">SINPE<span class="text-emerald-600 dark:text-emerald-400">Control</span></h1>
+        <h1 class="text-xl font-bold text-slate-900 tracking-tight">SINPE<span class="text-emerald-600">Control</span></h1>
       </div>
       
       <div class="flex items-center gap-3" id="authNav">
-        <!-- Toggle Modo Oscuro -->
-        <button id="darkModeToggle" onclick="toggleDarkMode()" class="text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 transition-all flex items-center gap-1.5" title="Cambiar tema">
-          <i id="darkModeIcon" class="fa-solid fa-moon"></i>
-          <span id="darkModeText" class="hidden sm:inline">Oscuro</span>
-        </button>
-
-        <span id="userEmail" class="text-xs font-medium text-slate-600 dark:text-slate-300 hidden sm:inline"></span>
-        <button id="cierreBtn" onclick="openCierreModal()" class="text-xs bg-indigo-50 dark:bg-indigo-900/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-bold px-3 py-1.5 rounded-lg border border-indigo-200 dark:border-indigo-800 transition-all flex items-center gap-1.5 hidden">
-          <i class="fa-solid fa-calculator text-xs"></i> Cierre
-        </button>
-        <button id="startDemoBtn" onclick="iniciarDemoGuiada()" class="text-xs bg-emerald-50 dark:bg-emerald-900/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-bold px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800 transition-all flex items-center gap-1.5 hidden">
+        <span id="userEmail" class="text-xs font-medium text-slate-600 hidden sm:inline"></span>
+        <button id="startDemoBtn" onclick="iniciarDemoGuiada()" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold px-3 py-1.5 rounded-lg border border-emerald-200 transition-all flex items-center gap-1.5">
           <i class="fa-solid fa-play text-xs"></i> Ver Demo
         </button>
-        <button id="logoutBtn" class="hidden text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold px-3 py-1.5 rounded-lg transition-all">
+        <button id="logoutBtn" class="hidden text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-1.5 rounded-lg transition-all">
           <i class="fa-solid fa-right-from-bracket mr-1"></i> Salir
         </button>
       </div>
@@ -54,131 +39,113 @@
   </header>
 
   <!-- Login Screen -->
-  <div id="loginScreen" class="hidden max-w-md mx-auto mt-20 p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 text-center">
-    <div class="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+  <div id="loginScreen" class="hidden max-w-md mx-auto mt-20 p-6 bg-white rounded-2xl shadow-sm border border-slate-200 text-center">
+    <div class="bg-emerald-100 text-emerald-700 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
       <i class="fa-solid fa-lock text-2xl"></i>
     </div>
-    <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Acceso Restringido</h2>
-    <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Debes iniciar sesión con tu cuenta autorizada de Google.</p>
-    <button id="loginBtn" class="w-full bg-slate-900 dark:bg-emerald-600 dark:hover:bg-emerald-700 hover:bg-slate-800 text-white font-medium py-3 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-3">
+    <h2 class="text-xl font-bold text-slate-900 mb-2">Acceso Restringido</h2>
+    <p class="text-sm text-slate-500 mb-6">Debes iniciar sesión con tu cuenta autorizada de Google.</p>
+    <button id="loginBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-3">
       <i class="fa-brands fa-google text-lg"></i>
       <span>Continuar con Google</span>
     </button>
   </div>
 
   <!-- App Main Screen -->
-  <main id="appScreen" class="hidden max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+  <main id="appScreen" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       
-      <!-- COLUMNA IZQUIERDA: Panel de Carga y Filtros -->
-      <section class="lg:col-span-4 xl:col-span-3 space-y-6">
-        
-        <!-- Panel de Carga -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
-          <h2 class="text-base font-bold text-slate-900 dark:text-white mb-1">Registrar Comprobante</h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Sube la foto del comprobante para procesarla.</p>
+      <!-- Panel de Carga -->
+      <section class="lg:col-span-4 space-y-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <h2 class="text-lg font-bold text-slate-900 mb-1">Registrar Comprobante</h2>
+          <p class="text-sm text-slate-500 mb-6">Sube la foto del comprobante para procesarla.</p>
           
           <form id="uploadForm" class="space-y-4">
-            <div id="dropzone" class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-4 text-center hover:border-emerald-500 dark:hover:border-emerald-400 transition-colors cursor-pointer bg-slate-50 dark:bg-slate-900/50">
+            <div id="dropzone" class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-emerald-500 transition-colors cursor-pointer bg-slate-50">
               <input type="file" id="fileInput" name="comprobante" accept="image/*,application/pdf" class="hidden">
-              <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400 dark:text-slate-500 mb-1"></i>
-              <p class="text-xs font-medium text-slate-700 dark:text-slate-300">Haz clic para elegir foto o PDF</p>
+              <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-400 mb-2"></i>
+              <p class="text-sm font-medium text-slate-700">Haz clic para elegir la foto o PDF</p>
             </div>
 
             <div id="previewContainer" class="hidden">
-              <img id="imagePreview" src="" class="w-full h-40 object-cover rounded-xl border border-slate-200 dark:border-slate-700 hidden">
-              <div id="pdfPreview" class="hidden flex items-center justify-center gap-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
-                <i class="fa-solid fa-file-pdf text-red-500 text-2xl"></i>
-                <span id="pdfFileName" class="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[150px]"></span>
+              <img id="imagePreview" src="" class="w-full h-48 object-cover rounded-xl border border-slate-200 hidden">
+              <div id="pdfPreview" class="hidden flex items-center justify-center gap-3 p-4 bg-slate-100 rounded-xl border border-slate-200">
+                <i class="fa-solid fa-file-pdf text-red-500 text-3xl"></i>
+                <span id="pdfFileName" class="text-xs font-semibold text-slate-700 truncate max-w-[200px]"></span>
               </div>
             </div>
 
             <div>
-              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Comentario Previo</label>
-              <textarea id="initialComment" name="comentario" rows="2" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="Ej: Pago de pedido #1234..."></textarea>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Comentario Previo (Opcional)</label>
+              <textarea id="initialComment" name="comentario" rows="2" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-emerald-500" placeholder="Ej: Pago de pedido #1234..."></textarea>
             </div>
 
-            <button type="submit" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-xs">
+            <button type="submit" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
               <i class="fa-solid fa-bolt"></i> <span>Procesar SINPE</span>
             </button>
           </form>
 
-          <div id="alertBox" class="mt-4 hidden p-3 rounded-xl text-xs"></div>
+          <div id="alertBox" class="mt-4 hidden p-4 rounded-xl text-sm"></div>
+        </div>
+      </section>
+
+      <!-- Panel de Registros y Filtros -->
+      <section class="lg:col-span-8 space-y-6">
+        
+        <!-- Tarjetas Estadísticas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-xs font-semibold text-slate-400 uppercase">Total Comprobantes</span>
+            <div id="totalCount" class="text-2xl font-bold text-slate-900 mt-1">0</div>
+          </div>
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-xs font-semibold text-slate-400 uppercase">Monto Total Acumulado</span>
+            <div id="totalAmount" class="text-2xl font-bold text-emerald-600 mt-1">₡0.00</div>
+          </div>
         </div>
 
-        <!-- Panel de Filtros -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5 space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
-            <h3 class="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wider flex items-center gap-2">
-              <i class="fa-solid fa-filter text-emerald-600 dark:text-emerald-400"></i> Filtros de Búsqueda
-            </h3>
-            <button onclick="resetFilters()" class="text-[10px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 underline">Limpiar</button>
-          </div>
-
-          <div class="space-y-3">
+        <!-- Barra de Filtros -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label class="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500">Búsqueda Global</label>
-              <input type="text" id="searchFilter" placeholder="Cliente, ref, monto..." class="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-emerald-500" oninput="renderTable()">
+              <label class="text-[10px] font-bold uppercase text-slate-400">Búsqueda Global</label>
+              <input type="text" id="searchFilter" placeholder="Cliente, ref, monto..." class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none focus:border-emerald-500">
             </div>
-
             <div>
-              <label class="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500">Banco Emisor</label>
-              <select id="bankFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-emerald-500" onchange="renderTable()">
+              <label class="text-[10px] font-bold uppercase text-slate-400">Banco Emisor</label>
+              <select id="bankFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none focus:border-emerald-500">
                 <option value="">Todos los Bancos</option>
               </select>
             </div>
-
             <div>
-              <label class="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500">Estado</label>
-              <select id="statusFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-emerald-500" onchange="renderTable()">
+              <label class="text-[10px] font-bold uppercase text-slate-400">Estado</label>
+              <select id="statusFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none focus:border-emerald-500">
                 <option value="">Todos los Estados</option>
                 <option value="Pendiente">Pendiente</option>
                 <option value="Aprobado">Aprobado</option>
                 <option value="Rechazado">Rechazado</option>
               </select>
             </div>
+          </div>
 
-            <div class="pt-2 border-t border-slate-100 dark:border-slate-700 space-y-2">
-              <div>
-                <label class="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500">Fecha Creación (BD)</label>
-                <input type="date" id="createdFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-emerald-500" onchange="renderTable()">
-              </div>
-
-              <div>
-                <label class="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500">Fecha Transacción</label>
-                <input type="date" id="txFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-emerald-500" onchange="renderTable()">
-              </div>
-
-              <div>
-                <label class="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500">Fecha Facturación</label>
-                <input type="date" id="factFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-emerald-500" onchange="renderTable()">
-              </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400">Fecha de Creación (BD)</label>
+              <input type="date" id="createdFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none">
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400">Fecha de Transacción</label>
+              <input type="date" id="txFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none">
             </div>
           </div>
         </div>
 
-      </section>
-
-      <!-- COLUMNA DERECHA: Estadísticas y Tabla de Registros -->
-      <section class="lg:col-span-8 xl:col-span-9 space-y-6">
-        
-        <!-- Tarjetas Estadísticas -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Total Comprobantes</span>
-            <div id="totalCount" class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">0</div>
-          </div>
-          <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Monto Total Acumulado</span>
-            <div id="totalAmount" class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">₡0.00</div>
-          </div>
-        </div>
-
-        <!-- Tabla de Registros -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden transition-colors">
-          <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
-            <h3 class="font-bold text-slate-900 dark:text-white text-sm">Histórico de Transacciones</h3>
-            <button id="refreshBtn" onclick="loadRecords()" class="text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium px-3 py-1.5 rounded-lg transition-colors">
+        <!-- Tabla -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="p-5 border-b border-slate-200 flex items-center justify-between">
+            <h3 class="font-bold text-slate-900">Histórico de Transacciones</h3>
+            <button id="refreshBtn" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-lg">
               <i class="fa-solid fa-rotate-right mr-1"></i> Actualizar
             </button>
           </div>
@@ -186,88 +153,40 @@
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
-                <tr class="bg-slate-100 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 uppercase text-[11px] tracking-wider border-b border-slate-200 dark:border-slate-700">
-                  <th class="p-3">Detalle del SINPE</th>
-                  <th class="p-3">Banco</th>
-                  <th class="p-3">Fechas</th>
-                  <th class="p-3">Comentarios</th>
-                  <th class="p-3 text-center">Acciones</th>
+                <tr class="bg-slate-100 text-slate-600 uppercase text-xs tracking-wider border-b border-slate-200">
+                  <th class="p-4">Detalle del SINPE</th>
+                  <th class="p-4">Banco</th>
+                  <th class="p-4">Fechas</th>
+                  <th class="p-4">Comentarios</th>
+                  <th class="p-4 text-center">Acciones</th>
                 </tr>
               </thead>
-              <tbody id="recordsTable" class="divide-y divide-slate-100 dark:divide-slate-700 text-xs"></tbody>
+              <tbody id="recordsTable" class="divide-y divide-slate-100 text-sm"></tbody>
             </table>
           </div>
         </div>
-
       </section>
 
     </div>
   </main>
 
-  <!-- MODAL PARA VER EL COMPROBANTE -->
+  <!-- MODAL PARA VER EL COMPROBANTE EN LA MISMA APP -->
   <div id="viewerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-slate-200 dark:border-slate-700">
-      <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
-        <h3 class="font-bold text-slate-800 dark:text-white text-sm flex items-center gap-2">
-          <i class="fa-solid fa-file-invoice text-emerald-600 dark:text-emerald-400"></i> Vista Previa del Comprobante
-        </h3>
+    <div class="bg-white rounded-2xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+      <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <h3 class="font-bold text-slate-800 text-sm"><i class="fa-solid fa-file-invoice text-emerald-600 mr-2"></i>Vista Previa del Comprobante</h3>
         <div class="flex items-center gap-2">
-          <a id="modalExternalLink" href="#" target="_blank" class="text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium px-2.5 py-1.5 rounded-lg">
+          <a id="modalExternalLink" href="#" target="_blank" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-2.5 py-1.5 rounded-lg">
             <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Abrir Original
           </a>
-          <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg">
+          <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg">
             <i class="fa-solid fa-xmark text-lg"></i>
           </button>
         </div>
       </div>
-      <div class="p-4 flex-1 overflow-auto bg-slate-100 dark:bg-slate-900 flex items-center justify-center min-h-[300px]">
+      <div class="p-4 flex-1 overflow-auto bg-slate-100 flex items-center justify-center min-h-[300px]">
         <img id="modalImage" src="" class="max-w-full max-h-[70vh] object-contain rounded-lg shadow-sm hidden">
         <iframe id="modalPdf" src="" class="w-full h-[70vh] rounded-lg hidden border-0"></iframe>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL DE CIERRE DIARIO -->
-  <div id="cierreModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-slate-200 dark:border-slate-700">
-      <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
-        <h3 class="font-bold text-slate-800 dark:text-white text-sm flex items-center gap-2">
-          <i class="fa-solid fa-calculator text-indigo-600 dark:text-indigo-400"></i> Cierre de Comprobantes Facturados
-        </h3>
-        <button onclick="closeCierreModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-      
-      <div class="p-6 overflow-auto space-y-4">
-        <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
-          <label class="text-xs font-bold uppercase text-slate-600 dark:text-slate-400 whitespace-nowrap">Fecha de Facturación:</label>
-          <input type="date" id="cierreFechaInput" class="text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500" onchange="calcularCierre()">
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div class="bg-indigo-50/50 dark:bg-indigo-950/30 p-4 rounded-xl border border-indigo-100 dark:border-indigo-900/50">
-            <span class="text-[10px] font-bold uppercase text-indigo-500 dark:text-indigo-400">Total Comprobantes</span>
-            <div id="cierreTotalCount" class="text-xl font-bold text-indigo-900 dark:text-indigo-200 mt-1">0</div>
-          </div>
-          <div class="bg-emerald-50/50 dark:bg-emerald-950/30 p-4 rounded-xl border border-emerald-100 dark:border-emerald-900/50">
-            <span class="text-[10px] font-bold uppercase text-emerald-500 dark:text-emerald-400">Monto Facturado</span>
-            <div id="cierreTotalMonto" class="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">₡0.00</div>
-          </div>
-        </div>
-
-        <div class="border rounded-xl overflow-hidden border-slate-200 dark:border-slate-700 max-h-[300px] overflow-y-auto">
-          <table class="w-full text-left border-collapse text-xs">
-            <thead class="bg-slate-100 dark:bg-slate-900/80 text-slate-600 dark:text-slate-400 uppercase">
-              <tr>
-                <th class="p-3">Cliente / Ref</th>
-                <th class="p-3">Hora Facturación</th>
-                <th class="p-3 text-right">Monto</th>
-              </tr>
-            </thead>
-            <tbody id="cierreTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
-          </table>
-        </div>
       </div>
     </div>
   </div>
@@ -282,62 +201,18 @@
     let currentSession = null;
     let rawRecordsData = [];
 
-    // Lógica del Modo Oscuro
-    function initDarkMode() {
-      const isDark = localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-        document.documentElement.classList.remove('light');
-      } else {
-        document.documentElement.classList.remove('dark');
-        document.documentElement.classList.add('light');
-      }
-      updateDarkModeUI();
-    }
-
-    function toggleDarkMode() {
-      const isDark = document.documentElement.classList.contains('dark');
-      if (isDark) {
-        document.documentElement.classList.remove('dark');
-        document.documentElement.classList.add('light');
-        localStorage.setItem('theme', 'light');
-      } else {
-        document.documentElement.classList.add('dark');
-        document.documentElement.classList.remove('light');
-        localStorage.setItem('theme', 'dark');
-      }
-      updateDarkModeUI();
-    }
-
-    function updateDarkModeUI() {
-      const isDark = document.documentElement.classList.contains('dark');
-      const icon = document.getElementById('darkModeIcon');
-      const text = document.getElementById('darkModeText');
-      if (isDark) {
-        icon.className = 'fa-solid fa-sun text-amber-400';
-        text.innerText = 'Claro';
-      } else {
-        icon.className = 'fa-solid fa-moon text-slate-600';
-        text.innerText = 'Oscuro';
-      }
-    }
-
-    initDarkMode();
-
     // DOM Elements
     const loginScreen = document.getElementById('loginScreen');
     const appScreen = document.getElementById('appScreen');
     const userEmail = document.getElementById('userEmail');
     const logoutBtn = document.getElementById('logoutBtn');
     const loginBtn = document.getElementById('loginBtn');
-    const startDemoBtn = document.getElementById('startDemoBtn');
     const dropzone = document.getElementById('dropzone');
     const fileInput = document.getElementById('fileInput');
     const uploadForm = document.getElementById('uploadForm');
     const submitBtn = document.getElementById('submitBtn');
     const alertBox = document.getElementById('alertBox');
     const recordsTable = document.getElementById('recordsTable');
-    const cierreBtn = document.getElementById('cierreBtn');
 
     // Filtros
     const searchFilter = document.getElementById('searchFilter');
@@ -345,25 +220,17 @@
     const statusFilter = document.getElementById('statusFilter');
     const createdFilter = document.getElementById('createdFilter');
     const txFilter = document.getElementById('txFilter');
-    const factFilter = document.getElementById('factFilter');
 
-    // Modal Comprobante
+    // Modal
     const viewerModal = document.getElementById('viewerModal');
     const modalImage = document.getElementById('modalImage');
     const modalPdf = document.getElementById('modalPdf');
     const modalExternalLink = document.getElementById('modalExternalLink');
 
-    // Modal Cierre
-    const cierreModal = document.getElementById('cierreModal');
-
     function showAlert(message, type = 'success') {
       alertBox.innerText = message;
-      alertBox.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-emerald-100', 'text-emerald-700', 'dark:bg-red-900/50', 'dark:text-red-300', 'dark:bg-emerald-900/50', 'dark:text-emerald-300');
-      if (type === 'error') {
-        alertBox.classList.add('bg-red-100', 'text-red-700', 'dark:bg-red-900/50', 'dark:text-red-300');
-      } else {
-        alertBox.classList.add('bg-emerald-100', 'text-emerald-700', 'dark:bg-emerald-900/50', 'dark:text-emerald-300');
-      }
+      alertBox.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-emerald-100', 'text-emerald-700');
+      alertBox.classList.add(type === 'error' ? 'bg-red-100' : 'bg-emerald-100', type === 'error' ? 'text-red-700' : 'text-emerald-700');
     }
 
     async function initAuth() {
@@ -390,16 +257,12 @@
         userEmail.innerText = session.user.email;
         userEmail.classList.remove('hidden');
         logoutBtn.classList.remove('hidden');
-        cierreBtn.classList.remove('hidden');
-        startDemoBtn.classList.remove('hidden');
         loginScreen.classList.add('hidden');
         appScreen.classList.remove('hidden');
         loadRecords();
       } else {
         userEmail.classList.add('hidden');
         logoutBtn.classList.add('hidden');
-        cierreBtn.classList.add('hidden');
-        startDemoBtn.classList.add('hidden');
         loginScreen.classList.remove('hidden');
         appScreen.classList.add('hidden');
       }
@@ -431,6 +294,7 @@
       }
     });
 
+    // Función para optimizar imágenes en el navegador antes de subir
     async function compressImage(file) {
       if (file.type === 'application/pdf') return file;
       return new Promise((resolve) => {
@@ -493,6 +357,11 @@
           body: formData 
         });
 
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error(`El servidor respondió con un formato no válido (${response.status}).`);
+        }
+
         const result = await response.json();
         if (!result.success) throw new Error(result.error);
 
@@ -514,6 +383,12 @@
         const res = await fetch('/api/obtener_registros', {
           headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
         });
+
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          return showAlert(`⚠️ La ruta de la API /api/obtener_registros no está respondiendo en formato JSON.`, 'error');
+        }
+
         const data = await res.json();
         if (data.error) return showAlert(`⚠️ ${data.error}`, 'error');
 
@@ -531,23 +406,12 @@
       banks.forEach(b => bankFilter.innerHTML += `<option value="${b}">${b}</option>`);
     }
 
-    function resetFilters() {
-      searchFilter.value = '';
-      bankFilter.value = '';
-      statusFilter.value = '';
-      createdFilter.value = '';
-      txFilter.value = '';
-      factFilter.value = '';
-      renderTable();
-    }
-
     function renderTable() {
       const search = searchFilter.value.toLowerCase();
       const bank = bankFilter.value;
       const status = statusFilter.value;
       const created = createdFilter.value;
       const txDate = txFilter.value;
-      const factDate = factFilter.value;
       
       const filtered = rawRecordsData.filter(row => {
         const matchesSearch = !search || 
@@ -559,9 +423,8 @@
         const matchesStatus = !status || (row.estado || 'Pendiente') === status;
         const matchesCreated = !created || (row.created_at && row.created_at.startsWith(created));
         const matchesTx = !txDate || (row.fecha_transferencia && row.fecha_transferencia.includes(txDate));
-        const matchesFact = !factDate || (row.fecha_facturacion && row.fecha_facturacion.startsWith(factDate));
         
-        return matchesSearch && matchesBank && matchesStatus && matchesCreated && matchesTx && matchesFact;
+        return matchesSearch && matchesBank && matchesStatus && matchesCreated && matchesTx;
       });
       
       recordsTable.innerHTML = '';
@@ -571,134 +434,64 @@
         filtered.forEach(row => {
           totalMonto += parseFloat(row.monto || 0);
           const currentStatus = row.estado || 'Pendiente';
-          const isFacturado = !!row.fecha_facturacion;
-          const isAprobado = currentStatus === 'Aprobado';
         
-          let statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 font-semibold inline-block">Pendiente</span>`;
-          if (isAprobado) statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 font-semibold inline-block">Aprobado</span>`;
-          if (currentStatus === 'Rechazado') statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 font-semibold inline-block">Rechazado</span>`;
+          let statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-100 text-amber-700 font-semibold inline-block">Pendiente</span>`;
+          if (currentStatus === 'Aprobado') statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-emerald-100 text-emerald-700 font-semibold inline-block">Aprobado</span>`;
+          if (currentStatus === 'Rechazado') statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-red-100 text-red-700 font-semibold inline-block">Rechazado</span>`;
         
-          let facturadoBadge = isFacturado 
-            ? `<span class="px-2 py-0.5 text-[10px] rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-semibold inline-block"><i class="fa-solid fa-file-circle-check mr-1"></i>Facturado</span>` 
-            : '';
-
           const tr = document.createElement('tr');
-          tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors border-b border-slate-100 dark:border-slate-700";
+          tr.className = "hover:bg-slate-50 transition-colors border-b border-slate-100";
           tr.innerHTML = `
-            <td class="p-3">
+            <td class="p-4">
               <div class="flex flex-col gap-1">
                 <div class="flex items-center justify-between gap-2">
-                  <span class="font-bold text-slate-800 dark:text-slate-100 text-sm truncate max-w-[280px]" title="${row.cliente || 'Sin nombre'}">
+                  <span class="font-bold text-slate-800 text-sm truncate max-w-[200px]" title="${row.cliente || 'Sin nombre'}">
                     ${row.cliente || 'Cliente no identificado'}
                   </span>
-                  <div class="flex items-center gap-1">
-                    ${statusBadge}
-                    ${facturadoBadge}
-                  </div>
+                  ${statusBadge}
                 </div>
-                <div class="font-black text-slate-900 dark:text-white text-base">
+                <div class="font-black text-slate-900 text-base">
                   ₡${Number(row.monto || 0).toLocaleString('es-CR', { minimumFractionDigits: 2 })}
                 </div>
                 <div class="flex items-center gap-2">
-                  <span class="font-mono text-[11px] text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded">
+                  <span class="font-mono text-[11px] text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded">
                     Ref: ${row.numero_referencia || 'N/A'}
                   </span>
-                  ${row.telefono_emisor ? `<span class="text-[11px] text-slate-500 dark:text-slate-400 font-mono"><i class="fa-solid fa-phone text-[9px] mr-1"></i>${row.telefono_emisor}</span>` : ''}
+                  ${row.telefono_emisor ? `<span class="text-[11px] text-slate-500 font-mono"><i class="fa-solid fa-phone text-[9px] mr-1"></i>${row.telefono_emisor}</span>` : ''}
                 </div>
               </div>
             </td>
-            <td class="p-3 text-xs font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap">
+            <td class="p-4 text-xs font-semibold text-slate-700 whitespace-nowrap">
               ${row.nombre_emisor || 'N/A'}
             </td>
-            <td class="p-3 text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap">
+            <td class="p-4 text-[11px] text-slate-500 whitespace-nowrap">
               <div class="flex flex-col gap-0.5">
-                <div><strong class="text-slate-600 dark:text-slate-300">Tx:</strong> ${row.fecha_transferencia || 'N/A'}</div>
-                <div class="text-slate-400 dark:text-slate-500"><strong class="text-slate-400 dark:text-slate-500">Reg:</strong> ${row.created_at ? row.created_at.substring(0,10) : 'N/A'}</div>
-                ${row.fecha_facturacion ? `<div class="text-indigo-600 dark:text-indigo-400"><strong class="text-indigo-600 dark:text-indigo-400">Fact:</strong> ${row.fecha_facturacion.substring(0,10)}</div>` : ''}
+                <div><strong class="text-slate-600">Tx:</strong> ${row.fecha_transferencia || 'N/A'}</div>
+                <div class="text-slate-400"><strong class="text-slate-400">Reg:</strong> ${row.created_at ? row.created_at.substring(0,10) : 'N/A'}</div>
               </div>
             </td>
-            <td class="p-3 min-w-[200px]">
+            <td class="p-4 min-w-[180px]">
               <input type="text" value="${row.comentario || ''}" placeholder="Añadir comentario..." 
                 onchange="updateComment('${row.id}', this.value)" 
-                class="w-full text-xs p-2 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:border-emerald-500 bg-slate-50/50 dark:bg-slate-900/50 text-slate-800 dark:text-slate-200">
+                class="w-full text-xs p-2 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500 bg-slate-50/50">
             </td>
-            <td class="p-3 text-center whitespace-nowrap">
-              <div class="flex items-center justify-center gap-1.5">
-                <!-- Botón Ver -->
-                ${row.imagen_url ? `
-                  <button onclick="openModal('${row.imagen_url}')" class="text-[11px] font-semibold bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1" title="Ver Comprobante">
-                    <i class="fa-solid fa-eye text-xs"></i> <span>Ver</span>
-                  </button>
-                ` : ''}
-
-                <!-- Botón Aprobar -->
-                <button onclick="updateStatus('${row.id}', 'Aprobado')" class="text-[11px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1" title="Aprobar">
-                  <i class="fa-solid fa-check text-xs"></i> <span>Aprobar</span>
-                </button>
-
-                <!-- Botón Rechazar -->
-                <button onclick="updateStatus('${row.id}', 'Rechazado')" class="text-[11px] font-semibold bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800/60 px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1" title="Rechazar">
-                  <i class="fa-solid fa-xmark text-xs"></i> <span>Rechazar</span>
-                </button>
-
-                <!-- Botón Facturar -->
-                <button onclick="toggleFacturado('${row.id}', ${isFacturado}, '${currentStatus}')" 
-                  class="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1 border ${isFacturado ? 'bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-200 border-indigo-300 dark:border-indigo-700' : (isAprobado ? 'bg-slate-50 dark:bg-slate-700/50 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 border-slate-200 dark:border-slate-800 cursor-not-allowed')}" 
-                  title="${!isAprobado ? 'Solo se puede facturar si está Aprobado' : (isFacturado ? 'Desmarcar Facturado' : 'Marcar como Facturado')}">
-                  <i class="fa-solid fa-file-invoice text-xs"></i> <span>${isFacturado ? 'Facturado' : 'Facturar'}</span>
-                </button>
-              </div>
+            <td class="p-4 text-center whitespace-nowrap space-x-1">
+              <button onclick="updateStatus('${row.id}', 'Aprobado')" class="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="Aprobar"><i class="fa-solid fa-check"></i></button>
+              <button onclick="updateStatus('${row.id}', 'Rechazado')" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Rechazar"><i class="fa-solid fa-xmark"></i></button>
+              ${row.imagen_url ? `<button onclick="openModal('${row.imagen_url}')" class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg inline-block transition-colors" title="Ver Comprobante"><i class="fa-solid fa-eye"></i></button>` : ''}
             </td>
           `;
           recordsTable.appendChild(tr);
         });
       } else {
-        recordsTable.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400 dark:text-slate-500 text-sm">No se encontraron registros.</td></tr>`;
+        recordsTable.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400 text-sm">No se encontraron registros.</td></tr>`;
       }
       
       document.getElementById('totalCount').innerText = filtered.length;
       document.getElementById('totalAmount').innerText = `₡${totalMonto.toLocaleString('es-CR', { minimumFractionDigits: 2 })}`;
     }
 
-    // Funciones de Acciones (Actualizar Registro en BD)
-    async function executeUpdate(id, payload) {
-      if (!currentSession) return;
-      try {
-        const res = await fetch('/api/actualizar', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentSession.access_token}`
-          },
-          body: JSON.stringify({ id, ...payload })
-        });
-        const result = await res.json();
-        if (!res.ok || result.error) throw new Error(result.error || 'Error actualizando registro');
-        loadRecords();
-      } catch (err) {
-        console.error('Error al actualizar:', err);
-        showAlert(`⚠️ Error al actualizar: ${err.message}`, 'error');
-      }
-    }
-
-    function updateStatus(id, newStatus) {
-      executeUpdate(id, { estado: newStatus });
-    }
-
-    function toggleFacturado(id, currentFacturadoState, status) {
-      if (status !== 'Aprobado') {
-        showAlert('Solo se pueden facturar comprobantes con estado "Aprobado".', 'error');
-        return;
-      }
-      const fechaFacturacion = currentFacturadoState ? null : new Date().toISOString();
-      executeUpdate(id, { fecha_facturacion: fechaFacturacion });
-    }
-
-    function updateComment(id, comment) {
-      executeUpdate(id, { comentario: comment });
-    }
-
-    // Funciones del Modal Comprobante
+    // Funciones del Modal
     function openModal(url) {
       modalExternalLink.href = url;
       if (url.toLowerCase().endsWith('.pdf')) {
@@ -719,54 +512,129 @@
       modalPdf.src = '';
     }
 
-    // Funciones del Cierre
-    function openCierreModal() {
-      const today = new Date().toISOString().substring(0, 10);
-      document.getElementById('cierreFechaInput').value = today;
-      calcularCierre();
-      cierreModal.classList.remove('hidden');
-    }
-
-    function closeCierreModal() {
-      cierreModal.classList.add('hidden');
-    }
-
-    function calcularCierre() {
-      const fechaSeleccionada = document.getElementById('cierreFechaInput').value;
-      const tbody = document.getElementById('cierreTableBody');
-      tbody.innerHTML = '';
-
-      if (!fechaSeleccionada) return;
-
-      const facturados = rawRecordsData.filter(row => row.fecha_facturacion && row.fecha_facturacion.startsWith(fechaSeleccionada));
-
-      let totalMonto = 0;
-      if (facturados.length > 0) {
-        facturados.forEach(row => {
-          totalMonto += parseFloat(row.monto || 0);
-          const hora = row.fecha_facturacion ? new Date(row.fecha_facturacion).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A';
-          const tr = document.createElement('tr');
-          tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50";
-          tr.innerHTML = `
-            <td class="p-3">
-              <div class="font-bold text-slate-800 dark:text-slate-200">${row.cliente || 'Sin cliente'}</div>
-              <div class="text-[10px] text-slate-400 dark:text-slate-500 font-mono">Ref: ${row.numero_referencia || 'N/A'}</div>
-            </td>
-            <td class="p-3 text-slate-500 dark:text-slate-400 font-mono">${hora}</td>
-            <td class="p-3 text-right font-bold text-slate-900 dark:text-white">₡${Number(row.monto || 0).toLocaleString('es-CR', { minimumFractionDigits: 2 })}</td>
-          `;
-          tbody.appendChild(tr);
+    async function updateStatus(id, estado) {
+      if (!currentSession) return;
+      try {
+        const response = await fetch('/api/actualizar_registro', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentSession.access_token}` 
+          },
+          body: JSON.stringify({ id, estado })
         });
-      } else {
-        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400 dark:text-slate-500 text-xs">No hay comprobantes facturados para esta fecha.</td></tr>`;
-      }
+        
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error(`El servidor de actualización devolvió un formato no válido (código ${response.status}). Verifica el endpoint de backend.`);
+        }
 
-      document.getElementById('cierreTotalCount').innerText = facturados.length;
-      document.getElementById('cierreTotalMonto').innerText = `₡${totalMonto.toLocaleString('es-CR', { minimumFractionDigits: 2 })}`;
+        const result = await response.json();
+        if (!result.success) return showAlert(`⚠️ Error: ${result.error}`, 'error');
+        
+        showAlert(`✅ Estado actualizado a ${estado}`, 'success');
+        loadRecords();
+      } catch (err) {
+        showAlert(`⚠️ Error al actualizar: ${err.message}`, 'error');
+      }
+    }
+    
+    async function updateComment(id, comentario) {
+      if (!currentSession) return;
+      try {
+        const response = await fetch('/api/actualizar_registro', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentSession.access_token}` 
+          },
+          body: JSON.stringify({ id, comentario })
+        });
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          console.error("Respuesta no es JSON:", response.status);
+          return;
+        }
+
+        const result = await response.json();
+        if (!result.success) {
+          console.error('Error al guardar comentario:', result.error);
+        }
+      } catch (err) {
+        console.error('Error al guardar comentario:', err);
+      }
     }
 
-    // Inicializar sesión al cargar la página
-    document.addEventListener('DOMContentLoaded', initAuth);
+    function iniciarDemoGuiada() {
+      const driver = window.driver.js.driver;
+    
+      const driverObj = driver({
+        showProgress: true,
+        animate: true,
+        nextBtnText: 'Siguiente →',
+        prevBtnText: '← Anterior',
+        doneBtnText: '¡Entendido!',
+        steps: [
+          {
+            element: '#uploadForm',
+            popover: {
+              title: '1. Carga de Comprobantes',
+              description: 'Arrastra o selecciona la foto/PDF de tu SINPE Móvil aquí. El sistema optimizará el archivo automáticamente.',
+              side: "right",
+              align: 'start'
+            }
+          },
+          {
+            element: '#initialComment',
+            popover: {
+              title: '2. Comentarios Previos',
+              description: 'Puedes vincular una nota rápida (ej. "Pedido #1042") antes de guardar la transacción.',
+              side: "top"
+            }
+          },
+          {
+            element: '#submitBtn',
+            popover: {
+              title: '3. Procesamiento Automático',
+              description: 'Al hacer clic, la plataforma analiza la imagen y extrae el monto, banco emisor, cliente y número de referencia de forma inmediata.',
+              side: "bottom"
+            }
+          },
+          {
+            element: '.grid.grid-cols-1.sm\\:grid-cols-2.gap-4',
+            popover: {
+              title: '4. Métricas en Tiempo Real',
+              description: 'Monitorea el total acumulado en colones y el volumen general de comprobantes ingresados al instante.',
+              side: "bottom"
+            }
+          },
+          {
+            element: '#searchFilter',
+            popover: {
+              title: '5. Filtros y Búsqueda',
+              description: 'Busca por cliente, referencia o filtra según el banco emisor, fecha y estado de la transacción.',
+              side: "top"
+            }
+          },
+          {
+            element: '#recordsTable',
+            popover: {
+              title: '6. Histórico y Validación',
+              description: 'Consulta los datos registrados. Puedes aprobar, rechazar o visualizar el comprobante original en pantalla.',
+              side: "top"
+            }
+          }
+        ]
+      });
+    
+      driverObj.drive();
+    }
+
+    [searchFilter, bankFilter, statusFilter, createdFilter, txFilter].forEach(el => el.addEventListener('input', renderTable));
+    document.getElementById('refreshBtn').addEventListener('click', loadRecords);
+
+    initAuth();
   </script>
 </body>
 </html>
