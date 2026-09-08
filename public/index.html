@@ -35,16 +35,22 @@
       </h1>
     </div>
     
-    <!-- Controles de Autenticación y Navegación (Mantenimiento estricto de IDs) -->
+    <!-- Controles de Autenticación y Navegación -->
     <div class="flex items-center gap-1.5 sm:gap-3 shrink-0 ml-auto" id="authNav">
       
+      <!-- Toggle Planes y Precios -->
+      <button id="planesNavBtn" onclick="togglePlanes()" class="text-xs bg-emerald-50 dark:bg-emerald-900/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-bold px-2.5 sm:px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800 transition-all flex items-center gap-1.5" title="Ver Planes">
+        <i class="fa-solid fa-tags text-xs"></i>
+        <span class="hidden xs:inline">Planes</span>
+      </button>
+
       <!-- Toggle Modo Oscuro -->
       <button id="darkModeToggle" onclick="toggleDarkMode()" class="text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold px-2 sm:px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 transition-all flex items-center gap-1.5" title="Cambiar tema">
         <i id="darkModeIcon" class="fa-solid fa-moon"></i>
         <span id="darkModeText" class="hidden sm:inline">Oscuro</span>
       </button>
 
-      <!-- Correo (Oculto en pantallas pequeñas para dar espacio a los botones) -->
+      <!-- Correo de usuario -->
       <span id="userEmail" class="text-xs font-medium text-slate-600 dark:text-slate-300 hidden md:inline truncate max-w-[140px]"></span>
       
       <!-- Botón Cierre -->
@@ -75,7 +81,8 @@
       <span>Continuar con Google</span>
     </button>
   </div>
-<!-- Access Denied Screen -->
+
+  <!-- Access Denied Screen -->
   <div id="deniedScreen" class="hidden max-w-md mx-auto mt-20 p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 text-center">
     <div class="bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
       <i class="fa-solid fa-user-slash text-2xl"></i>
@@ -86,13 +93,18 @@
       Probar con otra cuenta
     </button>
   </div>
+
   <!-- App Main Screen -->
-  <main id="appScreen" class="hidden max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <main id="appScreen" class="hidden max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    
+    <!-- GRID PRINCIPAL DE LA APLICACIÓN -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
       
-      <!-- 1. Panel de Carga (Arriba en móvil, Columna Izquierda en PC) -->
-      <section class="lg:col-span-4 xl:col-span-3 order-1">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+      <!-- Columna Izquierda: Registro y Filtros -->
+      <div class="lg:col-span-4 xl:col-span-3 space-y-6">
+        
+        <!-- 1. Panel de Carga -->
+        <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
           <h2 class="text-base font-bold text-slate-900 dark:text-white mb-1">Registrar Comprobante</h2>
           <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Sube la foto del comprobante para procesarla.</p>
           
@@ -122,54 +134,10 @@
           </form>
 
           <div id="alertBox" class="mt-4 hidden p-3 rounded-xl text-xs"></div>
-        </div>
-      </section>
+        </section>
 
-      <!-- 2. Estadísticas y Tabla (En medio en móvil, Columna Derecha en PC) -->
-      <section class="lg:col-span-8 xl:col-span-9 space-y-6 order-2 lg:row-span-2">
-        
-        <!-- Tarjetas Estadísticas -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Total Comprobantes</span>
-            <div id="totalCount" class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">0</div>
-          </div>
-          <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Monto Total Acumulado</span>
-            <div id="totalAmount" class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">₡0.00</div>
-          </div>
-        </div>
-
-        <!-- Tabla de Registros -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden transition-colors">
-          <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
-            <h3 class="font-bold text-slate-900 dark:text-white text-sm">Histórico de Transacciones</h3>
-            <button id="refreshBtn" onclick="loadRecords()" class="text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium px-3 py-1.5 rounded-lg transition-colors">
-              <i class="fa-solid fa-rotate-right mr-1"></i> Actualizar
-            </button>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr class="bg-slate-100 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 uppercase text-[11px] tracking-wider border-b border-slate-200 dark:border-slate-700">
-                  <th class="p-3">Detalle del SINPE</th>
-                  <th class="p-3">Banco</th>
-                  <th class="p-3">Fechas</th>
-                  <th class="p-3">Comentarios</th>
-                  <th class="p-3 text-center">Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="recordsTable" class="divide-y divide-slate-100 dark:divide-slate-700 text-xs"></tbody>
-            </table>
-          </div>
-        </div>
-
-      </section>
-
-      <!-- 3. Panel de Filtros (Abajo en móvil, Columna Izquierda debajo del Registrar en PC) -->
-      <section class="lg:col-span-4 xl:col-span-3 order-3 lg:order-2">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5 space-y-4">
+        <!-- 2. Panel de Filtros -->
+        <section class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5 space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
             <h3 class="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wider flex items-center gap-2">
               <i class="fa-solid fa-filter text-emerald-600 dark:text-emerald-400"></i> Filtros de Búsqueda
@@ -217,134 +185,181 @@
               </div>
             </div>
           </div>
-        </div>
-      </section>
-      <section class="max-w-6xl mx-auto px-4 py-12">
-  
-  <!-- Encabezado y Selector de Modalidad -->
-  <div class="text-center max-w-2xl mx-auto mb-10">
-    <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
-      Planes y Flexibilidad
-    </span>
-    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-3 tracking-tight">
-      Elige cómo quieres usar SINPEControl
-    </h2>
-    <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
-      Alquila por meses sin compromiso o adquiere una licencia de por vida.
-    </p>
+        </section>
 
-    <!-- Toggle Selector Tipo Netflix / Switcher -->
-    <div class="inline-flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 mt-6 shadow-inner">
-      <button id="btnAlquiler" onclick="switchPlanMode('alquiler')" class="plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-emerald-600 text-slate-900 dark:text-white">
-        <i class="fa-solid fa-repeat mr-1.5 text-emerald-600 dark:text-white"></i> Alquiler Mensual
-      </button>
-      <button id="btnCompra" onclick="switchPlanMode('compra')" class="plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-        <i class="fa-solid fa-key mr-1.5"></i> Compra Definitiva
-      </button>
-    </div>
-  </div>
-
-  <!-- VISTA 1: PLANES DE ALQUILER (SUSCRIPCIÓN) -->
-  <div id="viewAlquiler" class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-    
-    <!-- Plan Alquiler Básico -->
-    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden">
-      <div>
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Alquiler Mensual</h3>
-          <span class="text-[11px] font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded-full">Sin Permanencia</span>
-        </div>
-        <div class="mb-6">
-          <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">₡15,000</span>
-          <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ mes</span>
-        </div>
-        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Procesamiento ilimitado de SINPEs</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Soporte e infraestructura en la nube incluido</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Actualizaciones continuas garantizadas</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Cancela cuando quieras</li>
-        </ul>
       </div>
-      <button class="w-full bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 text-white font-semibold py-3 px-4 rounded-2xl transition-all text-xs">
-        Comenzar Suscripción
-      </button>
-    </div>
 
-    <!-- Plan Alquiler Anual (Destacado) -->
-    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border-2 border-emerald-500 dark:border-emerald-400 shadow-lg flex flex-col justify-between relative overflow-hidden">
-      <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
-        Ahorra 2 Meses
+      <!-- Columna Derecha: Estadísticas y Tabla -->
+      <div class="lg:col-span-8 xl:col-span-9 space-y-6">
+        
+        <!-- Tarjetas Estadísticas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
+            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Total Comprobantes</span>
+            <div id="totalCount" class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">0</div>
+          </div>
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
+            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Monto Total Acumulado</span>
+            <div id="totalAmount" class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">₡0.00</div>
+          </div>
+        </div>
+
+        <!-- Tabla de Registros -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden transition-colors">
+          <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm">Histórico de Transacciones</h3>
+            <button id="refreshBtn" onclick="loadRecords()" class="text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium px-3 py-1.5 rounded-lg transition-colors">
+              <i class="fa-solid fa-rotate-right mr-1"></i> Actualizar
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-100 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 uppercase text-[11px] tracking-wider border-b border-slate-200 dark:border-slate-700">
+                  <th class="p-3">Detalle del SINPE</th>
+                  <th class="p-3">Banco</th>
+                  <th class="p-3">Fechas</th>
+                  <th class="p-3">Comentarios</th>
+                  <th class="p-3 text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="recordsTable" class="divide-y divide-slate-100 dark:divide-slate-700 text-xs"></tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
-      <div>
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Alquiler Anual</h3>
+
+    </div>
+
+    <!-- SECCIÓN DE PLANES Y PRECIOS (Oculto/Mostrable por botón) -->
+    <section id="planesSection" class="hidden border-t border-slate-200 dark:border-slate-700 pt-10">
+      
+      <!-- Encabezado y Selector de Modalidad -->
+      <div class="text-center max-w-2xl mx-auto mb-10">
+        <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
+          Planes y Flexibilidad
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-3 tracking-tight">
+          Elige cómo quieres usar SINPEControl
+        </h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
+          Alquila por meses sin compromiso o adquiere una licencia de por vida.
+        </p>
+
+        <!-- Toggle Selector Tipo Netflix / Switcher -->
+        <div class="inline-flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 mt-6 shadow-inner">
+          <button id="btnAlquiler" onclick="switchPlanMode('alquiler')" class="plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-emerald-600 text-slate-900 dark:text-white">
+            <i class="fa-solid fa-repeat mr-1.5 text-emerald-600 dark:text-white"></i> Alquiler Mensual
+          </button>
+          <button id="btnCompra" onclick="switchPlanMode('compra')" class="plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+            <i class="fa-solid fa-key mr-1.5"></i> Compra Definitiva
+          </button>
         </div>
-        <div class="mb-6">
-          <span class="text-3xl sm:text-4xl font-extrabold text-emerald-600 dark:text-emerald-400">₡150,000</span>
-          <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ año</span>
-        </div>
-        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Todo lo del plan mensual</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Descuento especial pago anticipado</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Soporte técnico prioritario</li>
-        </ul>
       </div>
-      <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-2xl shadow-sm transition-all text-xs">
-        Suscribirse Anualmente
-      </button>
-    </div>
 
-  </div>
+      <!-- VISTA 1: PLANES DE ALQUILER (SUSCRIPCIÓN) -->
+      <div id="viewAlquiler" class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        
+        <!-- Plan Alquiler Básico -->
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden">
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Alquiler Mensual</h3>
+              <span class="text-[11px] font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded-full">Sin Permanencia</span>
+            </div>
+            <div class="mb-6">
+              <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">₡15,000</span>
+              <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ mes</span>
+            </div>
+            <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Procesamiento ilimitado de SINPEs</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Soporte e infraestructura en la nube incluido</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Actualizaciones continuas garantizadas</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Cancela cuando quieras</li>
+            </ul>
+          </div>
+          <button class="w-full bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 text-white font-semibold py-3 px-4 rounded-2xl transition-all text-xs">
+            Comenzar Suscripción
+          </button>
+        </div>
 
-  <!-- VISTA 2: PLANES DE COMPRA DEFINITIVA -->
-  <div id="viewCompra" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-    
-    <!-- Licencia Única / On-Premise o Propia -->
-    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-      <div>
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Licencia De Por Vida</h3>
-          <span class="text-[11px] font-semibold bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-full">Pago Único</span>
+        <!-- Plan Alquiler Anual (Destacado) -->
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border-2 border-emerald-500 dark:border-emerald-400 shadow-lg flex flex-col justify-between relative overflow-hidden">
+          <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+            Ahorra 2 Meses
+          </div>
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Alquiler Anual</h3>
+            </div>
+            <div class="mb-6">
+              <span class="text-3xl sm:text-4xl font-extrabold text-emerald-600 dark:text-emerald-400">₡150,000</span>
+              <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ año</span>
+            </div>
+            <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Todo lo del plan mensual</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Descuento especial pago anticipado</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Soporte técnico prioritario</li>
+            </ul>
+          </div>
+          <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-2xl shadow-sm transition-all text-xs">
+            Suscribirse Anualmente
+          </button>
         </div>
-        <div class="mb-6">
-          <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">₡350,000</span>
-          <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ pago único</span>
-        </div>
-        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Código / Despliegue en tu propia infraestructura</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Sin mensualidades ni cobros recurrentes</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Soporte e instalación incluida (1er mes)</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Mantenimiento de Supabase por tu cuenta</li>
-        </ul>
+
       </div>
-      <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-2xl transition-all text-xs">
-        Comprar Licencia Completa
-      </button>
-    </div>
 
-    <!-- Licencia Enterprise con Soporte Permanente -->
-    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-      <div>
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Licencia Enterprise + Personalizaciones</h3>
+      <!-- VISTA 2: PLANES DE COMPRA DEFINITIVA -->
+      <div id="viewCompra" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        
+        <!-- Licencia Única / On-Premise o Propia -->
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Licencia De Por Vida</h3>
+              <span class="text-[11px] font-semibold bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-full">Pago Único</span>
+            </div>
+            <div class="mb-6">
+              <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">₡350,000</span>
+              <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ pago único</span>
+            </div>
+            <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Código / Despliegue en tu propia infraestructura</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Sin mensualidades ni cobros recurrentes</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Soporte e instalación incluida (1er mes)</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Mantenimiento de Supabase por tu cuenta</li>
+            </ul>
+          </div>
+          <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-2xl transition-all text-xs">
+            Comprar Licencia Completa
+          </button>
         </div>
-        <div class="mb-6">
-          <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">A Medida</span>
+
+        <!-- Licencia Enterprise con Soporte Permanente -->
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Licencia Enterprise + Personalizaciones</h3>
+            </div>
+            <div class="mb-6">
+              <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">A Medida</span>
+            </div>
+            <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Integración directa con tu sistema de facturación / ERP</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Módulos y reportería personalizada</li>
+              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> SLA y soporte técnico dedicado</li>
+            </ul>
+          </div>
+          <button class="w-full bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 text-white font-semibold py-3 px-4 rounded-2xl transition-all text-xs">
+            Contactar Asesor
+          </button>
         </div>
-        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Integración directa con tu sistema de facturación / ERP</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Módulos y reportería personalizada</li>
-          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> SLA y soporte técnico dedicado</li>
-        </ul>
+
       </div>
-      <button class="w-full bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 text-white font-semibold py-3 px-4 rounded-2xl transition-all text-xs">
-        Contactar Asesor
-      </button>
-    </div>
+    </section>
 
-  </div>
-</section>
-    </div>
   </main>
 
   <!-- MODAL PARA VER EL COMPROBANTE -->
@@ -424,6 +439,18 @@
 
     let currentSession = null;
     let rawRecordsData = [];
+
+    // Mostrar / Ocultar la sección de Planes
+    function togglePlanes() {
+      const planesSection = document.getElementById('planesSection');
+      const isHidden = planesSection.classList.contains('hidden');
+      if (isHidden) {
+        planesSection.classList.remove('hidden');
+        planesSection.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        planesSection.classList.add('hidden');
+      }
+    }
     
     // Lógica del Modo Oscuro
     function initDarkMode() {
@@ -464,28 +491,26 @@
         text.innerText = 'Oscuro';
       }
     }
+
     function switchPlanMode(mode) {
-    const viewAlquiler = document.getElementById('viewAlquiler');
-    const viewCompra = document.getElementById('viewCompra');
-    const btnAlquiler = document.getElementById('btnAlquiler');
-    const btnCompra = document.getElementById('btnCompra');
+      const viewAlquiler = document.getElementById('viewAlquiler');
+      const viewCompra = document.getElementById('viewCompra');
+      const btnAlquiler = document.getElementById('btnAlquiler');
+      const btnCompra = document.getElementById('btnCompra');
 
-    if (mode === 'alquiler') {
-      viewAlquiler.classList.remove('hidden');
-      viewCompra.classList.add('hidden');
-      
-      // Estilos de botones
-      btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-emerald-600 text-slate-900 dark:text-white";
-      btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
-    } else {
-      viewAlquiler.classList.add('hidden');
-      viewCompra.classList.remove('hidden');
-
-      // Estilos de botones
-      btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-indigo-600 text-slate-900 dark:text-white";
-      btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+      if (mode === 'alquiler') {
+        viewAlquiler.classList.remove('hidden');
+        viewCompra.classList.add('hidden');
+        btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-emerald-600 text-slate-900 dark:text-white";
+        btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+      } else {
+        viewAlquiler.classList.add('hidden');
+        viewCompra.classList.remove('hidden');
+        btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-indigo-600 text-slate-900 dark:text-white";
+        btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+      }
     }
-  }
+
     initDarkMode();
 
     // DOM Elements
@@ -553,14 +578,10 @@
       currentSession = session;
     
       if (session) {
-        // 1. Ocultar login provisionalmente mientras validamos permisos
         loginScreen.classList.add('hidden');
-        
-        // 2. Intentar obtener registros/validar sesión en backend
         const hasPermission = await checkUserPermissions();
     
         if (hasPermission) {
-          // ✅ TIENE PERMISOS: Mostrar app y ocultar mensaje de error
           userEmail.innerText = session.user.email;
           userEmail.classList.remove('hidden');
           logoutBtn.classList.remove('hidden');
@@ -569,7 +590,6 @@
           deniedScreen.classList.add('hidden');
           appScreen.classList.remove('hidden');
         } else {
-          // ❌ NO TIENE PERMISOS: Ocultar interfaz y mostrar denegado
           userEmail.classList.add('hidden');
           logoutBtn.classList.add('hidden');
           cierreBtn.classList.add('hidden');
@@ -579,7 +599,6 @@
           deniedScreen.classList.remove('hidden');
         }
       } else {
-        // Sesión no iniciada / Cerrada
         userEmail.classList.add('hidden');
         logoutBtn.classList.add('hidden');
         cierreBtn.classList.add('hidden');
@@ -589,19 +608,18 @@
         loginScreen.classList.remove('hidden');
       }
     }
+
     async function checkUserPermissions() {
       try {
         const res = await fetch('/api/obtener_registros', {
           headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
         });
         
-        // Si la API responde 401 o 403, o retorna un objeto de error explícito
         if (res.status === 401 || res.status === 403) return false;
     
         const data = await res.json();
         if (data.error) return false;
     
-        // Guardar datos e inicializar filtros si fue exitoso
         rawRecordsData = data || [];
         populateBankFilter(rawRecordsData);
         renderTable();
@@ -611,6 +629,7 @@
         return false;
       }
     }
+
     loginBtn.addEventListener('click', () => supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin } }));
     logoutBtn.addEventListener('click', () => supabaseClient.auth.signOut());
 
@@ -788,17 +807,14 @@
           let payDateStr = '-';
           if (row.fecha_transferencia) {
             const str = String(row.fecha_transferencia).trim();
-            // Verifica si la cadena contiene una hora explícita (HH:mm)
             const hasTime = /\d{1,2}:\d{2}/.test(str);
           
             if (hasTime) {
-              // Si trae hora, se parsea normalmente
               const dateObj = new Date(str.replace(' ', 'T'));
               payDateStr = !isNaN(dateObj.getTime())
                 ? dateObj.toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' })
                 : str;
             } else {
-              // Si solo es fecha (YYYY-MM-DD), parseamos dividiendo los componentes para evitar desfases UTC
               const dateParts = str.split('T')[0].split(' ')[0].split('-');
               if (dateParts.length === 3) {
                 const [year, month, day] = dateParts;
@@ -837,18 +853,14 @@
             </td>
             <td class="p-3 align-top text-center">
               <div class="flex items-center justify-center gap-1.5 flex-wrap">
-                
-                <!-- Aprobar -->
                 <button onclick="updateRecordData('${row.id}', { estado: 'Aprobado' })" class="px-2 py-1 text-xs font-semibold bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900/50 dark:hover:bg-emerald-800 text-emerald-800 dark:text-emerald-200 rounded-lg transition-colors flex items-center gap-1 ${isAprobado ? 'opacity-40 cursor-not-allowed' : ''}" ${isAprobado ? 'disabled' : ''} title="Aprobar">
                   <i class="fa-solid fa-check text-[10px]"></i> Aprobar
                 </button>
     
-                <!-- Rechazar -->
                 <button onclick="updateRecordData('${row.id}', { estado: 'Rechazado' })" class="px-2 py-1 text-xs font-semibold bg-red-100 hover:bg-red-200 dark:bg-red-900/50 dark:hover:bg-red-800 text-red-800 dark:text-red-200 rounded-lg transition-colors flex items-center gap-1 ${currentStatus === 'Rechazado' ? 'opacity-40 cursor-not-allowed' : ''}" ${currentStatus === 'Rechazado' ? 'disabled' : ''} title="Rechazar">
                   <i class="fa-solid fa-xmark text-[10px]"></i> Rechazar
                 </button>
     
-                <!-- Facturar (Solo habilitado si está Aprobado) -->
                 <button onclick="toggleFacturadoRecord('${row.id}', ${isFacturado})" 
                   class="px-2 py-1 text-xs font-semibold bg-indigo-100 hover:bg-indigo-200 dark:bg-indigo-900/50 dark:hover:bg-indigo-800 text-indigo-800 dark:text-indigo-200 rounded-lg transition-colors flex items-center gap-1 ${!isAprobado ? 'opacity-40 cursor-not-allowed' : ''}" 
                   ${!isAprobado ? 'disabled title="Debe estar Aprobado para poder facturar"' : `title="${isFacturado ? 'Desmarcar Facturado' : 'Marcar como Facturado'}"`}>
@@ -856,7 +868,6 @@
                   ${isFacturado ? 'Desmarcar' : 'Facturar'}
                 </button>
     
-                <!-- Ver Comprobante -->
                 <button onclick="openModal('${row.imagen_url}')" class="px-2 py-1 text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg transition-colors flex items-center gap-1" title="Ver comprobante">
                   <i class="fa-solid fa-eye text-[10px]"></i> Ver
                 </button>
@@ -873,11 +884,10 @@
       document.getElementById('totalAmount').innerText = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(totalMonto);
     }
 
-    // Función para alternar el estado de facturación de un comprobante
     function toggleFacturadoRecord(id, currentlyFacturado) {
       updateRecordData(id, { facturar: !currentlyFacturado });
     }
-    // Función unificada para actualizar cualquier campo utilizando /api/actualizar_registro
+
     async function updateRecordData(id, payloadData) {
       if (!currentSession) return;
       try {
@@ -909,9 +919,7 @@
       }
     }
 
-    // Lógica del Viewer Modal
-   // Lógica del Viewer Modal corregida
-     function openModal(url) {
+    function openModal(url) {
       modalExternalLink.href = url;
       if (url.toLowerCase().endsWith('.pdf')) {
         modalImage.classList.add('hidden');
@@ -924,13 +932,13 @@
       }
       viewerModal.classList.remove('hidden');
     }
+
     function closeModal() {
       viewerModal.classList.add('hidden');
       modalImage.src = '';
       modalPdf.src = '';
     }
 
-    // Lógica del Modal Cierre
     function openCierreModal() {
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('cierreFechaInput').value = today;
@@ -978,7 +986,6 @@
       document.getElementById('cierreTotalMonto').innerText = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(totalMonto);
     }
 
-    // Inicializar Auth
     initAuth();
   </script>
 </body>
