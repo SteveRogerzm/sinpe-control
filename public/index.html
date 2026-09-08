@@ -644,6 +644,11 @@
   document.getElementById('totalAmount').innerText = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(totalMonto);
 }
 
+    // Función para alternar el estado de facturación de un comprobante
+function toggleFacturadoRecord(id, currentlyFacturado) {
+  const newFactDate = currentlyFacturado ? null : new Date().toISOString();
+  updateRecordData(id, { fecha_facturacion: newFactDate });
+}
     // Función unificada para actualizar cualquier campo utilizando /api/actualizar_registro
     async function updateRecordData(id, payloadData) {
       if (!currentSession) return;
