@@ -482,7 +482,13 @@
 
     let currentSession = null;
     let rawRecordsData = [];
+    let isAnnual = false;
 
+    const prices = {
+      basico: { monthly: "₡20,000", annualEquiv: "₡16,667", annualTotal: "₡200,000" },
+      pro: { monthly: "₡35,000", annualEquiv: "₡29,167", annualTotal: "₡350,000" },
+      empresarial: { monthly: "₡60,000", annualEquiv: "₡50,000", annualTotal: "₡600,000" }
+    };
     // Mostrar / Ocultar la sección de Planes
     function togglePlanes() {
       const planesSection = document.getElementById('planesSection');
@@ -536,32 +542,32 @@
     }
 
 
-
-const prices = {
-  basico: { monthly: "₡20,000", annualEquiv: "₡16,667", annualTotal: "₡200,000" },
-  pro: { monthly: "₡35,000", annualEquiv: "₡29,167", annualTotal: "₡350,000" },
-  empresarial: { monthly: "₡60,000", annualEquiv: "₡50,000", annualTotal: "₡600,000" }
-};
-
 function toggleBillingCycle() {
   isAnnual = !isAnnual;
   const btn = document.getElementById('btnBillingCycle');
   const dot = document.getElementById('billingCycleDot');
   
   if (isAnnual) {
-    btn.classList.replace('bg-slate-300', 'bg-emerald-500');
-    btn.classList.replace('dark:bg-slate-700', 'bg-emerald-500');
+    // Cambiar fondo del switch a verde
+    btn.classList.remove('bg-slate-300', 'dark:bg-slate-700');
+    btn.classList.add('bg-emerald-500');
+    
+    // Desplazar el círculo interno
     dot.classList.replace('translate-x-0', 'translate-x-5');
     
-    // Actualizar Precios
+    // Actualizar precios a versión anual
     updateCardPrice('basicoPriceContainer', 'basicoAnnualDetail', prices.basico.annualEquiv, prices.basico.annualTotal);
     updateCardPrice('proPriceContainer', 'proAnnualDetail', prices.pro.annualEquiv, prices.pro.annualTotal);
     updateCardPrice('empresarialPriceContainer', 'empresarialAnnualDetail', prices.empresarial.annualEquiv, prices.empresarial.annualTotal);
   } else {
-    btn.classList.replace('bg-emerald-500', 'bg-slate-300');
+    // Revertir fondo del switch
+    btn.classList.remove('bg-emerald-500');
+    btn.classList.add('bg-slate-300', 'dark:bg-slate-700');
+    
+    // Regresar el círculo interno
     dot.classList.replace('translate-x-5', 'translate-x-0');
     
-    // Revertir Precios
+    // Revertir precios a versión mensual
     resetCardPrice('basicoPriceContainer', 'basicoAnnualDetail', prices.basico.monthly);
     resetCardPrice('proPriceContainer', 'proAnnualDetail', prices.pro.monthly);
     resetCardPrice('empresarialPriceContainer', 'empresarialAnnualDetail', prices.empresarial.monthly);
@@ -592,14 +598,25 @@ function switchPlanMode(mode) {
   const viewAlquiler = document.getElementById('viewAlquiler');
   const viewCompra = document.getElementById('viewCompra');
   
+  const btnAlquiler = document.getElementById('btnAlquiler');
+  const btnCompra = document.getElementById('btnCompra');
+  
   if (mode === 'alquiler') {
     viewAlquiler.classList.remove('hidden');
     viewCompra.classList.add('hidden');
     toggleBilling.classList.remove('hidden');
+    
+    // Estilos de botones de pestaña
+    btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-emerald-600 text-slate-900 dark:text-white";
+    btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
   } else {
     viewAlquiler.classList.add('hidden');
     viewCompra.classList.remove('hidden');
     toggleBilling.classList.add('hidden');
+    
+    // Estilos de botones de pestaña
+    btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-emerald-600 text-slate-900 dark:text-white";
+    btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
   }
 }
     initDarkMode();
