@@ -18,7 +18,7 @@
 <body class="bg-slate-50 text-slate-800 min-h-screen">
 
   <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="bg-emerald-600 text-white p-2 rounded-xl">
           <i class="fa-solid fa-wallet text-xl"></i>
@@ -54,57 +54,57 @@
     </button>
   </div>
 
-  <!-- App Main Screen -->
-  <main id="appScreen" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+  <!-- App Main Screen (Ancho expandido a 1600px) -->
+  <main id="appScreen" class="hidden max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
       
-      <!-- Panel de Carga -->
-      <section class="lg:col-span-4 space-y-6">
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-          <h2 class="text-lg font-bold text-slate-900 mb-1">Registrar Comprobante</h2>
-          <p class="text-sm text-slate-500 mb-6">Sube la foto del comprobante para procesarla.</p>
+      <!-- Panel de Carga (Reducido a 3 columnas en pantallas grandes) -->
+      <section class="lg:col-span-3 space-y-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+          <h2 class="text-base font-bold text-slate-900 mb-1">Registrar Comprobante</h2>
+          <p class="text-xs text-slate-500 mb-4">Sube la foto del comprobante para procesarla.</p>
           
           <form id="uploadForm" class="space-y-4">
-            <div id="dropzone" class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-emerald-500 transition-colors cursor-pointer bg-slate-50">
+            <div id="dropzone" class="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center hover:border-emerald-500 transition-colors cursor-pointer bg-slate-50">
               <input type="file" id="fileInput" name="comprobante" accept="image/*,application/pdf" class="hidden">
-              <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-400 mb-2"></i>
-              <p class="text-sm font-medium text-slate-700">Haz clic para elegir la foto o PDF</p>
+              <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400 mb-1"></i>
+              <p class="text-xs font-medium text-slate-700">Haz clic para elegir foto o PDF</p>
             </div>
 
             <div id="previewContainer" class="hidden">
-              <img id="imagePreview" src="" class="w-full h-48 object-cover rounded-xl border border-slate-200 hidden">
-              <div id="pdfPreview" class="hidden flex items-center justify-center gap-3 p-4 bg-slate-100 rounded-xl border border-slate-200">
-                <i class="fa-solid fa-file-pdf text-red-500 text-3xl"></i>
-                <span id="pdfFileName" class="text-xs font-semibold text-slate-700 truncate max-w-[200px]"></span>
+              <img id="imagePreview" src="" class="w-full h-40 object-cover rounded-xl border border-slate-200 hidden">
+              <div id="pdfPreview" class="hidden flex items-center justify-center gap-2 p-3 bg-slate-100 rounded-xl border border-slate-200">
+                <i class="fa-solid fa-file-pdf text-red-500 text-2xl"></i>
+                <span id="pdfFileName" class="text-xs font-semibold text-slate-700 truncate max-w-[150px]"></span>
               </div>
             </div>
 
             <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Comentario Previo (Opcional)</label>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Comentario Previo</label>
               <textarea id="initialComment" name="comentario" rows="2" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-emerald-500" placeholder="Ej: Pago de pedido #1234..."></textarea>
             </div>
 
-            <button type="submit" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2">
+            <button type="submit" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-xs">
               <i class="fa-solid fa-bolt"></i> <span>Procesar SINPE</span>
             </button>
           </form>
 
-          <div id="alertBox" class="mt-4 hidden p-4 rounded-xl text-sm"></div>
+          <div id="alertBox" class="mt-4 hidden p-3 rounded-xl text-xs"></div>
         </div>
       </section>
 
-      <!-- Panel de Registros y Filtros -->
-      <section class="lg:col-span-8 space-y-6">
+      <!-- Panel de Registros y Filtros (Ampliado a 9 columnas) -->
+      <section class="lg:col-span-9 space-y-6">
         
         <!-- Tarjetas Estadísticas -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-semibold text-slate-400 uppercase">Total Comprobantes</span>
-            <div id="totalCount" class="text-2xl font-bold text-slate-900 mt-1">0</div>
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-[10px] font-bold text-slate-400 uppercase">Total Comprobantes</span>
+            <div id="totalCount" class="text-2xl font-bold text-slate-900 mt-0.5">0</div>
           </div>
-          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span class="text-xs font-semibold text-slate-400 uppercase">Monto Total Acumulado</span>
-            <div id="totalAmount" class="text-2xl font-bold text-emerald-600 mt-1">₡0.00</div>
+          <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <span class="text-[10px] font-bold text-slate-400 uppercase">Monto Total Acumulado</span>
+            <div id="totalAmount" class="text-2xl font-bold text-emerald-600 mt-0.5">₡0.00</div>
           </div>
         </div>
 
@@ -146,8 +146,8 @@
 
         <!-- Tabla -->
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          <div class="p-5 border-b border-slate-200 flex items-center justify-between">
-            <h3 class="font-bold text-slate-900">Histórico de Transacciones</h3>
+          <div class="p-4 border-b border-slate-200 flex items-center justify-between">
+            <h3 class="font-bold text-slate-900 text-sm">Histórico de Transacciones</h3>
             <button id="refreshBtn" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-lg">
               <i class="fa-solid fa-rotate-right mr-1"></i> Actualizar
             </button>
@@ -156,15 +156,15 @@
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
-                <tr class="bg-slate-100 text-slate-600 uppercase text-xs tracking-wider border-b border-slate-200">
-                  <th class="p-4">Detalle del SINPE</th>
-                  <th class="p-4">Banco</th>
-                  <th class="p-4">Fechas</th>
-                  <th class="p-4">Comentarios</th>
-                  <th class="p-4 text-center">Acciones</th>
+                <tr class="bg-slate-100 text-slate-600 uppercase text-[11px] tracking-wider border-b border-slate-200">
+                  <th class="p-3">Detalle del SINPE</th>
+                  <th class="p-3">Banco</th>
+                  <th class="p-3">Fechas</th>
+                  <th class="p-3">Comentarios</th>
+                  <th class="p-3 text-center">Acciones</th>
                 </tr>
               </thead>
-              <tbody id="recordsTable" class="divide-y divide-slate-100 text-sm"></tbody>
+              <tbody id="recordsTable" class="divide-y divide-slate-100 text-xs"></tbody>
             </table>
           </div>
         </div>
@@ -419,7 +419,7 @@
         loadRecords();
       } catch (err) {
         showAlert(`⚠️ Error: ${err.message}`, 'error');
-      } finally {
+      } font-medium {
         submitBtn.disabled = false;
         submitBtn.innerHTML = `<i class="fa-solid fa-bolt"></i> <span>Procesar SINPE</span>`;
       }
@@ -477,9 +477,10 @@
           totalMonto += parseFloat(row.monto || 0);
           const currentStatus = row.estado || 'Pendiente';
           const isFacturado = !!row.fecha_facturacion;
+          const isAprobado = currentStatus === 'Aprobado';
         
           let statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-100 text-amber-700 font-semibold inline-block">Pendiente</span>`;
-          if (currentStatus === 'Aprobado') statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-emerald-100 text-emerald-700 font-semibold inline-block">Aprobado</span>`;
+          if (isAprobado) statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-emerald-100 text-emerald-700 font-semibold inline-block">Aprobado</span>`;
           if (currentStatus === 'Rechazado') statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-red-100 text-red-700 font-semibold inline-block">Rechazado</span>`;
         
           let facturadoBadge = isFacturado 
@@ -489,10 +490,10 @@
           const tr = document.createElement('tr');
           tr.className = "hover:bg-slate-50 transition-colors border-b border-slate-100";
           tr.innerHTML = `
-            <td class="p-4">
+            <td class="p-3">
               <div class="flex flex-col gap-1">
                 <div class="flex items-center justify-between gap-2">
-                  <span class="font-bold text-slate-800 text-sm truncate max-w-[200px]" title="${row.cliente || 'Sin nombre'}">
+                  <span class="font-bold text-slate-800 text-sm truncate max-w-[280px]" title="${row.cliente || 'Sin nombre'}">
                     ${row.cliente || 'Cliente no identificado'}
                   </span>
                   <div class="flex items-center gap-1">
@@ -511,23 +512,25 @@
                 </div>
               </div>
             </td>
-            <td class="p-4 text-xs font-semibold text-slate-700 whitespace-nowrap">
+            <td class="p-3 text-xs font-semibold text-slate-700 whitespace-nowrap">
               ${row.nombre_emisor || 'N/A'}
             </td>
-            <td class="p-4 text-[11px] text-slate-500 whitespace-nowrap">
+            <td class="p-3 text-[11px] text-slate-500 whitespace-nowrap">
               <div class="flex flex-col gap-0.5">
                 <div><strong class="text-slate-600">Tx:</strong> ${row.fecha_transferencia || 'N/A'}</div>
                 <div class="text-slate-400"><strong class="text-slate-400">Reg:</strong> ${row.created_at ? row.created_at.substring(0,10) : 'N/A'}</div>
                 ${row.fecha_facturacion ? `<div class="text-indigo-600"><strong class="text-indigo-600">Fact:</strong> ${row.fecha_facturacion.substring(0,10)}</div>` : ''}
               </div>
             </td>
-            <td class="p-4 min-w-[180px]">
+            <td class="p-3 min-w-[200px]">
               <input type="text" value="${row.comentario || ''}" placeholder="Añadir comentario..." 
                 onchange="updateComment('${row.id}', this.value)" 
                 class="w-full text-xs p-2 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500 bg-slate-50/50">
             </td>
-            <td class="p-4 text-center whitespace-nowrap space-x-1">
-              <button onclick="toggleFacturado('${row.id}', ${isFacturado})" class="p-2 ${isFacturado ? 'text-indigo-600 bg-indigo-50' : 'text-slate-400 hover:bg-slate-100'} rounded-lg transition-colors" title="${isFacturado ? 'Desmarcar Facturado' : 'Marcar como Facturado'}">
+            <td class="p-3 text-center whitespace-nowrap space-x-1">
+              <button onclick="toggleFacturado('${row.id}', ${isFacturado}, '${currentStatus}')" 
+                class="p-2 ${isFacturado ? 'text-indigo-600 bg-indigo-50' : (isAprobado ? 'text-slate-400 hover:bg-slate-100' : 'text-slate-300 cursor-not-allowed')}" 
+                title="${!isAprobado ? 'Solo se puede facturar si está Aprobado' : (isFacturado ? 'Desmarcar Facturado' : 'Marcar como Facturado')}">
                 <i class="fa-solid fa-file-invoice"></i>
               </button>
               <button onclick="updateStatus('${row.id}', 'Aprobado')" class="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="Aprobar"><i class="fa-solid fa-check"></i></button>
@@ -612,8 +615,14 @@
       document.getElementById('cierreTotalMonto').innerText = `₡${totalMonto.toLocaleString('es-CR', { minimumFractionDigits: 2 })}`;
     }
 
-    async function toggleFacturado(id, actualFacturado) {
+    async function toggleFacturado(id, actualFacturado, estado) {
       if (!currentSession) return;
+      
+      // Validación: solo se puede facturar si está Aprobado
+      if (estado !== 'Aprobado') {
+        return showAlert('⚠️ Solo se pueden facturar comprobantes con estado Aprobado.', 'error');
+      }
+
       const nuevaFecha = actualFacturado ? null : new Date().toISOString();
 
       try {
@@ -688,7 +697,7 @@
             element: '#uploadForm',
             popover: {
               title: '1. Carga de Comprobantes',
-              description: 'Arrastra o selecciona la foto/PDF de tu SINPE Móvil aquí. El sistema optimizará el archivo automáticamente.',
+              description: 'Arrastra o selecciona la foto/PDF de tu SINPE Móvil aquí. El sistema optimización el archivo automáticamente.',
               side: "right",
               align: 'start'
             }
@@ -729,7 +738,7 @@
             element: '#recordsTable',
             popover: {
               title: '6. Histórico y Validación',
-              description: 'Consulta los datos registrados. Puedes marcar como facturado, aprobar, rechazar o visualizar el comprobante original.',
+              description: 'Consulta los datos registrados. Puedes marcar como facturado (solo si está Aprobado), aprobar, rechazar o visualizar el comprobante original.',
               side: "top"
             }
           }
