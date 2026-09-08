@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -31,7 +31,7 @@
         <button id="cierreBtn" onclick="openCierreModal()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-3 py-1.5 rounded-lg border border-indigo-200 transition-all flex items-center gap-1.5 hidden">
           <i class="fa-solid fa-calculator text-xs"></i> Cierre
         </button>
-        <button id="startDemoBtn" onclick="iniciarDemoGuiada()" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold px-3 py-1.5 rounded-lg border border-emerald-200 transition-all flex items-center gap-1.5">
+        <button id="startDemoBtn" onclick="iniciarDemoGuiada()" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold px-3 py-1.5 rounded-lg border border-emerald-200 transition-all flex items-center gap-1.5 hidden">
           <i class="fa-solid fa-play text-xs"></i> Ver Demo
         </button>
         <button id="logoutBtn" class="hidden text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-1.5 rounded-lg transition-all">
@@ -132,14 +132,18 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-100">
             <div>
               <label class="text-[10px] font-bold uppercase text-slate-400">Fecha de Creación (BD)</label>
-              <input type="date" id="createdFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none" onchange="renderTable()">
+              <input type="date" id="createdFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none focus:border-emerald-500" onchange="renderTable()">
             </div>
             <div>
               <label class="text-[10px] font-bold uppercase text-slate-400">Fecha de Transacción</label>
-              <input type="date" id="txFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none" onchange="renderTable()">
+              <input type="date" id="txFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none focus:border-emerald-500" onchange="renderTable()">
+            </div>
+            <div>
+              <label class="text-[10px] font-bold uppercase text-slate-400">Fecha de Facturación</label>
+              <input type="date" id="factFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 focus:outline-none focus:border-emerald-500" onchange="renderTable()">
             </div>
           </div>
         </div>
@@ -255,6 +259,7 @@
     const userEmail = document.getElementById('userEmail');
     const logoutBtn = document.getElementById('logoutBtn');
     const loginBtn = document.getElementById('loginBtn');
+    const startDemoBtn = document.getElementById('startDemoBtn');
     const dropzone = document.getElementById('dropzone');
     const fileInput = document.getElementById('fileInput');
     const uploadForm = document.getElementById('uploadForm');
@@ -269,6 +274,7 @@
     const statusFilter = document.getElementById('statusFilter');
     const createdFilter = document.getElementById('createdFilter');
     const txFilter = document.getElementById('txFilter');
+    const factFilter = document.getElementById('factFilter');
 
     // Modal Comprobante
     const viewerModal = document.getElementById('viewerModal');
@@ -310,6 +316,7 @@
         userEmail.classList.remove('hidden');
         logoutBtn.classList.remove('hidden');
         cierreBtn.classList.remove('hidden');
+        startDemoBtn.classList.remove('hidden');
         loginScreen.classList.add('hidden');
         appScreen.classList.remove('hidden');
         loadRecords();
@@ -317,6 +324,7 @@
         userEmail.classList.add('hidden');
         logoutBtn.classList.add('hidden');
         cierreBtn.classList.add('hidden');
+        startDemoBtn.classList.add('hidden');
         loginScreen.classList.remove('hidden');
         appScreen.classList.add('hidden');
       }
@@ -454,6 +462,7 @@
       const status = statusFilter.value;
       const created = createdFilter.value;
       const txDate = txFilter.value;
+      const factDate = factFilter.value;
       
       const filtered = rawRecordsData.filter(row => {
         const matchesSearch = !search || 
@@ -465,8 +474,9 @@
         const matchesStatus = !status || (row.estado || 'Pendiente') === status;
         const matchesCreated = !created || (row.created_at && row.created_at.startsWith(created));
         const matchesTx = !txDate || (row.fecha_transferencia && row.fecha_transferencia.includes(txDate));
+        const matchesFact = !factDate || (row.fecha_facturacion && row.fecha_facturacion.startsWith(factDate));
         
-        return matchesSearch && matchesBank && matchesStatus && matchesCreated && matchesTx;
+        return matchesSearch && matchesBank && matchesStatus && matchesCreated && matchesTx && matchesFact;
       });
       
       recordsTable.innerHTML = '';
