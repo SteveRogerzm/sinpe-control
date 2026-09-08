@@ -47,6 +47,7 @@ try {
     $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica (imagen o PDF). '
         . 'Identifica el banco/entidad financiera de origen (ej: BAC, Banco Nacional, BCR, Davivienda, etc.) como "banco_emisor", '
         . 'y la persona que envía el dinero como "cliente". '
+        . 'OBLIGATORIO: Para "fecha_transferencia", debes convertir la fecha y hora encontrada al formato estrictamente "YYYY-MM-DD HH:mm:ss" (ej: "2019-01-15 00:00:00" o "2019-09-05 15:59:13"). Si no hay hora disponible, usa "00:00:00". '
         . 'Responde strictly en formato JSON: '
         . '{"monto": float, "numero_referencia": "string", "fecha_transferencia": "string", "cliente": "string", "banco_emisor": "string", "telefono_emisor": "string"}';
 
@@ -151,7 +152,7 @@ try {
     $dbPayload = json_encode([
         "numero_referencia"   => (string)$extractedData['numero_referencia'],
         "monto"               => floatval($extractedData['monto'] ?? 0),
-        "fecha_transferencia" => (string)($extractedData['fecha_transferencia'] ?? ''),
+        "fecha_transferencia" => !empty($extractedData['fecha_transferencia']) ? (string)$extractedData['fecha_transferencia'] : null,
         "nombre_emisor"       => (string)($extractedData['banco_emisor'] ?? $extractedData['nombre_emisor'] ?? ''),
         "cliente"             => (string)($extractedData['cliente'] ?? ''),
         "telefono_emisor"     => (string)($extractedData['telefono_emisor'] ?? ''),
