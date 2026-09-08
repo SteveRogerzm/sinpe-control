@@ -3,7 +3,12 @@ ini_set('display_errors', '0');
 error_reporting(0);
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/auth_check.php'; 
-verificarAcceso();
+
+// verificarAcceso() valida el correo de Google y retorna los datos del usuario autorizado
+$usuarioActual = verificarAcceso();
+
+// Si por alguna razón nombre_usuario no viene asignado, usamos un valor por defecto o el email como fallback
+$nombreUsuario = $usuarioActual['nombre_usuario'] ?? $usuarioActual['email'] ?? 'Sistema';
 
 try {
     $rawSupabaseUrl = getenv('SUPABASE_URL');
@@ -29,25 +34,77 @@ try {
     $cleanBaseUrl = preg_replace('/\/rest\/v1\/?$/', '', rtrim(trim($rawSupabaseUrl), '/'));
     $dbUrl = $cleanBaseUrl . "/rest/v1/sinpes?id=eq." . urlencode($id);
 
-    $updateData = [];
-    if (isset($input['estado'])) {
-        $updateData['estado'] = $input['estado'];
-    }
-    if (isset($input['comentario'])) {
-        $updateData['comentario'] = $input['comentario'];
+    // 1. CONSULTAR EL REGISTRO ACTUAL EN SUPABASE
+    $chGet = curl_init($dbUrl);
+    curl_setopt($chGet, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($chGet, CURLOPT_HTTPHEADER, [
+        "apikey: " . trim($supabaseKey),
+        "Authorization: Bearer " . trim($supabaseKey),
+        "Content-Type: application/json"
+    ]);
+    curl_setopt($chGet, CURLOPT_SSL_VERIFYPEER, false);
+    
+    $getResponse = curl_exec($chGet);
+    $getHttpCode = curl_getinfo($chGet, CURLINFO_HTTP_CODE);
+    curl_close($chGet);
+
+    $registros = json_decode($getResponse, true);
+    if ($getHttpCode >= 400 || empty($registros)) {
+        throw new Exception("Registro no encontrado en la base de datos.");
     }
 
-    // Manejo seguro de la fecha de facturación en el servidor
+    $registroActual = $registros[0];
+    $updateData = [];
+
+    // 2. MANEJO DE ESTADO, FECHA Y USUARIO DE APROBACIÓN
+    if (isset($input['estado'])) {
+        $updateData['estado'] = $input['estado'];
+        
+        if ($input['estado'] === 'Aprobado') {
+            $updateData['fecha_aprobacion'] = gmdate('Y-m-d\TH:i:s\Z');
+            $updateData['usuario_aprobacion'] = $nombreUsuario; // <--- Se guarda el nombre_usuario
+        } else {
+            $updateData['fecha_aprobacion'] = null;
+            $updateData['usuario_aprobacion'] = null;
+        }
+    }
+
+    $estadoFinal = $updateData['estado'] ?? $registroActual['estado'];
+
+    // 3. MANEJO DE FACTURACIÓN, FECHA Y USUARIO DE FACTURACIÓN
+    $quiereFacturar = false;
     if (isset($input['facturar'])) {
-        $updateData['fecha_facturacion'] = $input['facturar'] ? gmdate('Y-m-d\TH:i:s\Z') : null;
-    } elseif (array_key_exists('fecha_facturacion', $input)) {
-        $updateData['fecha_facturacion'] = $input['fecha_facturacion'];
+        $quiereFacturar = (bool)$input['facturar'];
+    } elseif (isset($input['fecha_facturacion'])) {
+        $quiereFacturar = !empty($input['fecha_facturacion']);
+    }
+
+    if ($quiereFacturar) {
+        if ($estadoFinal !== 'Aprobado') {
+            throw new Exception("No se puede facturar un registro que no esté Aprobado.");
+        }
+
+        if (isset($input['facturar'])) {
+            $updateData['fecha_facturacion'] = gmdate('Y-m-d\TH:i:s\Z');
+        } else {
+            $updateData['fecha_facturacion'] = $input['fecha_facturacion'];
+        }
+        $updateData['usuario_facturacion'] = $nombreUsuario; // <--- Se guarda el nombre_usuario
+    } elseif (array_key_exists('facturar', $input) && !$input['facturar']) {
+        $updateData['fecha_facturacion'] = null;
+        $updateData['usuario_facturacion'] = null;
+    }
+
+    // 4. MANEJO DE COMENTARIOS
+    if (isset($input['comentario'])) {
+        $updateData['comentario'] = $input['comentario'];
     }
 
     if (empty($updateData)) {
         throw new Exception("No hay datos para actualizar.");
     }
 
+    // 5. EJECUTAR PATCH EN SUPABASE
     $ch = curl_init($dbUrl);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
