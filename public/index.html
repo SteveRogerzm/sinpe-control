@@ -677,8 +677,11 @@ function switchPlanMode(mode) {
       handleSession(session);
 
       supabaseClient.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') handleSession(session);
-        else if (event === 'SIGNED_OUT') handleSession(null);
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          handleSession(session);
+        } else if (event === 'SIGNED_OUT') {
+          handleSession(null);
+        }
       });
     }
 
@@ -739,7 +742,10 @@ function switchPlanMode(mode) {
     }
 
     loginBtn.addEventListener('click', () => supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin } }));
-    logoutBtn.addEventListener('click', () => supabaseClient.auth.signOut());
+    logoutBtn.addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
+      handleSession(null);
+    });
 
     dropzone.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', (e) => {
