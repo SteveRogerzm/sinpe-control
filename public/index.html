@@ -75,8 +75,10 @@
   </div>
   <!-- App Main Screen -->
   <main id="appScreen" class="hidden max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="flex flex-col-reverse lg:grid lg:grid-cols-12 gap-6">
-    <section class="lg:col-span-4 xl:col-span-3 space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- 1. Panel de Carga (Arriba en móvil, Columna Izquierda en PC) -->
+      <section class="lg:col-span-4 xl:col-span-3 order-1">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
           <h2 class="text-base font-bold text-slate-900 dark:text-white mb-1">Registrar Comprobante</h2>
           <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Sube la foto del comprobante para procesarla.</p>
@@ -108,8 +110,52 @@
 
           <div id="alertBox" class="mt-4 hidden p-3 rounded-xl text-xs"></div>
         </div>
+      </section>
 
-        <!-- Panel de Filtros -->
+      <!-- 2. Estadísticas y Tabla (En medio en móvil, Columna Derecha en PC) -->
+      <section class="lg:col-span-8 xl:col-span-9 space-y-6 order-2 lg:row-span-2">
+        
+        <!-- Tarjetas Estadísticas -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
+            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Total Comprobantes</span>
+            <div id="totalCount" class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">0</div>
+          </div>
+          <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
+            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Monto Total Acumulado</span>
+            <div id="totalAmount" class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">₡0.00</div>
+          </div>
+        </div>
+
+        <!-- Tabla de Registros -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden transition-colors">
+          <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+            <h3 class="font-bold text-slate-900 dark:text-white text-sm">Histórico de Transacciones</h3>
+            <button id="refreshBtn" onclick="loadRecords()" class="text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium px-3 py-1.5 rounded-lg transition-colors">
+              <i class="fa-solid fa-rotate-right mr-1"></i> Actualizar
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-100 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 uppercase text-[11px] tracking-wider border-b border-slate-200 dark:border-slate-700">
+                  <th class="p-3">Detalle del SINPE</th>
+                  <th class="p-3">Banco</th>
+                  <th class="p-3">Fechas</th>
+                  <th class="p-3">Comentarios</th>
+                  <th class="p-3 text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="recordsTable" class="divide-y divide-slate-100 dark:divide-slate-700 text-xs"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- 3. Panel de Filtros (Abajo en móvil, Columna Izquierda debajo del Registrar en PC) -->
+      <section class="lg:col-span-4 xl:col-span-3 order-3 lg:order-2">
         <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5 space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
             <h3 class="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wider flex items-center gap-2">
@@ -159,49 +205,6 @@
             </div>
           </div>
         </div>
-
-      </section>
-
-      <!-- COLUMNA DERECHA: Estadísticas y Tabla de Registros -->
-      <section class="lg:col-span-8 xl:col-span-9 space-y-6">
-        
-        <!-- Tarjetas Estadísticas -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Total Comprobantes</span>
-            <div id="totalCount" class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">0</div>
-          </div>
-          <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Monto Total Acumulado</span>
-            <div id="totalAmount" class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">₡0.00</div>
-          </div>
-        </div>
-
-        <!-- Tabla de Registros -->
-        <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden transition-colors">
-          <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
-            <h3 class="font-bold text-slate-900 dark:text-white text-sm">Histórico de Transacciones</h3>
-            <button id="refreshBtn" onclick="loadRecords()" class="text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium px-3 py-1.5 rounded-lg transition-colors">
-              <i class="fa-solid fa-rotate-right mr-1"></i> Actualizar
-            </button>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr class="bg-slate-100 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 uppercase text-[11px] tracking-wider border-b border-slate-200 dark:border-slate-700">
-                  <th class="p-3">Detalle del SINPE</th>
-                  <th class="p-3">Banco</th>
-                  <th class="p-3">Fechas</th>
-                  <th class="p-3">Comentarios</th>
-                  <th class="p-3 text-center">Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="recordsTable" class="divide-y divide-slate-100 dark:divide-slate-700 text-xs"></tbody>
-            </table>
-          </div>
-        </div>
-
       </section>
 
     </div>
