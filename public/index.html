@@ -646,8 +646,7 @@
 
     // Función para alternar el estado de facturación de un comprobante
 function toggleFacturadoRecord(id, currentlyFacturado) {
-  const newFactDate = currentlyFacturado ? null : new Date().toISOString();
-  updateRecordData(id, { fecha_facturacion: newFactDate });
+  updateRecordData(id, { facturar: !currentlyFacturado });
 }
     // Función unificada para actualizar cualquier campo utilizando /api/actualizar_registro
     async function updateRecordData(id, payloadData) {
