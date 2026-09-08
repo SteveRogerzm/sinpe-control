@@ -13,7 +13,6 @@ try {
         throw new Exception("Faltan variables de entorno.");
     }
 
-    // CORRECCIÓN AQUÍ: Usar 'php://input' con los dos puntos
     $jsonContent = file_get_contents('php://input');
     $input = json_decode($jsonContent, true);
 
@@ -31,8 +30,15 @@ try {
     $dbUrl = $cleanBaseUrl . "/rest/v1/sinpes?id=eq." . urlencode($id);
 
     $updateData = [];
-    if (isset($input['estado'])) $updateData['estado'] = $input['estado'];
-    if (isset($input['comentario'])) $updateData['comentario'] = $input['comentario'];
+    if (isset($input['estado'])) {
+        $updateData['estado'] = $input['estado'];
+    }
+    if (isset($input['comentario'])) {
+        $updateData['comentario'] = $input['comentario'];
+    }
+    if (array_key_exists('fecha_facturacion', $input)) {
+        $updateData['fecha_facturacion'] = $input['fecha_facturacion']; // Puede ser ISO string o null
+    }
 
     if (empty($updateData)) {
         throw new Exception("No hay datos para actualizar.");
