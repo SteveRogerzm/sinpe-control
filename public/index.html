@@ -219,7 +219,131 @@
           </div>
         </div>
       </section>
+      <section class="max-w-6xl mx-auto px-4 py-12">
+  
+  <!-- Encabezado y Selector de Modalidad -->
+  <div class="text-center max-w-2xl mx-auto mb-10">
+    <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
+      Planes y Flexibilidad
+    </span>
+    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-3 tracking-tight">
+      Elige cómo quieres usar SINPEControl
+    </h2>
+    <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
+      Alquila por meses sin compromiso o adquiere una licencia de por vida.
+    </p>
 
+    <!-- Toggle Selector Tipo Netflix / Switcher -->
+    <div class="inline-flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 mt-6 shadow-inner">
+      <button id="btnAlquiler" onclick="switchPlanMode('alquiler')" class="plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-emerald-600 text-slate-900 dark:text-white">
+        <i class="fa-solid fa-repeat mr-1.5 text-emerald-600 dark:text-white"></i> Alquiler Mensual
+      </button>
+      <button id="btnCompra" onclick="switchPlanMode('compra')" class="plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+        <i class="fa-solid fa-key mr-1.5"></i> Compra Definitiva
+      </button>
+    </div>
+  </div>
+
+  <!-- VISTA 1: PLANES DE ALQUILER (SUSCRIPCIÓN) -->
+  <div id="viewAlquiler" class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+    
+    <!-- Plan Alquiler Básico -->
+    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden">
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Alquiler Mensual</h3>
+          <span class="text-[11px] font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded-full">Sin Permanencia</span>
+        </div>
+        <div class="mb-6">
+          <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">₡15,000</span>
+          <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ mes</span>
+        </div>
+        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Procesamiento ilimitado de SINPEs</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Soporte e infraestructura en la nube incluido</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Actualizaciones continuas garantizadas</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Cancela cuando quieras</li>
+        </ul>
+      </div>
+      <button class="w-full bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 text-white font-semibold py-3 px-4 rounded-2xl transition-all text-xs">
+        Comenzar Suscripción
+      </button>
+    </div>
+
+    <!-- Plan Alquiler Anual (Destacado) -->
+    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border-2 border-emerald-500 dark:border-emerald-400 shadow-lg flex flex-col justify-between relative overflow-hidden">
+      <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+        Ahorra 2 Meses
+      </div>
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Alquiler Anual</h3>
+        </div>
+        <div class="mb-6">
+          <span class="text-3xl sm:text-4xl font-extrabold text-emerald-600 dark:text-emerald-400">₡150,000</span>
+          <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ año</span>
+        </div>
+        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Todo lo del plan mensual</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Descuento especial pago anticipado</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Soporte técnico prioritario</li>
+        </ul>
+      </div>
+      <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-2xl shadow-sm transition-all text-xs">
+        Suscribirse Anualmente
+      </button>
+    </div>
+
+  </div>
+
+  <!-- VISTA 2: PLANES DE COMPRA DEFINITIVA -->
+  <div id="viewCompra" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+    
+    <!-- Licencia Única / On-Premise o Propia -->
+    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Licencia De Por Vida</h3>
+          <span class="text-[11px] font-semibold bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-full">Pago Único</span>
+        </div>
+        <div class="mb-6">
+          <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">₡350,000</span>
+          <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ pago único</span>
+        </div>
+        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Código / Despliegue en tu propia infraestructura</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Sin mensualidades ni cobros recurrentes</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Soporte e instalación incluida (1er mes)</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Mantenimiento de Supabase por tu cuenta</li>
+        </ul>
+      </div>
+      <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-2xl transition-all text-xs">
+        Comprar Licencia Completa
+      </button>
+    </div>
+
+    <!-- Licencia Enterprise con Soporte Permanente -->
+    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Licencia Enterprise + Personalizaciones</h3>
+        </div>
+        <div class="mb-6">
+          <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">A Medida</span>
+        </div>
+        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Integración directa con tu sistema de facturación / ERP</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Módulos y reportería personalizada</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> SLA y soporte técnico dedicado</li>
+        </ul>
+      </div>
+      <button class="w-full bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 text-white font-semibold py-3 px-4 rounded-2xl transition-all text-xs">
+        Contactar Asesor
+      </button>
+    </div>
+
+  </div>
+</section>
     </div>
   </main>
 
@@ -300,7 +424,7 @@
 
     let currentSession = null;
     let rawRecordsData = [];
-
+    
     // Lógica del Modo Oscuro
     function initDarkMode() {
       const isDark = localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -340,7 +464,28 @@
         text.innerText = 'Oscuro';
       }
     }
+    function switchPlanMode(mode) {
+    const viewAlquiler = document.getElementById('viewAlquiler');
+    const viewCompra = document.getElementById('viewCompra');
+    const btnAlquiler = document.getElementById('btnAlquiler');
+    const btnCompra = document.getElementById('btnCompra');
 
+    if (mode === 'alquiler') {
+      viewAlquiler.classList.remove('hidden');
+      viewCompra.classList.add('hidden');
+      
+      // Estilos de botones
+      btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-emerald-600 text-slate-900 dark:text-white";
+      btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+    } else {
+      viewAlquiler.classList.add('hidden');
+      viewCompra.classList.remove('hidden');
+
+      // Estilos de botones
+      btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-indigo-600 text-slate-900 dark:text-white";
+      btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+    }
+  }
     initDarkMode();
 
     // DOM Elements
