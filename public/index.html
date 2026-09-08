@@ -535,25 +535,73 @@
       }
     }
 
-    function switchPlanMode(mode) {
-      const viewAlquiler = document.getElementById('viewAlquiler');
-      const viewCompra = document.getElementById('viewCompra');
-      const btnAlquiler = document.getElementById('btnAlquiler');
-      const btnCompra = document.getElementById('btnCompra');
 
-      if (mode === 'alquiler') {
-        viewAlquiler.classList.remove('hidden');
-        viewCompra.classList.add('hidden');
-        btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-emerald-600 text-slate-900 dark:text-white";
-        btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
-      } else {
-        viewAlquiler.classList.add('hidden');
-        viewCompra.classList.remove('hidden');
-        btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-indigo-600 text-slate-900 dark:text-white";
-        btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
-      }
-    }
 
+const prices = {
+  basico: { monthly: "₡20,000", annualEquiv: "₡16,667", annualTotal: "₡200,000" },
+  pro: { monthly: "₡35,000", annualEquiv: "₡29,167", annualTotal: "₡350,000" },
+  empresarial: { monthly: "₡60,000", annualEquiv: "₡50,000", annualTotal: "₡600,000" }
+};
+
+function toggleBillingCycle() {
+  isAnnual = !isAnnual;
+  const btn = document.getElementById('btnBillingCycle');
+  const dot = document.getElementById('billingCycleDot');
+  
+  if (isAnnual) {
+    btn.classList.replace('bg-slate-300', 'bg-emerald-500');
+    btn.classList.replace('dark:bg-slate-700', 'bg-emerald-500');
+    dot.classList.replace('translate-x-0', 'translate-x-5');
+    
+    // Actualizar Precios
+    updateCardPrice('basicoPriceContainer', 'basicoAnnualDetail', prices.basico.annualEquiv, prices.basico.annualTotal);
+    updateCardPrice('proPriceContainer', 'proAnnualDetail', prices.pro.annualEquiv, prices.pro.annualTotal);
+    updateCardPrice('empresarialPriceContainer', 'empresarialAnnualDetail', prices.empresarial.annualEquiv, prices.empresarial.annualTotal);
+  } else {
+    btn.classList.replace('bg-emerald-500', 'bg-slate-300');
+    dot.classList.replace('translate-x-5', 'translate-x-0');
+    
+    // Revertir Precios
+    resetCardPrice('basicoPriceContainer', 'basicoAnnualDetail', prices.basico.monthly);
+    resetCardPrice('proPriceContainer', 'proAnnualDetail', prices.pro.monthly);
+    resetCardPrice('empresarialPriceContainer', 'empresarialAnnualDetail', prices.empresarial.monthly);
+  }
+}
+
+function updateCardPrice(containerId, detailId, equivPrice, annualTotal) {
+  const container = document.getElementById(containerId);
+  container.querySelector('.price-val').innerText = equivPrice;
+  container.querySelector('.price-period').innerText = '/ mes (equivalente)';
+  
+  const detail = document.getElementById(detailId);
+  detail.querySelector('strong').innerText = `${annualTotal} / año`;
+  detail.classList.remove('hidden');
+}
+
+function resetCardPrice(containerId, detailId, monthlyPrice) {
+  const container = document.getElementById(containerId);
+  container.querySelector('.price-val').innerText = monthlyPrice;
+  container.querySelector('.price-period').innerText = '/ mes';
+  
+  const detail = document.getElementById(detailId);
+  detail.classList.add('hidden');
+}
+
+function switchPlanMode(mode) {
+  const toggleBilling = document.getElementById('billingCycleToggle');
+  const viewAlquiler = document.getElementById('viewAlquiler');
+  const viewCompra = document.getElementById('viewCompra');
+  
+  if (mode === 'alquiler') {
+    viewAlquiler.classList.remove('hidden');
+    viewCompra.classList.add('hidden');
+    toggleBilling.classList.remove('hidden');
+  } else {
+    viewAlquiler.classList.add('hidden');
+    viewCompra.classList.remove('hidden');
+    toggleBilling.classList.add('hidden');
+  }
+}
     initDarkMode();
 
     // DOM Elements
