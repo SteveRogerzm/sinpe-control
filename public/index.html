@@ -233,163 +233,176 @@
 
     </div>
 
-    <!-- SECCIÓN DE PLANES Y PRECIOS (Oculto/Mostrable por botón) -->
-    <section id="planesSection" class="hidden border-t border-slate-200 dark:border-slate-700 pt-10">
-      
-      <!-- Encabezado y Selector de Modalidad -->
-      <div class="text-center max-w-2xl mx-auto mb-10">
-        <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
-          Planes y Flexibilidad
+   <!-- SECCIÓN DE PLANES Y PRECIOS (Oculto/Mostrable por botón) -->
+<section id="planesSection" class="hidden border-t border-slate-200 dark:border-slate-700 pt-10">
+  
+  <!-- Encabezado y Selector de Modalidad -->
+  <div class="text-center max-w-2xl mx-auto mb-10">
+    <span class="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800">
+      Planes y Flexibilidad
+    </span>
+    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-3 tracking-tight">
+      Elige cómo quieres usar SINPEControl
+    </h2>
+    <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
+      Alquila por mensualidades ajustadas a tu volumen o adquiere el código/derechos de por vida.
+    </p>
+
+    <!-- Toggle Principal: Alquiler vs Compra -->
+    <div class="inline-flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 mt-6 shadow-inner">
+      <button id="btnAlquiler" onclick="switchPlanMode('alquiler')" class="plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-emerald-600 text-slate-900 dark:text-white">
+        <i class="fa-solid fa-repeat mr-1.5 text-emerald-600 dark:text-white"></i> Alquiler (SaaS)
+      </button>
+      <button id="btnCompra" onclick="switchPlanMode('compra')" class="plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+        <i class="fa-solid fa-key mr-1.5"></i> Compra / Código Fuente
+      </button>
+    </div>
+
+    <!-- Toggle Secundario: Facturación Mensual vs Anual (Solo visible en Alquiler) -->
+    <div id="billingCycleToggle" class="flex items-center justify-center gap-3 mt-6">
+      <span class="text-xs font-semibold text-slate-600 dark:text-slate-400">Mensual</span>
+      <button id="btnBillingCycle" onclick="toggleBillingCycle()" role="switch" aria-checked="false" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-300 dark:bg-slate-700 transition-colors duration-200 ease-in-out focus:outline-none">
+        <span id="billingCycleDot" class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-0"></span>
+      </button>
+      <span class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+        Anual
+        <span class="bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-emerald-300 dark:border-emerald-700">
+          Ahorra 2 meses
         </span>
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-3 tracking-tight">
-          Elige cómo quieres usar SINPEControl
-        </h2>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
-          Alquila por mensualidades ajustadas a tu volumen o adquiere el código/derechos de por vida.
-        </p>
+      </span>
+    </div>
+  </div>
 
-        <!-- Toggle Selector Tipo Netflix / Switcher -->
-        <div class="inline-flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 mt-6 shadow-inner">
-          <button id="btnAlquiler" onclick="switchPlanMode('alquiler')" class="plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-emerald-600 text-slate-900 dark:text-white">
-            <i class="fa-solid fa-repeat mr-1.5 text-emerald-600 dark:text-white"></i> Alquiler Mensual (SaaS)
-          </button>
-          <button id="btnCompra" onclick="switchPlanMode('compra')" class="plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
-            <i class="fa-solid fa-key mr-1.5"></i> Compra / Código Fuente
-          </button>
+  <!-- VISTA 1: PLANES DE ALQUILER (SUSCRIPCIÓN) -->
+  <div id="viewAlquiler" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+    
+    <!-- Plan Básico -->
+    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden">
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Plan Básico</h3>
+          <span class="text-[11px] font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded-full">Estándar</span>
         </div>
+        <div class="mb-6">
+          <div id="basicoPriceContainer">
+            <span class="price-val text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">₡20,000</span>
+            <span class="price-period text-xs text-slate-500 dark:text-slate-400 font-medium">/ mes</span>
+          </div>
+          <p id="basicoAnnualDetail" class="hidden text-[11px] font-medium text-emerald-600 dark:text-emerald-400 mt-1">
+            Cobrado anualmente: <strong>₡200,000 / año</strong>
+          </p>
+        </div>
+        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Hasta <strong>500 comprobantes</strong>/día</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Hosting y base de datos</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Soporte técnico e infraestructura</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Mantenimiento evolutivo incluido</li>
+        </ul>
       </div>
+    </div>
 
-      <!-- VISTA 1: PLANES DE ALQUILER (SUSCRIPCIÓN) -->
-      <div id="viewAlquiler" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-        
-        <!-- Plan Básico -->
-        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden">
-          <div>
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Plan Básico</h3>
-              <span class="text-[11px] font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded-full">Estándar</span>
-            </div>
-            <div class="mb-6">
-              <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">₡20,000</span>
-              <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ mes</span>
-            </div>
-            <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Hasta <strong>300 comprobantes</strong>/mes</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Hosting y base de datos (Supabase)</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Soporte técnico e infraestructura</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Mantenimiento evolutivo incluido</li>
-            </ul>
-          </div>
-          <button class="w-full bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 text-white font-semibold py-3 px-4 rounded-2xl transition-all text-xs">
-            Contratar Básico
-          </button>
-        </div>
-
-        <!-- Plan Pro (Destacado) -->
-        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border-2 border-emerald-500 dark:border-emerald-400 shadow-lg flex flex-col justify-between relative overflow-hidden">
-          <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
-            Recomendado
-          </div>
-          <div>
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Plan Pro</h3>
-            </div>
-            <div class="mb-6">
-              <span class="text-3xl sm:text-4xl font-extrabold text-emerald-600 dark:text-emerald-400">₡35,000</span>
-              <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ mes</span>
-            </div>
-            <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Hasta <strong>1.000 comprobantes</strong>/mes</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Hosting e infraestructura en la nube</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Soporte técnico prioritario</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Mantenimiento evolutivo continuo</li>
-            </ul>
-          </div>
-          <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-2xl shadow-sm transition-all text-xs">
-            Contratar Plan Pro
-          </button>
-        </div>
-
-        <!-- Plan Empresarial -->
-        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-          <div>
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Plan Empresarial</h3>
-              <span class="text-[11px] font-semibold bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-full">Ilimitado</span>
-            </div>
-            <div class="mb-6">
-              <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">₡60,000</span>
-              <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ mes</span>
-            </div>
-            <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Comprobantes <strong>ilimitados</strong></li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Infraestructura dedicada</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Soporte técnico prioritario</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Mantenimiento evolutivo garantizado</li>
-            </ul>
-          </div>
-          <button class="w-full bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 dark:hover:bg-slate-600 text-white font-semibold py-3 px-4 rounded-2xl transition-all text-xs">
-            Contratar Empresarial
-          </button>
-        </div>
-
+    <!-- Plan Pro (Destacado) -->
+    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border-2 border-emerald-500 dark:border-emerald-400 shadow-lg flex flex-col justify-between relative overflow-hidden">
+      <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+        Recomendado
       </div>
-
-      <!-- VISTA 2: PLANES DE COMPRA DEFINITIVA -->
-      <div id="viewCompra" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        
-        <!-- Licencia de Código Fuente -->
-        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-          <div>
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Licencia Código Fuente</h3>
-              <span class="text-[11px] font-semibold bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-full">Pago Único</span>
-            </div>
-            <div class="mb-6">
-              <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">₡750,000</span>
-              <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ único</span>
-            </div>
-            <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Entrega de archivos completos (HTML, JS, CSS, APIs)</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Despliegue e instalación en servidor propio</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Permite adaptaciones internas e integración ERP</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Autonomía técnica sobre la solución</li>
-            </ul>
-          </div>
-          <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-2xl transition-all text-xs">
-            Adquirir Código Fuente
-          </button>
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Plan Pro</h3>
         </div>
-
-        <!-- Compra de Exclusividad Total -->
-        <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border-2 border-emerald-500 dark:border-emerald-400 shadow-lg flex flex-col justify-between relative overflow-hidden">
-          <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
-            Cesión Total
+        <div class="mb-6">
+          <div id="proPriceContainer">
+            <span class="price-val text-3xl sm:text-4xl font-extrabold text-emerald-600 dark:text-emerald-400">₡35,000</span>
+            <span class="price-period text-xs text-slate-500 dark:text-slate-400 font-medium">/ mes</span>
           </div>
-          <div>
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Exclusividad Total</h3>
-              <span class="text-[11px] font-semibold bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 px-2.5 py-1 rounded-full">Propiedad Intelectual</span>
-            </div>
-            <div class="mb-6">
-              <span class="text-3xl sm:text-4xl font-extrabold text-emerald-600 dark:text-emerald-400">₡1,800,000</span>
-              <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ único</span>
-            </div>
-            <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Cesión total de derechos patrimoniales y de autor</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Garantía de no comercialización a terceros</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Código fuente y documentación técnica completa</li>
-              <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Acompañamiento integral para despliegue privado</li>
-            </ul>
-          </div>
-          <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-4 rounded-2xl shadow-sm transition-all text-xs">
-            Comprar Exclusividad
-          </button>
+          <p id="proAnnualDetail" class="hidden text-[11px] font-medium text-emerald-600 dark:text-emerald-400 mt-1">
+            Cobrado anualmente: <strong>₡350,000 / año</strong>
+          </p>
         </div>
-
+        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Hasta <strong>1.000 comprobantes</strong>/día</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Hosting e infraestructura en la nube</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Soporte técnico prioritario</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Mantenimiento evolutivo continuo</li>
+        </ul>
       </div>
-    </section>
+    </div>
 
+    <!-- Plan Empresarial -->
+    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Plan Empresarial</h3>
+          <span class="text-[11px] font-semibold bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-full">Ilimitado</span>
+        </div>
+        <div class="mb-6">
+          <div id="empresarialPriceContainer">
+            <span class="price-val text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">₡60,000</span>
+            <span class="price-period text-xs text-slate-500 dark:text-slate-400 font-medium">/ mes</span>
+          </div>
+          <p id="empresarialAnnualDetail" class="hidden text-[11px] font-medium text-emerald-600 dark:text-emerald-400 mt-1">
+            Cobrado anualmente: <strong>₡600,000 / año</strong>
+          </p>
+        </div>
+        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Comprobantes <strong>ilimitados</strong></li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Infraestructura dedicada</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Soporte técnico prioritario</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Mantenimiento evolutivo garantizado</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- VISTA 2: PLANES DE COMPRA DEFINITIVA -->
+  <div id="viewCompra" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+    
+    <!-- Licencia de Código Fuente -->
+    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Licencia Código Fuente</h3>
+          <span class="text-[11px] font-semibold bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-full">Pago Único</span>
+        </div>
+        <div class="mb-6">
+          <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">₡750,000</span>
+          <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ único</span>
+        </div>
+        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Entrega de archivos completos (HTML, JS, CSS, APIs)</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Despliegue e instalación en servidor propio</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Permite adaptaciones internas e integración ERP</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Autonomía técnica sobre la solución</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Compra de Exclusividad Total -->
+    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border-2 border-emerald-500 dark:border-emerald-400 shadow-lg flex flex-col justify-between relative overflow-hidden">
+      <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+        Cesión Total
+      </div>
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Exclusividad Total</h3>
+          <span class="text-[11px] font-semibold bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 px-2.5 py-1 rounded-full">Propiedad Intelectual</span>
+        </div>
+        <div class="mb-6">
+          <span class="text-3xl sm:text-4xl font-extrabold text-emerald-600 dark:text-emerald-400">₡1,800,000</span>
+          <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ único</span>
+        </div>
+        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Cesión total de derechos patrimoniales y de autor</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Garantía de no comercialización a terceros</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Código fuente y documentación técnica completa</li>
+          <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-500"></i> Acompañamiento integral para despliegue privado</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
   </main>
 
   <!-- MODAL PARA VER EL COMPROBANTE -->
