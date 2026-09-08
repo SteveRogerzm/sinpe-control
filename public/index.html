@@ -681,10 +681,16 @@ function toggleFacturadoRecord(id, currentlyFacturado) {
     }
 
     // Lógica del Viewer Modal
+   // Lógica del Viewer Modal corregida
     function openModal(url) {
       if (!url) return;
       modalExternalLink.href = url;
-      if (url.toLowerCase().endsWith('.pdf')) {
+      
+      // Elimina los parámetros de la URL para comprobar la extensión real del archivo
+      const cleanUrl = url.split('?')[0].toLowerCase();
+      const isPdf = cleanUrl.endsWith('.pdf');
+
+      if (isPdf) {
         modalImage.classList.add('hidden');
         modalPdf.classList.remove('hidden');
         modalPdf.src = url;
