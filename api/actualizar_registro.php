@@ -36,8 +36,12 @@ try {
     if (isset($input['comentario'])) {
         $updateData['comentario'] = $input['comentario'];
     }
-    if (array_key_exists('fecha_facturacion', $input)) {
-        $updateData['fecha_facturacion'] = $input['fecha_facturacion']; // Puede ser ISO string o null
+
+    // Manejo seguro de la fecha de facturación en el servidor
+    if (isset($input['facturar'])) {
+        $updateData['fecha_facturacion'] = $input['facturar'] ? gmdate('Y-m-d\TH:i:s\Z') : null;
+    } elseif (array_key_exists('fecha_facturacion', $input)) {
+        $updateData['fecha_facturacion'] = $input['fecha_facturacion'];
     }
 
     if (empty($updateData)) {
