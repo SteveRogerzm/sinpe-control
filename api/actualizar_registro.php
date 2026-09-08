@@ -4,11 +4,11 @@ error_reporting(0);
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/auth_check.php'; 
 
-// verificarAcceso() valida el correo de Google y retorna los datos del usuario autorizado
+// verificarAcceso() valida el correo de Google y retorna el registro completo del usuario
 $usuarioActual = verificarAcceso();
 
-// Si por alguna razón nombre_usuario no viene asignado, usamos un valor por defecto o el email como fallback
-$nombreUsuario = $usuarioActual['nombre_usuario'] ?? $usuarioActual['email'] ?? 'Sistema';
+// Identificador único para guardar en las FKs de trazabilidad
+$idUsuario = $usuarioActual['id'] ?? null; // o $usuarioActual['email'] según tu preferencia de FK
 
 try {
     $rawSupabaseUrl = getenv('SUPABASE_URL');
@@ -62,7 +62,7 @@ try {
         
         if ($input['estado'] === 'Aprobado') {
             $updateData['fecha_aprobacion'] = gmdate('Y-m-d\TH:i:s\Z');
-            $updateData['usuario_aprobacion'] = $nombreUsuario; // <--- Se guarda el nombre_usuario
+            $updateData['usuario_aprobacion'] = $idUsuario; // <--- Guarda el ID o email del usuario
         } else {
             $updateData['fecha_aprobacion'] = null;
             $updateData['usuario_aprobacion'] = null;
@@ -89,7 +89,7 @@ try {
         } else {
             $updateData['fecha_facturacion'] = $input['fecha_facturacion'];
         }
-        $updateData['usuario_facturacion'] = $nombreUsuario; // <--- Se guarda el nombre_usuario
+        $updateData['usuario_facturacion'] = $idUsuario; // <--- Guarda el ID o email del usuario
     } elseif (array_key_exists('facturar', $input) && !$input['facturar']) {
         $updateData['fecha_facturacion'] = null;
         $updateData['usuario_facturacion'] = null;
