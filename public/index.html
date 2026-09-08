@@ -629,12 +629,20 @@
           const createdDateStr = row.created_at ? new Date(row.created_at).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' }) : '-';
           const factDateStr = row.fecha_facturacion ? new Date(row.fecha_facturacion).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' }) : '-';
           let payDateStr = '-';
-          if (row.fecha_transferencia) {
-            const payDateObj = new Date(row.fecha_transferencia.replace(' ', 'T'));
-            payDateStr = isNaN(payDateObj.getTime()) 
-              ? row.fecha_transferencia 
-              : payDateObj.toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' });
-          }
+            if (row.fecha_transferencia) {
+              const str = row.fecha_transferencia.trim();
+              const hasTime = str.includes(':') || str.includes(' ');
+              const dateObj = new Date(str.replace(' ', 'T'));
+            
+              if (!isNaN(dateObj.getTime())) {
+                payDateStr = dateObj.toLocaleString('es-CR', {
+                  dateStyle: 'short',
+                  ...(hasTime && { timeStyle: 'short' })
+                });
+              } else {
+                payDateStr = str;
+              }
+            }  
           tr.innerHTML = `
             <td class="p-3">
               <div class="font-bold text-slate-900 dark:text-white">${row.cliente || 'Desconocido'}</div>
