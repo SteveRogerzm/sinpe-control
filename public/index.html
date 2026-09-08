@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Driver.js CSS y JS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css"/>
-<script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; }
@@ -28,6 +28,9 @@
       
       <div class="flex items-center gap-3" id="authNav">
         <span id="userEmail" class="text-xs font-medium text-slate-600 hidden sm:inline"></span>
+        <button id="cierreBtn" onclick="openCierreModal()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-3 py-1.5 rounded-lg border border-indigo-200 transition-all flex items-center gap-1.5 hidden">
+          <i class="fa-solid fa-calculator text-xs"></i> Cierre
+        </button>
         <button id="startDemoBtn" onclick="iniciarDemoGuiada()" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold px-3 py-1.5 rounded-lg border border-emerald-200 transition-all flex items-center gap-1.5">
           <i class="fa-solid fa-play text-xs"></i> Ver Demo
         </button>
@@ -170,7 +173,7 @@
     </div>
   </main>
 
-  <!-- MODAL PARA VER EL COMPROBANTE EN LA MISMA APP -->
+  <!-- MODAL PARA VER EL COMPROBANTE -->
   <div id="viewerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col">
       <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
@@ -187,6 +190,51 @@
       <div class="p-4 flex-1 overflow-auto bg-slate-100 flex items-center justify-center min-h-[300px]">
         <img id="modalImage" src="" class="max-w-full max-h-[70vh] object-contain rounded-lg shadow-sm hidden">
         <iframe id="modalPdf" src="" class="w-full h-[70vh] rounded-lg hidden border-0"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE CIERRE DIARIO -->
+  <div id="cierreModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+      <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+          <i class="fa-solid fa-calculator text-indigo-600"></i> Cierre de Comprobantes Facturados
+        </h3>
+        <button onclick="closeCierreModal()" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      
+      <div class="p-6 overflow-auto space-y-4">
+        <div class="flex items-center gap-4 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <label class="text-xs font-bold uppercase text-slate-600 whitespace-nowrap">Fecha de Facturación:</label>
+          <input type="date" id="cierreFechaInput" class="text-xs p-2 rounded-lg border border-slate-200 focus:outline-none focus:border-indigo-500 bg-white" onchange="calcularCierre()">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+            <span class="text-[10px] font-bold uppercase text-indigo-400">Total Comprobantes</span>
+            <div id="cierreTotalCount" class="text-xl font-bold text-indigo-900 mt-1">0</div>
+          </div>
+          <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100">
+            <span class="text-[10px] font-bold uppercase text-emerald-400">Monto Facturado</span>
+            <div id="cierreTotalMonto" class="text-xl font-bold text-emerald-600 mt-1">₡0.00</div>
+          </div>
+        </div>
+
+        <div class="border rounded-xl overflow-hidden border-slate-200 max-h-[300px] overflow-y-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead class="bg-slate-100 text-slate-600 uppercase">
+              <tr>
+                <th class="p-3">Cliente / Ref</th>
+                <th class="p-3">Hora Facturación</th>
+                <th class="p-3 text-right">Monto</th>
+              </tr>
+            </thead>
+            <tbody id="cierreTableBody" class="divide-y divide-slate-100"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -213,6 +261,7 @@
     const submitBtn = document.getElementById('submitBtn');
     const alertBox = document.getElementById('alertBox');
     const recordsTable = document.getElementById('recordsTable');
+    const cierreBtn = document.getElementById('cierreBtn');
 
     // Filtros
     const searchFilter = document.getElementById('searchFilter');
@@ -221,11 +270,14 @@
     const createdFilter = document.getElementById('createdFilter');
     const txFilter = document.getElementById('txFilter');
 
-    // Modal
+    // Modal Comprobante
     const viewerModal = document.getElementById('viewerModal');
     const modalImage = document.getElementById('modalImage');
     const modalPdf = document.getElementById('modalPdf');
     const modalExternalLink = document.getElementById('modalExternalLink');
+
+    // Modal Cierre
+    const cierreModal = document.getElementById('cierreModal');
 
     function showAlert(message, type = 'success') {
       alertBox.innerText = message;
@@ -257,12 +309,14 @@
         userEmail.innerText = session.user.email;
         userEmail.classList.remove('hidden');
         logoutBtn.classList.remove('hidden');
+        cierreBtn.classList.remove('hidden');
         loginScreen.classList.add('hidden');
         appScreen.classList.remove('hidden');
         loadRecords();
       } else {
         userEmail.classList.add('hidden');
         logoutBtn.classList.add('hidden');
+        cierreBtn.classList.add('hidden');
         loginScreen.classList.remove('hidden');
         appScreen.classList.add('hidden');
       }
@@ -294,7 +348,6 @@
       }
     });
 
-    // Función para optimizar imágenes en el navegador antes de subir
     async function compressImage(file) {
       if (file.type === 'application/pdf') return file;
       return new Promise((resolve) => {
@@ -315,7 +368,7 @@
                 width = maxDimension;
               } else {
                 width = Math.round((width * maxDimension) / height);
-                maxDimension;
+                height = maxDimension;
               }
             }
 
@@ -423,11 +476,16 @@
         filtered.forEach(row => {
           totalMonto += parseFloat(row.monto || 0);
           const currentStatus = row.estado || 'Pendiente';
+          const isFacturado = !!row.fecha_facturacion;
         
           let statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-100 text-amber-700 font-semibold inline-block">Pendiente</span>`;
           if (currentStatus === 'Aprobado') statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-emerald-100 text-emerald-700 font-semibold inline-block">Aprobado</span>`;
           if (currentStatus === 'Rechazado') statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-red-100 text-red-700 font-semibold inline-block">Rechazado</span>`;
         
+          let facturadoBadge = isFacturado 
+            ? `<span class="px-2 py-0.5 text-[10px] rounded-full bg-indigo-100 text-indigo-700 font-semibold inline-block"><i class="fa-solid fa-file-circle-check mr-1"></i>Facturado</span>` 
+            : '';
+
           const tr = document.createElement('tr');
           tr.className = "hover:bg-slate-50 transition-colors border-b border-slate-100";
           tr.innerHTML = `
@@ -437,7 +495,10 @@
                   <span class="font-bold text-slate-800 text-sm truncate max-w-[200px]" title="${row.cliente || 'Sin nombre'}">
                     ${row.cliente || 'Cliente no identificado'}
                   </span>
-                  ${statusBadge}
+                  <div class="flex items-center gap-1">
+                    ${statusBadge}
+                    ${facturadoBadge}
+                  </div>
                 </div>
                 <div class="font-black text-slate-900 text-base">
                   ₡${Number(row.monto || 0).toLocaleString('es-CR', { minimumFractionDigits: 2 })}
@@ -457,6 +518,7 @@
               <div class="flex flex-col gap-0.5">
                 <div><strong class="text-slate-600">Tx:</strong> ${row.fecha_transferencia || 'N/A'}</div>
                 <div class="text-slate-400"><strong class="text-slate-400">Reg:</strong> ${row.created_at ? row.created_at.substring(0,10) : 'N/A'}</div>
+                ${row.fecha_facturacion ? `<div class="text-indigo-600"><strong class="text-indigo-600">Fact:</strong> ${row.fecha_facturacion.substring(0,10)}</div>` : ''}
               </div>
             </td>
             <td class="p-4 min-w-[180px]">
@@ -465,6 +527,9 @@
                 class="w-full text-xs p-2 border border-slate-200 rounded-lg focus:outline-none focus:border-emerald-500 bg-slate-50/50">
             </td>
             <td class="p-4 text-center whitespace-nowrap space-x-1">
+              <button onclick="toggleFacturado('${row.id}', ${isFacturado})" class="p-2 ${isFacturado ? 'text-indigo-600 bg-indigo-50' : 'text-slate-400 hover:bg-slate-100'} rounded-lg transition-colors" title="${isFacturado ? 'Desmarcar Facturado' : 'Marcar como Facturado'}">
+                <i class="fa-solid fa-file-invoice"></i>
+              </button>
               <button onclick="updateStatus('${row.id}', 'Aprobado')" class="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors" title="Aprobar"><i class="fa-solid fa-check"></i></button>
               <button onclick="updateStatus('${row.id}', 'Rechazado')" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Rechazar"><i class="fa-solid fa-xmark"></i></button>
               ${row.imagen_url ? `<button onclick="openModal('${row.imagen_url}')" class="p-2 text-slate-500 hover:bg-slate-100 rounded-lg inline-block transition-colors" title="Ver Comprobante"><i class="fa-solid fa-eye"></i></button>` : ''}
@@ -480,7 +545,7 @@
       document.getElementById('totalAmount').innerText = `₡${totalMonto.toLocaleString('es-CR', { minimumFractionDigits: 2 })}`;
     }
 
-    // Funciones del Modal
+    // Funciones del Modal Comprobante
     function openModal(url) {
       modalExternalLink.href = url;
       if (url.toLowerCase().endsWith('.pdf')) {
@@ -499,6 +564,76 @@
       viewerModal.classList.add('hidden');
       modalImage.src = '';
       modalPdf.src = '';
+    }
+
+    // Funciones del Cierre
+    function openCierreModal() {
+      const today = new Date().toISOString().substring(0, 10);
+      document.getElementById('cierreFechaInput').value = today;
+      calcularCierre();
+      cierreModal.classList.remove('hidden');
+    }
+
+    function closeCierreModal() {
+      cierreModal.classList.add('hidden');
+    }
+
+    function calcularCierre() {
+      const fechaSeleccionada = document.getElementById('cierreFechaInput').value;
+      const tbody = document.getElementById('cierreTableBody');
+      tbody.innerHTML = '';
+
+      if (!fechaSeleccionada) return;
+
+      const facturados = rawRecordsData.filter(row => row.fecha_facturacion && row.fecha_facturacion.startsWith(fechaSeleccionada));
+
+      let totalMonto = 0;
+      if (facturados.length > 0) {
+        facturados.forEach(row => {
+          totalMonto += parseFloat(row.monto || 0);
+          const hora = row.fecha_facturacion ? new Date(row.fecha_facturacion).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A';
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-50";
+          tr.innerHTML = `
+            <td class="p-3">
+              <div class="font-bold text-slate-800">${row.cliente || 'Sin cliente'}</div>
+              <div class="text-[10px] text-slate-400 font-mono">Ref: ${row.numero_referencia || 'N/A'}</div>
+            </td>
+            <td class="p-3 text-slate-500 font-mono">${hora}</td>
+            <td class="p-3 text-right font-bold text-slate-900">₡${Number(row.monto || 0).toLocaleString('es-CR', { minimumFractionDigits: 2 })}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-slate-400">No hay comprobantes facturados para esta fecha.</td></tr>`;
+      }
+
+      document.getElementById('cierreTotalCount').innerText = facturados.length;
+      document.getElementById('cierreTotalMonto').innerText = `₡${totalMonto.toLocaleString('es-CR', { minimumFractionDigits: 2 })}`;
+    }
+
+    async function toggleFacturado(id, actualFacturado) {
+      if (!currentSession) return;
+      const nuevaFecha = actualFacturado ? null : new Date().toISOString();
+
+      try {
+        const response = await fetch('/api/actualizar_registro', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentSession.access_token}` 
+          },
+          body: JSON.stringify({ id, fecha_facturacion: nuevaFecha })
+        });
+        
+        const result = await response.json();
+        if (!result.success) return showAlert(`⚠️ Error: ${result.error}`, 'error');
+        
+        showAlert(nuevaFecha ? '✅ Comprobante marcado como facturado.' : 'ℹ️ Marca de facturación eliminada.', 'success');
+        loadRecords();
+      } catch (err) {
+        showAlert('⚠️ Error de conexión al actualizar facturación.', 'error');
+      }
     }
 
     async function updateStatus(id, estado) {
@@ -538,6 +673,7 @@
         console.error('Error al guardar comentario:', err);
       }
     }
+
     function iniciarDemoGuiada() {
       const driver = window.driver.js.driver;
     
@@ -574,10 +710,10 @@
             }
           },
           {
-            element: '.grid.grid-cols-1.sm\\:grid-cols-2.gap-4',
+            element: '#cierreBtn',
             popover: {
-              title: '4. Métricas en Tiempo Real',
-              description: 'Monitorea el total acumulado en colones y el volumen general de comprobantes ingresados al instante.',
+              title: '4. Cierre Diario',
+              description: 'Consulta los comprobantes marcados como facturados en la fecha que elijas y revisa los totales acumulados.',
               side: "bottom"
             }
           },
@@ -593,7 +729,7 @@
             element: '#recordsTable',
             popover: {
               title: '6. Histórico y Validación',
-              description: 'Consulta los datos registrados. Puedes aprobar, rechazar o visualizar el comprobante original en pantalla.',
+              description: 'Consulta los datos registrados. Puedes marcar como facturado, aprobar, rechazar o visualizar el comprobante original.',
               side: "top"
             }
           }
@@ -602,6 +738,7 @@
     
       driverObj.drive();
     }
+
     [searchFilter, bankFilter, statusFilter, createdFilter, txFilter].forEach(el => el.addEventListener('input', renderTable));
     document.getElementById('refreshBtn').addEventListener('click', loadRecords);
 
