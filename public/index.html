@@ -610,7 +610,7 @@
         <td class="p-3 align-top text-center">
           <div class="flex items-center justify-center gap-1.5 flex-wrap">
             <!-- Ver Comprobante -->
-            <button onclick="openModal('${row.url_comprobante}')" class="px-2 py-1 text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg transition-colors flex items-center gap-1" title="Ver comprobante">
+            <button onclick="openModal('${row.imagen_url}')" class="px-2 py-1 text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg transition-colors flex items-center gap-1" title="Ver comprobante">
               <i class="fa-solid fa-eye text-[10px]"></i> Ver
             </button>
 
@@ -682,26 +682,19 @@ function toggleFacturadoRecord(id, currentlyFacturado) {
 
     // Lógica del Viewer Modal
    // Lógica del Viewer Modal corregida
-    function openModal(url) {
-      if (!url) return;
+     function openModal(url) {
       modalExternalLink.href = url;
-      
-      // Elimina los parámetros de la URL para comprobar la extensión real del archivo
-      const cleanUrl = url.split('?')[0].toLowerCase();
-      const isPdf = cleanUrl.endsWith('.pdf');
-
-      if (isPdf) {
+      if (url.toLowerCase().endsWith('.pdf')) {
         modalImage.classList.add('hidden');
-        modalPdf.classList.remove('hidden');
         modalPdf.src = url;
+        modalPdf.classList.remove('hidden');
       } else {
         modalPdf.classList.add('hidden');
-        modalImage.classList.remove('hidden');
         modalImage.src = url;
+        modalImage.classList.remove('hidden');
       }
       viewerModal.classList.remove('hidden');
     }
-
     function closeModal() {
       viewerModal.classList.add('hidden');
       modalImage.src = '';
