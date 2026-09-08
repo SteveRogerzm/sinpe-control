@@ -609,11 +609,7 @@
         </td>
         <td class="p-3 align-top text-center">
           <div class="flex items-center justify-center gap-1.5 flex-wrap">
-            <!-- Ver Comprobante -->
-            <button onclick="openModal('${row.imagen_url}')" class="px-2 py-1 text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg transition-colors flex items-center gap-1" title="Ver comprobante">
-              <i class="fa-solid fa-eye text-[10px]"></i> Ver
-            </button>
-
+            
             <!-- Aprobar -->
             <button onclick="updateRecordData('${row.id}', { estado: 'Aprobado' })" class="px-2 py-1 text-xs font-semibold bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900/50 dark:hover:bg-emerald-800 text-emerald-800 dark:text-emerald-200 rounded-lg transition-colors flex items-center gap-1 ${isAprobado ? 'opacity-40 cursor-not-allowed' : ''}" ${isAprobado ? 'disabled' : ''} title="Aprobar">
               <i class="fa-solid fa-check text-[10px]"></i> Aprobar
@@ -630,6 +626,11 @@
               ${!isAprobado ? 'disabled title="Debe estar Aprobado para poder facturar"' : `title="${isFacturado ? 'Desmarcar Facturado' : 'Marcar como Facturado'}"`}>
               <i class="fa-solid ${isFacturado ? 'fa-file-circle-xmark text-red-500' : 'fa-file-invoice'} text-[10px]"></i>
               ${isFacturado ? 'Desmarcar' : 'Facturar'}
+            </button>
+
+            <!-- Ver Comprobante -->
+            <button onclick="openModal('${row.imagen_url}')" class="px-2 py-1 text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg transition-colors flex items-center gap-1" title="Ver comprobante">
+              <i class="fa-solid fa-eye text-[10px]"></i> Ver
             </button>
           </div>
         </td>
