@@ -559,18 +559,9 @@
 
     async function loadRecords() {
       if (!currentSession) return;
-      try {
-        const res = await fetch('/api/obtener_registros', {
-          headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
-        });
-        const data = await res.json();
-        if (data.error) return showAlert(`⚠️ ${data.error}`, 'error');
-
-        rawRecordsData = data || [];
-        populateBankFilter(rawRecordsData);
-        renderTable();
-      } catch (e) {
-        console.error('Error cargando registros:', e);
+      const success = await checkUserPermissions();
+      if (!success) {
+        showAlert('⚠️ No tienes permisos para consultar la información.', 'error');
       }
     }
 
