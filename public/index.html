@@ -604,7 +604,7 @@
             <td class="p-3 align-top max-w-[200px]">
               <input type="text" value="${row.comentario || ''}" 
                 placeholder="Añadir comentario..." 
-                onchange="updateComment('${row.id}', this.value)"
+                onchange="updateRecordData('${row.id}', { comentario: this.value })"
                 class="w-full text-xs p-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-emerald-500" />
             </td>
             <td class="p-3 align-top text-center">
@@ -615,17 +615,17 @@
                 </button>
 
                 <!-- Aprobar -->
-                <button onclick="updateStatus('${row.id}', 'Aprobado')" class="p-1.5 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/40 rounded-lg transition-colors ${isAprobado ? 'opacity-40 cursor-not-allowed' : ''}" ${isAprobado ? 'disabled' : ''} title="Aprobar">
+                <button onclick="updateRecordData('${row.id}', { estado: 'Aprobado' })" class="p-1.5 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/40 rounded-lg transition-colors ${isAprobado ? 'opacity-40 cursor-not-allowed' : ''}" ${isAprobado ? 'disabled' : ''} title="Aprobar">
                   <i class="fa-solid fa-check text-xs"></i>
                 </button>
 
                 <!-- Rechazar -->
-                <button onclick="updateStatus('${row.id}', 'Rechazado')" class="p-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 rounded-lg transition-colors ${currentStatus === 'Rechazado' ? 'opacity-40 cursor-not-allowed' : ''}" ${currentStatus === 'Rechazado' ? 'disabled' : ''} title="Rechazar">
+                <button onclick="updateRecordData('${row.id}', { estado: 'Rechazado' })" class="p-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/40 rounded-lg transition-colors ${currentStatus === 'Rechazado' ? 'opacity-40 cursor-not-allowed' : ''}" ${currentStatus === 'Rechazado' ? 'disabled' : ''} title="Rechazar">
                   <i class="fa-solid fa-xmark text-xs"></i>
                 </button>
 
                 <!-- Facturar -->
-                <button onclick="toggleFacturado('${row.id}', ${isFacturado})" class="p-1.5 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 rounded-lg transition-colors" title="${isFacturado ? 'Desmarcar Facturado' : 'Marcar como Facturado'}">
+                <button onclick="updateRecordData('${row.id}', { fecha_facturacion: ${isFacturado ? 'null' : `'${new Date().toISOString()}'`} })" class="p-1.5 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 rounded-lg transition-colors" title="${isFacturado ? 'Desmarcar Facturado' : 'Marcar como Facturado'}">
                   <i class="fa-solid ${isFacturado ? 'fa-file-circle-xmark text-red-500' : 'fa-file-invoice'} text-xs"></i>
                 </button>
               </div>
@@ -641,8 +641,8 @@
       document.getElementById('totalAmount').innerText = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(totalMonto);
     }
 
-    // Funcionalidades de Estado y Comentarios usando el endpoint /api/actualizar_registro
-    async function updateStatus(id, estado) {
+    // Función unificada para actualizar cualquier campo utilizando /api/actualizar_registro
+    async function updateRecordData(id, payloadData) {
       if (!currentSession) return;
       try {
         const response = await fetch('/api/actualizar_registro', {
@@ -651,69 +651,25 @@
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${currentSession.access_token}` 
           },
-          body: JSON.stringify({ id, estado })
+          body: JSON.stringify({ id, ...payloadData })
         });
         
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
-          throw new Error(`El servidor de actualización devolvió un formato no válido (código ${response.status}). Verifica el endpoint de backend.`);
+          throw new Error(`El servidor devolvió una respuesta no válida (${response.status}).`);
         }
 
         const result = await response.json();
-        if (!result.success) return showAlert(`⚠️ Error: ${result.error}`, 'error');
+        if (!result.success) throw new Error(result.error);
         
-        showAlert(`✅ Estado actualizado a ${estado}`, 'success');
+        if (payloadData.estado) showAlert(`✅ Estado actualizado a ${payloadData.estado}`, 'success');
+        if ('fecha_facturacion' in payloadData) {
+          showAlert(payloadData.fecha_facturacion ? '✅ Comprobante marcado como facturado' : '✅ Comprobante desmarcado como facturado', 'success');
+        }
+        
         loadRecords();
       } catch (err) {
         showAlert(`⚠️ Error al actualizar: ${err.message}`, 'error');
-      }
-    }
-    
-    async function updateComment(id, comentario) {
-      if (!currentSession) return;
-      try {
-        const response = await fetch('/api/actualizar_registro', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentSession.access_token}` 
-          },
-          body: JSON.stringify({ id, comentario })
-        });
-
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          console.error("Respuesta no es JSON:", response.status);
-          return;
-        }
-
-        const result = await response.json();
-        if (!result.success) {
-          console.error('Error al guardar comentario:', result.error);
-        }
-      } catch (err) {
-        console.error('Error al guardar comentario:', err);
-      }
-    }
-
-    async function toggleFacturado(id, currentlyFacturado) {
-      if (!currentSession) return;
-      try {
-        const response = await fetch('/api/actualizar_facturacion', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentSession.access_token}`
-          },
-          body: JSON.stringify({ id, facturado: !currentlyFacturado })
-        });
-        const result = await response.json();
-        if (!result.success) throw new Error(result.error);
-
-        showAlert(currentlyFacturado ? 'Comprobante desmarcado como facturado' : 'Comprobante marcado como facturado', 'success');
-        loadRecords();
-      } catch (e) {
-        showAlert(`Error al actualizar facturación: ${e.message}`, 'error');
       }
     }
 
@@ -783,8 +739,8 @@
         cierreTableBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">No hay comprobantes facturados para esta fecha.</td></tr>`;
       }
 
-      document.getElementById('totalCount').innerText = facturados.length;
-      document.getElementById('totalAmount').innerText = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(totalMonto);
+      document.getElementById('cierreTotalCount').innerText = facturados.length;
+      document.getElementById('cierreTotalMonto').innerText = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(totalMonto);
     }
 
     // Inicializar Auth
