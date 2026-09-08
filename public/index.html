@@ -75,12 +75,8 @@
   </div>
   <!-- App Main Screen -->
   <main id="appScreen" class="hidden max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      
-      <!-- COLUMNA IZQUIERDA: Panel de Carga y Filtros -->
-      <section class="lg:col-span-4 xl:col-span-3 space-y-6">
-        
-        <!-- Panel de Carga -->
+  <div class="flex flex-col-reverse lg:grid lg:grid-cols-12 gap-6">
+    <section class="lg:col-span-4 xl:col-span-3 space-y-6">
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
           <h2 class="text-base font-bold text-slate-900 dark:text-white mb-1">Registrar Comprobante</h2>
           <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Sube la foto del comprobante para procesarla.</p>
@@ -629,20 +625,31 @@
           const createdDateStr = row.created_at ? new Date(row.created_at).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' }) : '-';
           const factDateStr = row.fecha_facturacion ? new Date(row.fecha_facturacion).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' }) : '-';
           let payDateStr = '-';
-            if (row.fecha_transferencia) {
-              const str = row.fecha_transferencia.trim();
-              const hasTime = str.includes(':') || str.includes(' ');
+          if (row.fecha_transferencia) {
+            const str = String(row.fecha_transferencia).trim();
+            // Verifica si la cadena contiene una hora explícita (HH:mm)
+            const hasTime = /\d{1,2}:\d{2}/.test(str);
+          
+            if (hasTime) {
+              // Si trae hora, se parsea normalmente
               const dateObj = new Date(str.replace(' ', 'T'));
-            
-              if (!isNaN(dateObj.getTime())) {
-                payDateStr = dateObj.toLocaleString('es-CR', {
-                  dateStyle: 'short',
-                  ...(hasTime && { timeStyle: 'short' })
-                });
+              payDateStr = !isNaN(dateObj.getTime())
+                ? dateObj.toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' })
+                : str;
+            } else {
+              // Si solo es fecha (YYYY-MM-DD), parseamos dividiendo los componentes para evitar desfases UTC
+              const dateParts = str.split('T')[0].split(' ')[0].split('-');
+              if (dateParts.length === 3) {
+                const [year, month, day] = dateParts;
+                const dateObj = new Date(year, month - 1, day);
+                payDateStr = !isNaN(dateObj.getTime())
+                  ? dateObj.toLocaleDateString('es-CR', { dateStyle: 'short' })
+                  : str;
               } else {
                 payDateStr = str;
               }
-            }  
+            }
+          }
           tr.innerHTML = `
             <td class="p-3">
               <div class="font-bold text-slate-900 dark:text-white">${row.cliente || 'Desconocido'}</div>
