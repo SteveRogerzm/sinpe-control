@@ -3,7 +3,10 @@ ini_set('display_errors', '0');
 error_reporting(0);
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/auth_check.php'; 
-verificarAcceso();
+
+// 1. Obtener los datos del usuario autenticado
+$usuarioActual = verificarAcceso();
+$idUsuario = $usuarioActual['id'] ?? null; // Usa $usuarioActual['email'] si tu FK apunta a email
 
 try {
     $rawSupabaseUrl = getenv('SUPABASE_URL');
@@ -43,7 +46,7 @@ try {
     $cleanBaseUrl = preg_replace('/\/rest\/v1\/?$/', '', rtrim(trim($rawSupabaseUrl), '/'));
     $base64Data   = base64_encode(file_get_contents($tmpPath));
 
-    // 1. Prompt estructurado para Gemini
+    // 2. Prompt estructurado para Gemini
     $promptText = 'Extrae los datos de este comprobante SINPE Móvil de Costa Rica (imagen o PDF). '
         . 'Identifica el banco/entidad financiera de origen (ej: BAC, Banco Nacional, BCR, Davivienda, etc.) como "banco_emisor", '
         . 'y la persona que envía el dinero como "cliente". '
@@ -122,7 +125,7 @@ try {
         throw new Exception("La IA no logró extraer los datos del comprobante.");
     }
 
-    // 2. Subir Archivo a Supabase Storage
+    // 3. Subir Archivo a Supabase Storage
     $storageFileName = time() . '_' . preg_replace('/[^a-zA-Z0-9_\.-]/', '_', $fileName);
     $storageUrl      = $cleanBaseUrl . "/storage/v1/object/comprobantes/" . $storageFileName;
 
@@ -147,7 +150,7 @@ try {
     $publicImageUrl    = $cleanBaseUrl . "/storage/v1/object/public/comprobantes/" . $storageFileName;
     $comentarioInicial = $_POST['comentario'] ?? null;
     
-    // 3. Insertar Registro en BD
+    // 4. Insertar Registro en BD con usuario_creacion
     $dbUrl     = $cleanBaseUrl . "/rest/v1/sinpes";
     $dbPayload = json_encode([
         "numero_referencia"   => (string)$extractedData['numero_referencia'],
@@ -158,7 +161,8 @@ try {
         "telefono_emisor"     => (string)($extractedData['telefono_emisor'] ?? ''),
         "imagen_url"          => $publicImageUrl,
         "estado"              => 'Pendiente',
-        "comentario"          => $comentarioInicial
+        "comentario"          => $comentarioInicial,
+        "usuario_creacion"    => $idUsuario // <--- Asignación del usuario creador
     ]);
 
     $chDb = curl_init($dbUrl);
@@ -187,5 +191,6 @@ try {
     echo json_encode(['success' => true, 'data' => $extractedData, 'imagen_url' => $publicImageUrl]);
 
 } catch (Exception $e) {
+    http_response_code(400);
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
