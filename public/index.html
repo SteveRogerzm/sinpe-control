@@ -628,7 +628,13 @@
           const formattedMonto = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(row.monto || 0);
           const createdDateStr = row.created_at ? new Date(row.created_at).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' }) : '-';
           const factDateStr = row.fecha_facturacion ? new Date(row.fecha_facturacion).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' }) : '-';
-    
+          let payDateStr = '-';
+          if (row.fecha_transferencia) {
+            const payDateObj = new Date(row.fecha_transferencia.replace(' ', 'T'));
+            payDateStr = isNaN(payDateObj.getTime()) 
+              ? row.fecha_transferencia 
+              : payDateObj.toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' });
+          }
           tr.innerHTML = `
             <td class="p-3">
               <div class="font-bold text-slate-900 dark:text-white">${row.cliente || 'Desconocido'}</div>
@@ -643,7 +649,7 @@
               <span class="text-xs text-slate-700 dark:text-slate-300 font-medium">${row.nombre_emisor || 'N/A'}</span>
             </td>
             <td class="p-3 align-top space-y-1 text-[11px]">
-              <div><span class="text-slate-400">Pago:</span> <span class="text-slate-700 dark:text-slate-300">${row.fecha_transferencia || '-'}</span></div>
+              <div><span class="text-slate-400">Pago:</span> <span class="text-slate-700 dark:text-slate-300">${payDateStr}</span></div>
               <div><span class="text-slate-400">Ingr:</span> <span class="text-slate-700 dark:text-slate-300">${createdDateStr}</span></div>
               ${isFacturado ? `<div><span class="text-slate-400">Fact:</span> <span class="text-slate-700 dark:text-slate-300">${factDateStr}</span></div>` : ''}
             </td>
