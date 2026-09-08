@@ -9,7 +9,6 @@ function verificarAcceso() {
         exit;
     }
 
-    // Decodificar el token JWT para extraer el email
     $jwt = $matches[1];
     $tokenParts = explode('.', $jwt);
     if (count($tokenParts) !== 3) {
@@ -26,7 +25,7 @@ function verificarAcceso() {
     $payload = json_decode(base64_decode($payloadBase64), true);
     $email = strtolower($payload['email'] ?? '');
 
-    // Consultar permisos en la tabla usuarios en Supabase
+    // Validar en la tabla usuarios usando solo el correo de Google
     $supabaseUrl = getenv('SUPABASE_URL');
     $supabaseKey = getenv('SUPABASE_SERVICE_ROLE_KEY');
     
@@ -48,10 +47,10 @@ function verificarAcceso() {
 
     if (empty($usuarios) || !isset($usuarios[0])) {
         http_response_code(403);
-        echo json_encode(['error' => "El correo {$email} no tiene permisos para acceder."]);
+        echo json_encode(['error' => "El correo {$email} no tiene permisos de acceso."]);
         exit;
     }
 
-    // Retorna el array del usuario con todos sus flags de permisos
+    // Retorna el registro completo del usuario (incluye nombre_usuario, permisos, etc.)
     return $usuarios[0];
 }
