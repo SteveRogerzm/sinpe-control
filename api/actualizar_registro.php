@@ -7,8 +7,10 @@ require_once __DIR__ . '/auth_check.php';
 // verificarAcceso() valida el correo de Google y retorna el registro completo del usuario
 $usuarioActual = verificarAcceso();
 
-// Identificador único para guardar en las FKs de trazabilidad
-$idUsuario = $usuarioActual['id'] ?? null; // o $usuarioActual['email'] según tu preferencia de FK
+// Garantizar que se tome explícitamente el GUID/UUID único de la tabla usuarios
+$idUsuario = isset($usuarioActual['id']) && !empty($usuarioActual['id']) 
+    ? (string)$usuarioActual['id'] 
+    : null;
 
 try {
     $rawSupabaseUrl = getenv('SUPABASE_URL');
@@ -56,13 +58,13 @@ try {
     $registroActual = $registros[0];
     $updateData = [];
 
-    // 2. MANEJO DE ESTADO, FECHA Y USUARIO DE APROBACIÓN
+    // 2. MANEJO DE ESTADO, FECHA Y USUARIO DE APROBACIÓN (GUID)
     if (isset($input['estado'])) {
         $updateData['estado'] = $input['estado'];
         
         if ($input['estado'] === 'Aprobado') {
             $updateData['fecha_aprobacion'] = gmdate('Y-m-d\TH:i:s\Z');
-            $updateData['usuario_aprobacion'] = $idUsuario; // <--- Guarda el ID o email del usuario
+            $updateData['usuario_aprobacion'] = $idUsuario; // Se envía el GUID (string)
         } else {
             $updateData['fecha_aprobacion'] = null;
             $updateData['usuario_aprobacion'] = null;
@@ -71,7 +73,7 @@ try {
 
     $estadoFinal = $updateData['estado'] ?? $registroActual['estado'];
 
-    // 3. MANEJO DE FACTURACIÓN, FECHA Y USUARIO DE FACTURACIÓN
+    // 3. MANEJO DE FACTURACIÓN, FECHA Y USUARIO DE FACTURACIÓN (GUID)
     $quiereFacturar = false;
     if (isset($input['facturar'])) {
         $quiereFacturar = (bool)$input['facturar'];
@@ -89,7 +91,7 @@ try {
         } else {
             $updateData['fecha_facturacion'] = $input['fecha_facturacion'];
         }
-        $updateData['usuario_facturacion'] = $idUsuario; // <--- Guarda el ID o email del usuario
+        $updateData['usuario_facturacion'] = $idUsuario; // Se envía el GUID (string)
     } elseif (array_key_exists('facturar', $input) && !$input['facturar']) {
         $updateData['fecha_facturacion'] = null;
         $updateData['usuario_facturacion'] = null;
