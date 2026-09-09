@@ -878,9 +878,9 @@ function switchPlanMode(mode) {
           (row.cliente && row.cliente.toLowerCase().includes(search)) ||
           (row.numero_referencia && row.numero_referencia.toLowerCase().includes(search)) ||
           (row.monto && row.monto.toString().includes(search)) ||
-          (row.creado_por_nombre && row.creado_por_nombre.toLowerCase().includes(search)) ||
-          (row.aprobado_por_nombre && row.aprobado_por_nombre.toLowerCase().includes(search)) ||
-          (row.facturado_por_nombre && row.facturado_por_nombre.toLowerCase().includes(search));
+          (row.nombre_creacion && row.nombre_creacion.toLowerCase().includes(search)) ||
+          (row.nombre_aprobacion && row.nombre_aprobacion.toLowerCase().includes(search)) ||
+          (row.nombre_facturacion && row.nombre_facturacion.toLowerCase().includes(search))
         
         const matchesBank = !bank || row.nombre_emisor === bank;
         const matchesStatus = !status || (row.estado || 'Pendiente') === status;
@@ -989,14 +989,14 @@ function switchPlanMode(mode) {
           }
 
           // Bloques de Nombres/Responsables por evento
-          const creadoPor = row.creado_por_nombre 
-            ? `<span class="text-slate-500 font-normal">(${row.creado_por_nombre})</span>` 
+          const creadoPor = row.nombre_creacion 
+            ? `<span class="text-slate-500 font-normal">(${row.nombre_creacion})</span>` 
             : '';
-          const aprobadoPor = row.aprobado_por_nombre 
-            ? `<span class="text-emerald-600 dark:text-emerald-400 font-medium">(${row.aprobado_por_nombre})</span>` 
+          const aprobadoPor = row.nombre_aprobacion 
+            ? `<span class="text-emerald-600 dark:text-emerald-400 font-medium">(${row.nombre_aprobacion})</span>` 
             : '';
-          const facturadoPor = row.facturado_por_nombre 
-            ? `<span class="text-indigo-600 dark:text-indigo-400 font-medium">(${row.facturado_por_nombre})</span>` 
+          const facturadoPor = row.nombre_facturacion 
+            ? `<span class="text-indigo-600 dark:text-indigo-400 font-medium">(${row.nombre_facturacion})</span>` 
             : '';
 
           tr.innerHTML = `
