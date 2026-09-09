@@ -1015,7 +1015,7 @@ function switchPlanMode(mode) {
             <td class="p-3 align-top space-y-1 text-[11px]">
               <div><span class="text-slate-400">Pago:</span> <span class="text-slate-700 dark:text-slate-300 font-medium">${payDateStr}</span></div>
               <div><span class="text-slate-400">Ingr:</span> <span class="text-slate-700 dark:text-slate-300">${createdDateStr}</span> ${creadoPor}</div>
-              ${isAprobado || currentStatus === 'Rechazado' ? `<div><span class="text-slate-400">Gest:</span> ${aprobadoPor}</div>` : ''}
+              ${isAprobado || currentStatus === 'Rechazado' ? `<div><span class="text-slate-400">Aprob:</span> ${aprobadoPor}</div>` : ''}
               ${isFacturado ? `<div><span class="text-slate-400">Fact:</span> <span class="text-slate-700 dark:text-slate-300">${factDateStr}</span> ${facturadoPor}</div>` : ''}
             </td>
             <td class="p-3 align-top max-w-[200px]">
