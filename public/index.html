@@ -17,51 +17,115 @@
   <script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    body { font-family: 'Inter', sans-serif; }
+   /* --- TEMAS CON FONDOS Y TEXTOS PERSONALIZADOS --- */
 
-    /* Mapeo dinámico de Variables de Color y Fondos por Tema */
-html.theme-emerald { 
-  --theme-primary: #059669; 
-  --theme-primary-hover: #047857; 
-  --theme-primary-light: #ecfdf5; 
-  --theme-primary-dark-light: rgba(6, 78, 59, 0.4); 
-  --theme-text: #059669; 
-  --theme-border: #a7f3d0; 
+/* Esmeralda */
+html.theme-emerald {
+  --theme-bg: #ecfdf5;                   /* Fondo general claro */
+  --theme-surface: #ffffff;              /* Fondo de tarjetas/paneles */
+  --theme-text-main: #064e3b;           /* Texto oscuro de alto contraste */
+  --theme-primary: #059669;             /* Color principal/botones */
+  --theme-primary-hover: #047857;
+  --theme-border: #a7f3d0;
 }
-html.theme-blue { 
-  --theme-primary: #2563eb; 
-  --theme-primary-hover: #1d4ed8; 
-  --theme-primary-light: #eff6ff; 
-  --theme-primary-dark-light: rgba(30, 58, 138, 0.4); 
-  --theme-text: #2563eb; 
-  --theme-border: #bfdbfe; 
-}
-html.theme-violet { 
-  --theme-primary: #7c3aed; 
-  --theme-primary-hover: #6d28d9; 
-  --theme-primary-light: #f5f3ff; 
-  --theme-primary-dark-light: rgba(91, 33, 182, 0.4); 
-  --theme-text: #7c3aed; 
-  --theme-border: #ddd6fe; 
-}
-html.theme-amber { 
-  --theme-primary: #d97706; 
-  --theme-primary-hover: #b45309; 
-  --theme-primary-light: #fffbeb; 
-  --theme-primary-dark-light: rgba(120, 53, 15, 0.4); 
-  --theme-text: #d97706; 
-  --theme-border: #fde68a; 
-}
-html.theme-slate { 
-  --theme-primary: #475569; 
-  --theme-primary-hover: #334155; 
-  --theme-primary-light: #f8fafc; 
-  --theme-primary-dark-light: rgba(30, 41, 59, 0.4); 
-  --theme-text: #475569; 
-  --theme-border: #cbd5e1; 
+html.theme-emerald.dark {
+  --theme-bg: #022c22;                   /* Fondo general oscuro temático */
+  --theme-surface: #064e3b;           /* Tarjetas oscuras */
+  --theme-text-main: #ecfdf5;           /* Texto claro de alto contraste */
+  --theme-primary: #10b981;
+  --theme-primary-hover: #059669;
+  --theme-border: #047857;
 }
 
-/* Tarjetas de Selección de Tema con Personalidad e Imagen */
+/* Océano Azul */
+html.theme-blue {
+  --theme-bg: #eff6ff;
+  --theme-surface: #ffffff;
+  --theme-text-main: #1e3a8a;
+  --theme-primary: #2563eb;
+  --theme-primary-hover: #1d4ed8;
+  --theme-border: #bfdbfe;
+}
+html.theme-blue.dark {
+  --theme-bg: #0f172a;
+  --theme-surface: #1e293b;
+  --theme-text-main: #eff6ff;
+  --theme-primary: #3b82f6;
+  --theme-primary-hover: #2563eb;
+  --theme-border: #334155;
+}
+
+/* Cyber Violeta */
+html.theme-violet {
+  --theme-bg: #f5f3ff;
+  --theme-surface: #ffffff;
+  --theme-text-main: #4c1d95;
+  --theme-primary: #7c3aed;
+  --theme-primary-hover: #6d28d9;
+  --theme-border: #ddd6fe;
+}
+html.theme-violet.dark {
+  --theme-bg: #2e1065;
+  --theme-surface: #4c1d95;
+  --theme-text-main: #f5f3ff;
+  --theme-primary: #8b5cf6;
+  --theme-primary-hover: #7c3aed;
+  --theme-border: #5b21b6;
+}
+
+/* Ámbar Atardecer */
+html.theme-amber {
+  --theme-bg: #fffbeb;
+  --theme-surface: #ffffff;
+  --theme-text-main: #78350f;
+  --theme-primary: #d97706;
+  --theme-primary-hover: #b45309;
+  --theme-border: #fde68a;
+}
+html.theme-amber.dark {
+  --theme-bg: #451a03;
+  --theme-surface: #78350f;
+  --theme-text-main: #fffbeb;
+  --theme-primary: #f59e0b;
+  --theme-primary-hover: #d97706;
+  --theme-border: #92400e;
+}
+
+/* Slate Urbano */
+html.theme-slate {
+  --theme-bg: #f8fafc;
+  --theme-surface: #ffffff;
+  --theme-text-main: #0f172a;
+  --theme-primary: #475569;
+  --theme-primary-hover: #334155;
+  --theme-border: #cbd5e1;
+}
+html.theme-slate.dark {
+  --theme-bg: #0f172a;
+  --theme-surface: #1e293b;
+  --theme-text-main: #f8fafc;
+  --theme-primary: #64748b;
+  --theme-primary-hover: #475569;
+  --theme-border: #334155;
+}
+
+/* --- APLICACIÓN GLOBAL DEL FONDO Y TEXTO --- */
+body {
+  background-color: var(--theme-bg) !important;
+  color: var(--theme-text-main) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Clase de utilidad para aplicar el fondo de tarjeta temático */
+.bg-theme-surface {
+  background-color: var(--theme-surface) !important;
+}
+
+.text-theme-main {
+  color: var(--theme-text-main) !important;
+}
+
+/* Tarjetas de Selección en el Modal */
 .theme-card {
   position: relative;
   overflow: hidden;
@@ -76,12 +140,12 @@ html.theme-slate {
   inset: 0;
   background-size: cover;
   background-position: center;
-  opacity: 0.35;
+  opacity: 0.4;
   transition: opacity 0.2s ease, transform 0.3s ease;
 }
 
 .theme-card:hover .theme-card-bg {
-  opacity: 0.5;
+  opacity: 0.6;
   transform: scale(1.05);
 }
 
@@ -94,10 +158,9 @@ html.theme-slate {
   padding: 0.85rem 1rem;
 }
 
-/* Indicador de Tema Seleccionado */
 .theme-card.active-theme {
   border-color: var(--theme-primary);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
 }
     /* Clases de utilidad vinculadas a la paleta active */
     .bg-theme-primary { background-color: var(--theme-primary) !important; }
@@ -529,7 +592,6 @@ html.theme-slate {
           </div>
         </div>
 
-        <!-- Paleta de Colores -->
         <!-- Paleta de Colores y Temas Visuales -->
 <div>
   <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
@@ -869,15 +931,12 @@ html.theme-slate {
     }
     
     /* GESTIÓN DE APARIENCIA, PALETA Y MODO OSCURO */
-    function initTheme() {
-      // Cargar Modo Claro/Oscuro
-      const isDark = localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      setDarkMode(isDark);
-
-      // Cargar Paleta de Color
+   (function initTheme() {
       const savedPalette = localStorage.getItem('theme-palette') || 'emerald';
+      const savedTheme = localStorage.getItem('theme') || 'light';
       setThemePalette(savedPalette);
-    }
+      setDarkMode(savedTheme === 'dark');
+    })();
 
     function setDarkMode(isDark) {
       const html = document.documentElement;
@@ -895,13 +954,20 @@ html.theme-slate {
 
     function setThemePalette(paletteName) {
       const html = document.documentElement;
-      const palettes = ['emerald', 'blue', 'violet', 'amber', 'slate'];
       
-      palettes.forEach(p => html.classList.remove(`theme-${p}`));
+      // Remover temas anteriores
+      html.classList.remove('theme-emerald', 'theme-blue', 'theme-violet', 'theme-amber', 'theme-slate');
+      
+      // Agregar el tema seleccionado
       html.classList.add(`theme-${paletteName}`);
+      
+      // Guardar preferencia
       localStorage.setItem('theme-palette', paletteName);
-
-      updateThemeModalUI();
+      
+      // Actualizar la interfaz del modal
+      if (typeof updateThemeModalUI === 'function') {
+        updateThemeModalUI();
+      }
     }
 
     function openThemeModal() {
@@ -914,111 +980,110 @@ html.theme-slate {
     }
 
     function updateThemeModalUI() {
-  const isDark = document.documentElement.classList.contains('dark');
-  const activePalette = localStorage.getItem('theme-palette') || 'emerald';
+      const isDark = document.documentElement.classList.contains('dark');
+      const activePalette = localStorage.getItem('theme-palette') || 'emerald';
 
-  // Botones Modo Claro / Oscuro
-  const btnLight = document.getElementById('btnModeLight');
-  const btnDark = document.getElementById('btnModeDark');
+      // Botones Modo Claro / Oscuro
+      const btnLight = document.getElementById('btnModeLight');
+      const btnDark = document.getElementById('btnModeDark');
 
-  if (btnLight && btnDark) {
-    if (isDark) {
-      btnDark.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-theme bg-theme-light text-theme-primary transition-all';
-      btnLight.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-theme transition-all';
-    } else {
-      btnLight.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-theme bg-theme-light text-theme-primary transition-all';
-      btnDark.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-theme transition-all';
+      if (btnLight && btnDark) {
+        if (isDark) {
+          btnDark.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-theme bg-theme-light text-theme-primary transition-all';
+          btnLight.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-theme transition-all';
+        } else {
+          btnLight.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-theme bg-theme-light text-theme-primary transition-all';
+          btnDark.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-theme transition-all';
+        }
+      }
+
+      // Actualizar Tarjetas de Tema (Icono y Borde Activo)
+      ['emerald', 'blue', 'violet', 'amber', 'slate'].forEach(p => {
+        const check = document.getElementById(`check-${p}`);
+        const card = document.getElementById(`card-theme-${p}`);
+
+        if (check) {
+          if (p === activePalette) check.classList.remove('hidden');
+          else check.classList.add('hidden');
+        }
+
+        if (card) {
+          if (p === activePalette) {
+            card.classList.add('active-theme');
+          } else {
+            card.classList.remove('active-theme');
+          }
+        }
+      });
     }
-  }
 
-  // Actualizar Tarjetas de Tema (Icono y Borde Activo)
-  ['emerald', 'blue', 'violet', 'amber', 'slate'].forEach(p => {
-    const check = document.getElementById(`check-${p}`);
-    const card = document.getElementById(`card-theme-${p}`);
-
-    if (check) {
-      if (p === activePalette) check.classList.remove('hidden');
-      else check.classList.add('hidden');
-    }
-
-    if (card) {
-      if (p === activePalette) {
-        card.classList.add('active-theme');
+    function toggleBillingCycle() {
+      isAnnual = !isAnnual;
+      const btn = document.getElementById('btnBillingCycle');
+      const dot = document.getElementById('billingCycleDot');
+      
+      if (isAnnual) {
+        btn.classList.remove('bg-slate-300', 'dark:bg-slate-700');
+        btn.classList.add('bg-theme-primary');
+        dot.classList.replace('translate-x-0', 'translate-x-5');
+        
+        updateCardPrice('basicoPriceContainer', 'basicoAnnualDetail', prices.basico.annualEquiv, prices.basico.annualTotal);
+        updateCardPrice('proPriceContainer', 'proAnnualDetail', prices.pro.annualEquiv, prices.pro.annualTotal);
+        updateCardPrice('empresarialPriceContainer', 'empresarialAnnualDetail', prices.empresarial.annualEquiv, prices.empresarial.annualTotal);
       } else {
-        card.classList.remove('active-theme');
+        btn.classList.remove('bg-theme-primary');
+        btn.classList.add('bg-slate-300', 'dark:bg-slate-700');
+        dot.classList.replace('translate-x-5', 'translate-x-0');
+        
+        resetCardPrice('basicoPriceContainer', 'basicoAnnualDetail', prices.basico.monthly);
+        resetCardPrice('proPriceContainer', 'proAnnualDetail', prices.pro.monthly);
+        resetCardPrice('empresarialPriceContainer', 'empresarialAnnualDetail', prices.empresarial.monthly);
       }
     }
-  });
-}
 
-function toggleBillingCycle() {
-  isAnnual = !isAnnual;
-  const btn = document.getElementById('btnBillingCycle');
-  const dot = document.getElementById('billingCycleDot');
-  
-  if (isAnnual) {
-    btn.classList.remove('bg-slate-300', 'dark:bg-slate-700');
-    btn.classList.add('bg-theme-primary');
-    dot.classList.replace('translate-x-0', 'translate-x-5');
-    
-    updateCardPrice('basicoPriceContainer', 'basicoAnnualDetail', prices.basico.annualEquiv, prices.basico.annualTotal);
-    updateCardPrice('proPriceContainer', 'proAnnualDetail', prices.pro.annualEquiv, prices.pro.annualTotal);
-    updateCardPrice('empresarialPriceContainer', 'empresarialAnnualDetail', prices.empresarial.annualEquiv, prices.empresarial.annualTotal);
-  } else {
-    btn.classList.remove('bg-theme-primary');
-    btn.classList.add('bg-slate-300', 'dark:bg-slate-700');
-    dot.classList.replace('translate-x-5', 'translate-x-0');
-    
-    resetCardPrice('basicoPriceContainer', 'basicoAnnualDetail', prices.basico.monthly);
-    resetCardPrice('proPriceContainer', 'proAnnualDetail', prices.pro.monthly);
-    resetCardPrice('empresarialPriceContainer', 'empresarialAnnualDetail', prices.empresarial.monthly);
-  }
-}
+    function updateCardPrice(containerId, detailId, equivPrice, annualTotal) {
+      const container = document.getElementById(containerId);
+      container.querySelector('.price-val').innerText = equivPrice;
+      container.querySelector('.price-period').innerText = '/ mes (equivalente)';
+      
+      const detail = document.getElementById(detailId);
+      detail.querySelector('strong').innerText = `${annualTotal} / año`;
+      detail.classList.remove('hidden');
+    }
 
-function updateCardPrice(containerId, detailId, equivPrice, annualTotal) {
-  const container = document.getElementById(containerId);
-  container.querySelector('.price-val').innerText = equivPrice;
-  container.querySelector('.price-period').innerText = '/ mes (equivalente)';
-  
-  const detail = document.getElementById(detailId);
-  detail.querySelector('strong').innerText = `${annualTotal} / año`;
-  detail.classList.remove('hidden');
-}
+    function resetCardPrice(containerId, detailId, monthlyPrice) {
+      const container = document.getElementById(containerId);
+      container.querySelector('.price-val').innerText = monthlyPrice;
+      container.querySelector('.price-period').innerText = '/ mes';
+      
+      const detail = document.getElementById(detailId);
+      detail.classList.add('hidden');
+    }
 
-function resetCardPrice(containerId, detailId, monthlyPrice) {
-  const container = document.getElementById(containerId);
-  container.querySelector('.price-val').innerText = monthlyPrice;
-  container.querySelector('.price-period').innerText = '/ mes';
-  
-  const detail = document.getElementById(detailId);
-  detail.classList.add('hidden');
-}
-
-function switchPlanMode(mode) {
-  const toggleBilling = document.getElementById('billingCycleToggle');
-  const viewAlquiler = document.getElementById('viewAlquiler');
-  const viewCompra = document.getElementById('viewCompra');
-  
-  const btnAlquiler = document.getElementById('btnAlquiler');
-  const btnCompra = document.getElementById('btnCompra');
-  
-  if (mode === 'alquiler') {
-    viewAlquiler.classList.remove('hidden');
-    viewCompra.classList.add('hidden');
-    toggleBilling.classList.remove('hidden');
-    
-    btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-theme-primary text-slate-900 dark:text-white";
-    btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
-  } else {
-    viewAlquiler.classList.add('hidden');
-    viewCompra.classList.remove('hidden');
-    toggleBilling.classList.add('hidden');
-    
-    btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-theme-primary text-slate-900 dark:text-white";
-    btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
-  }
-}
-    initTheme();
+    function switchPlanMode(mode) {
+      const toggleBilling = document.getElementById('billingCycleToggle');
+      const viewAlquiler = document.getElementById('viewAlquiler');
+      const viewCompra = document.getElementById('viewCompra');
+      
+      const btnAlquiler = document.getElementById('btnAlquiler');
+      const btnCompra = document.getElementById('btnCompra');
+      
+      if (mode === 'alquiler') {
+        viewAlquiler.classList.remove('hidden');
+        viewCompra.classList.add('hidden');
+        toggleBilling.classList.remove('hidden');
+        
+        btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-theme-primary text-slate-900 dark:text-white";
+        btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+      } else {
+        viewAlquiler.classList.add('hidden');
+        viewCompra.classList.remove('hidden');
+        toggleBilling.classList.add('hidden');
+        
+        btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-theme-primary text-slate-900 dark:text-white";
+        btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+      }
+    }
 
     // DOM Elements
     const loginScreen = document.getElementById('loginScreen');
@@ -1303,7 +1368,7 @@ function switchPlanMode(mode) {
           (row.monto && row.monto.toString().includes(search)) ||
           (row.nombre_creacion && row.nombre_creacion.toLowerCase().includes(search)) ||
           (row.nombre_aprobacion && row.nombre_aprobacion.toLowerCase().includes(search)) ||
-          (row.nombre_facturacion && row.nombre_facturacion.toLowerCase().includes(search))
+          (row.nombre_facturacion && row.nombre_facturacion.toLowerCase().includes(search));
         
         const matchesBank = !bank || row.nombre_emisor === bank;
         const matchesStatus = !status || (row.estado || 'Pendiente') === status;
@@ -1315,22 +1380,22 @@ function switchPlanMode(mode) {
       });
       
       const tableHeader = document.querySelector('table thead tr');
-        if (currentUserPermissions.puede_gestionar_acciones) {
-          tableHeader.innerHTML = `
-            <th class="p-3">Detalle del SINPE</th>
-            <th class="p-3">Banco</th>
-            <th class="p-3">Trazabilidad / Fechas</th>
-            <th class="p-3">Comentarios</th>
-            <th class="p-3 text-center">Acciones</th>
-          `;
-        } else {
-          tableHeader.innerHTML = `
-            <th class="p-3">Detalle del SINPE</th>
-            <th class="p-3">Banco</th>
-            <th class="p-3">Trazabilidad / Fechas</th>
-            <th class="p-3">Comentarios</th>
-          `;
-        }
+      if (currentUserPermissions.puede_gestionar_acciones) {
+        tableHeader.innerHTML = `
+          <th class="p-3">Detalle del SINPE</th>
+          <th class="p-3">Banco</th>
+          <th class="p-3">Trazabilidad / Fechas</th>
+          <th class="p-3">Comentarios</th>
+          <th class="p-3 text-center">Acciones</th>
+        `;
+      } else {
+        tableHeader.innerHTML = `
+          <th class="p-3">Detalle del SINPE</th>
+          <th class="p-3">Banco</th>
+          <th class="p-3">Trazabilidad / Fechas</th>
+          <th class="p-3">Comentarios</th>
+        `;
+      }
       recordsTable.innerHTML = '';
       let totalMonto = 0;
       
@@ -1583,100 +1648,70 @@ function switchPlanMode(mode) {
 
     async function loadUsuariosList() {
       const tbody = document.getElementById('usuariosTableBody');
-      tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-400"><i class="fa-solid fa-spinner animate-spin mr-1"></i> Cargando usuarios...</td></tr>';
-
       if (!currentSession) return;
-
       try {
         const response = await fetch('/api/obtener_usuarios', {
           headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
         });
-        const result = await response.json();
+        const resData = await response.json();
+        
+        if (!resData.success) throw new Error(resData.error || 'Error al obtener lista de usuarios.');
 
-        if (!result.success) throw new Error(result.error || 'No se pudieron cargar los usuarios');
+        usuariosCache = resData.data || [];
+        tbody.innerHTML = '';
 
-        usuariosCache = result.data || [];
-        renderUsuariosTable(usuariosCache);
+        if (usuariosCache.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">No hay usuarios registrados.</td></tr>`;
+          return;
+        }
+
+        usuariosCache.forEach(usr => {
+          const perms = [];
+          if (usr.puede_cargar_comprobantes) perms.push('<span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-[10px] font-semibold">Cargar</span>');
+          if (usr.puede_editar_comentarios) perms.push('<span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[10px] font-semibold">Comentar</span>');
+          if (usr.puede_gestionar_acciones) perms.push('<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-semibold">Gestionar</span>');
+
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors border-b border-slate-100 dark:border-slate-700/50";
+          tr.innerHTML = `
+            <td class="p-3">
+              <div class="font-bold text-slate-800 dark:text-slate-200">${usr.nombre || 'Sin nombre'}</div>
+              <div class="text-[11px] text-slate-500 font-mono">${usr.correo}</div>
+            </td>
+            <td class="p-3">
+              <div class="flex flex-wrap gap-1">${perms.length > 0 ? perms.join(' ') : '<span class="text-slate-400 italic">Sin permisos</span>'}</div>
+            </td>
+            <td class="p-3 text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button onclick="editUsuario('${usr.id}')" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold px-2 py-1 rounded transition-colors" title="Editar">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+                <button onclick="deleteUsuario('${usr.id}')" class="text-xs bg-red-100 hover:bg-red-200 dark:bg-red-900/50 dark:hover:bg-red-800 text-red-700 dark:text-red-300 font-semibold px-2 py-1 rounded transition-colors" title="Eliminar">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
       } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500 font-medium">Error: ${err.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500">Error: ${err.message}</td></tr>`;
       }
     }
 
-    function renderUsuariosTable(data) {
-      const tbody = document.getElementById('usuariosTableBody');
-      tbody.innerHTML = '';
-
-      if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-400">No hay usuarios registrados.</td></tr>';
-        return;
-      }
-
-      data.forEach(usr => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 border-b border-slate-100 dark:border-slate-700/50";
-
-        const pCargar = usr.puede_cargar_comprobantes 
-          ? '<span class="px-1.5 py-0.5 text-[9px] rounded font-bold bg-theme-light text-theme-primary">Cargar</span>' 
-          : '';
-        const pComent = usr.puede_editar_comentarios 
-          ? '<span class="px-1.5 py-0.5 text-[9px] rounded font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">Comentarios</span>' 
-          : '';
-        const pAcciones = usr.puede_gestionar_acciones 
-          ? '<span class="px-1.5 py-0.5 text-[9px] rounded font-bold bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300">Acciones</span>' 
-          : '';
-
-        tr.innerHTML = `
-          <td class="p-3">
-            <div class="font-bold text-slate-800 dark:text-slate-100">${usr.nombre_usuario || 'Sin Nombre'}</div>
-            <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">${usr.correo}</div>
-          </td>
-          <td class="p-3">
-            <div class="flex flex-wrap gap-1">
-              ${pCargar} ${pComent} ${pAcciones}
-              ${(!usr.puede_cargar_comprobantes && !usr.puede_editar_comentarios && !usr.puede_gestionar_acciones) ? '<span class="text-slate-400 italic text-[11px]">Sin permisos</span>' : ''}
-            </div>
-          </td>
-          <td class="p-3 text-center">
-            <div class="flex items-center justify-center gap-2">
-              <button onclick="editUsuario('${usr.correo}')" class="p-1.5 text-xs text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors" title="Editar">
-                <i class="fa-solid fa-pen-to-square"></i>
-              </button>
-              <button onclick="deleteUsuario('${usr.correo}')" class="p-1.5 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors" title="Eliminar">
-                <i class="fa-solid fa-trash-can"></i>
-              </button>
-            </div>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function editUsuario(correo) {
-      const usr = usuariosCache.find(u => u.correo === correo);
-      if (!usr) return;
-
-      document.getElementById('usrNombre').value = usr.nombre_usuario || '';
-      document.getElementById('usrCorreo').value = usr.correo || '';
-      document.getElementById('permCargar').checked = !!usr.puede_cargar_comprobantes;
-      document.getElementById('permEditarComentarios').checked = !!usr.puede_editar_comentarios;
-      document.getElementById('permGestionarAcciones').checked = !!usr.puede_gestionar_acciones;
-    }
-
-    async function saveUsuario(event) {
-      event.preventDefault();
+    async function saveUsuario(e) {
+      e.preventDefault();
       if (!currentSession) return;
 
-      const btn = document.getElementById('btnSaveUsuario');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Guardando...`;
+      const nombre = document.getElementById('usrNombre').value;
+      const correo = document.getElementById('usrCorreo').value;
+      const puede_cargar_comprobantes = document.getElementById('permCargar').checked;
+      const puede_editar_comentarios = document.getElementById('permEditarComentarios').checked;
+      const puede_gestionar_acciones = document.getElementById('permGestionarAcciones').checked;
 
-      const payload = {
-        nombre_usuario: document.getElementById('usrNombre').value.trim(),
-        correo: document.getElementById('usrCorreo').value.trim(),
-        puede_cargar_comprobantes: document.getElementById('permCargar').checked,
-        puede_editar_comentarios: document.getElementById('permEditarComentarios').checked,
-        puede_gestionar_acciones: document.getElementById('permGestionarAcciones').checked
-      };
+      const btnSave = document.getElementById('btnSaveUsuario');
+      btnSave.disabled = true;
+      btnSave.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Guardando...`;
 
       try {
         const response = await fetch('/api/guardar_usuario', {
@@ -1685,25 +1720,42 @@ function switchPlanMode(mode) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${currentSession.access_token}`
           },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({
+            nombre,
+            correo,
+            puede_cargar_comprobantes,
+            puede_editar_comentarios,
+            puede_gestionar_acciones
+          })
         });
 
-        const result = await response.json();
-        if (!result.success) throw new Error(result.error || 'No se pudo guardar el usuario');
+        const resData = await response.json();
+        if (!resData.success) throw new Error(resData.error || 'No se pudo guardar el usuario.');
 
-        showAlert(`✅ Usuario ${payload.nombre_usuario} guardado correctamente.`, 'success');
+        showAlert('✅ Usuario guardado con éxito.', 'success');
         resetUsuarioForm();
         loadUsuariosList();
       } catch (err) {
         showAlert(`⚠️ Error al guardar usuario: ${err.message}`, 'error');
       } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar Usuario`;
+        btnSave.disabled = false;
+        btnSave.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar Usuario`;
       }
     }
 
-    async function deleteUsuario(correo) {
-      if (!confirm(`¿Estás seguro de eliminar el acceso para el correo ${correo}?`)) return;
+    function editUsuario(id) {
+      const usr = usuariosCache.find(u => u.id === id);
+      if (!usr) return;
+
+      document.getElementById('usrNombre').value = usr.nombre || '';
+      document.getElementById('usrCorreo').value = usr.correo || '';
+      document.getElementById('permCargar').checked = !!usr.puede_cargar_comprobantes;
+      document.getElementById('permEditarComentarios').checked = !!usr.puede_editar_comentarios;
+      document.getElementById('permGestionarAcciones').checked = !!usr.puede_gestionar_acciones;
+    }
+
+    async function deleteUsuario(id) {
+      if (!confirm('¿Estás seguro de que deseas eliminar este usuario?')) return;
       if (!currentSession) return;
 
       try {
@@ -1713,19 +1765,20 @@ function switchPlanMode(mode) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${currentSession.access_token}`
           },
-          body: JSON.stringify({ correo })
+          body: JSON.stringify({ id })
         });
 
-        const result = await response.json();
-        if (!result.success) throw new Error(result.error || 'No se pudo eliminar el usuario');
+        const resData = await response.json();
+        if (!resData.success) throw new Error(resData.error || 'No se pudo eliminar el usuario.');
 
-        showAlert(`✅ Usuario ${correo} eliminado correctamente.`, 'success');
+        showAlert('✅ Usuario eliminado con éxito.', 'success');
         loadUsuariosList();
       } catch (err) {
-        showAlert(`⚠️ Error al eliminar usuario: ${err.message}`, 'error');
+        showAlert(`⚠️ Error al eliminar: ${err.message}`, 'error');
       }
     }
 
+    // Inicializar autenticación al cargar
     initAuth();
   </script>
 </body>
