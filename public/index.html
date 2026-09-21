@@ -17,162 +17,185 @@
   <script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-   /* --- TEMAS CON FONDOS Y TEXTOS PERSONALIZADOS --- */
 
-/* Esmeralda */
-html.theme-emerald {
-  --theme-bg: #ecfdf5;                   /* Fondo general claro */
-  --theme-surface: #ffffff;              /* Fondo de tarjetas/paneles */
-  --theme-text-main: #064e3b;           /* Texto oscuro de alto contraste */
-  --theme-primary: #059669;             /* Color principal/botones */
-  --theme-primary-hover: #047857;
-  --theme-border: #a7f3d0;
-}
-html.theme-emerald.dark {
-  --theme-bg: #022c22;                   /* Fondo general oscuro temático */
-  --theme-surface: #064e3b;           /* Tarjetas oscuras */
-  --theme-text-main: #ecfdf5;           /* Texto claro de alto contraste */
-  --theme-primary: #10b981;
-  --theme-primary-hover: #059669;
-  --theme-border: #047857;
-}
+    /* --- TEMAS CON FONDOS Y TEXTOS PERSONALIZADOS --- */
 
-/* Océano Azul */
-html.theme-blue {
-  --theme-bg: #eff6ff;
-  --theme-surface: #ffffff;
-  --theme-text-main: #1e3a8a;
-  --theme-primary: #2563eb;
-  --theme-primary-hover: #1d4ed8;
-  --theme-border: #bfdbfe;
-}
-html.theme-blue.dark {
-  --theme-bg: #0f172a;
-  --theme-surface: #1e293b;
-  --theme-text-main: #eff6ff;
-  --theme-primary: #3b82f6;
-  --theme-primary-hover: #2563eb;
-  --theme-border: #334155;
-}
+    /* Esmeralda */
+    html.theme-emerald {
+      --theme-bg: #ecfdf5;                   /* Fondo general claro */
+      --theme-surface: #ffffff;              /* Fondo de tarjetas/paneles */
+      --theme-text-main: #064e3b;           /* Texto oscuro de alto contraste */
+      --theme-primary: #059669;             /* Color principal/botones */
+      --theme-primary-hover: #047857;
+      --theme-primary-light: #d1fae5;
+      --theme-primary-dark-light: #064e3b;
+      --theme-border: #a7f3d0;
+    }
+    html.theme-emerald.dark {
+      --theme-bg: #022c22;                   /* Fondo general oscuro temático */
+      --theme-surface: #064e3b;              /* Tarjetas oscuras */
+      --theme-text-main: #ecfdf5;           /* Texto claro de alto contraste */
+      --theme-primary: #10b981;
+      --theme-primary-hover: #059669;
+      --theme-primary-light: #065f46;
+      --theme-primary-dark-light: #064e3b;
+      --theme-border: #047857;
+    }
 
-/* Cyber Violeta */
-html.theme-violet {
-  --theme-bg: #f5f3ff;
-  --theme-surface: #ffffff;
-  --theme-text-main: #4c1d95;
-  --theme-primary: #7c3aed;
-  --theme-primary-hover: #6d28d9;
-  --theme-border: #ddd6fe;
-}
-html.theme-violet.dark {
-  --theme-bg: #2e1065;
-  --theme-surface: #4c1d95;
-  --theme-text-main: #f5f3ff;
-  --theme-primary: #8b5cf6;
-  --theme-primary-hover: #7c3aed;
-  --theme-border: #5b21b6;
-}
+    /* Océano Azul */
+    html.theme-blue {
+      --theme-bg: #eff6ff;
+      --theme-surface: #ffffff;
+      --theme-text-main: #1e3a8a;
+      --theme-primary: #2563eb;
+      --theme-primary-hover: #1d4ed8;
+      --theme-primary-light: #dbeafe;
+      --theme-primary-dark-light: #1e3a8a;
+      --theme-border: #bfdbfe;
+    }
+    html.theme-blue.dark {
+      --theme-bg: #0f172a;
+      --theme-surface: #1e293b;
+      --theme-text-main: #eff6ff;
+      --theme-primary: #3b82f6;
+      --theme-primary-hover: #2563eb;
+      --theme-primary-light: #1e3a8a;
+      --theme-primary-dark-light: #0f172a;
+      --theme-border: #334155;
+    }
 
-/* Ámbar Atardecer */
-html.theme-amber {
-  --theme-bg: #fffbeb;
-  --theme-surface: #ffffff;
-  --theme-text-main: #78350f;
-  --theme-primary: #d97706;
-  --theme-primary-hover: #b45309;
-  --theme-border: #fde68a;
-}
-html.theme-amber.dark {
-  --theme-bg: #451a03;
-  --theme-surface: #78350f;
-  --theme-text-main: #fffbeb;
-  --theme-primary: #f59e0b;
-  --theme-primary-hover: #d97706;
-  --theme-border: #92400e;
-}
+    /* Cyber Violeta */
+    html.theme-violet {
+      --theme-bg: #f5f3ff;
+      --theme-surface: #ffffff;
+      --theme-text-main: #4c1d95;
+      --theme-primary: #7c3aed;
+      --theme-primary-hover: #6d28d9;
+      --theme-primary-light: #ede9fe;
+      --theme-primary-dark-light: #4c1d95;
+      --theme-border: #ddd6fe;
+    }
+    html.theme-violet.dark {
+      --theme-bg: #2e1065;
+      --theme-surface: #4c1d95;
+      --theme-text-main: #f5f3ff;
+      --theme-primary: #8b5cf6;
+      --theme-primary-hover: #7c3aed;
+      --theme-primary-light: #5b21b6;
+      --theme-primary-dark-light: #2e1065;
+      --theme-border: #5b21b6;
+    }
 
-/* Slate Urbano */
-html.theme-slate {
-  --theme-bg: #f8fafc;
-  --theme-surface: #ffffff;
-  --theme-text-main: #0f172a;
-  --theme-primary: #475569;
-  --theme-primary-hover: #334155;
-  --theme-border: #cbd5e1;
-}
-html.theme-slate.dark {
-  --theme-bg: #0f172a;
-  --theme-surface: #1e293b;
-  --theme-text-main: #f8fafc;
-  --theme-primary: #64748b;
-  --theme-primary-hover: #475569;
-  --theme-border: #334155;
-}
+    /* Ámbar Atardecer */
+    html.theme-amber {
+      --theme-bg: #fffbeb;
+      --theme-surface: #ffffff;
+      --theme-text-main: #78350f;
+      --theme-primary: #d97706;
+      --theme-primary-hover: #b45309;
+      --theme-primary-light: #fef3c7;
+      --theme-primary-dark-light: #78350f;
+      --theme-border: #fde68a;
+    }
+    html.theme-amber.dark {
+      --theme-bg: #451a03;
+      --theme-surface: #78350f;
+      --theme-text-main: #fffbeb;
+      --theme-primary: #f59e0b;
+      --theme-primary-hover: #d97706;
+      --theme-primary-light: #92400e;
+      --theme-primary-dark-light: #451a03;
+      --theme-border: #92400e;
+    }
 
-/* --- APLICACIÓN GLOBAL DEL FONDO Y TEXTO --- */
-body {
-  background-color: var(--theme-bg) !important;
-  color: var(--theme-text-main) !important;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
+    /* Slate Urbano */
+    html.theme-slate {
+      --theme-bg: #f8fafc;
+      --theme-surface: #ffffff;
+      --theme-text-main: #0f172a;
+      --theme-primary: #475569;
+      --theme-primary-hover: #334155;
+      --theme-primary-light: #f1f5f9;
+      --theme-primary-dark-light: #1e293b;
+      --theme-border: #cbd5e1;
+    }
+    html.theme-slate.dark {
+      --theme-bg: #0f172a;
+      --theme-surface: #1e293b;
+      --theme-text-main: #f8fafc;
+      --theme-primary: #64748b;
+      --theme-primary-hover: #475569;
+      --theme-primary-light: #334155;
+      --theme-primary-dark-light: #0f172a;
+      --theme-border: #334155;
+    }
 
-/* Clase de utilidad para aplicar el fondo de tarjeta temático */
-.bg-theme-surface {
-  background-color: var(--theme-surface) !important;
-}
+    /* --- APLICACIÓN GLOBAL DEL FONDO Y TEXTO --- */
+    body {
+      background-color: var(--theme-bg) !important;
+      color: var(--theme-text-main) !important;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      font-family: 'Inter', sans-serif;
+    }
 
-.text-theme-main {
-  color: var(--theme-text-main) !important;
-}
+    /* Clase de utilidad para aplicar el fondo de tarjeta temático */
+    .bg-theme-surface {
+      background-color: var(--theme-surface) !important;
+    }
 
-/* Tarjetas de Selección en el Modal */
-.theme-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 0.75rem;
-  border: 2px solid transparent;
-  transition: all 0.2s ease-in-out;
-  cursor: pointer;
-}
+    .text-theme-main {
+      color: var(--theme-text-main) !important;
+    }
 
-.theme-card-bg {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  opacity: 0.4;
-  transition: opacity 0.2s ease, transform 0.3s ease;
-}
+    /* Tarjetas de Selección en el Modal */
+    .theme-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 0.75rem;
+      border: 2px solid transparent;
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+    }
 
-.theme-card:hover .theme-card-bg {
-  opacity: 0.6;
-  transform: scale(1.05);
-}
+    .theme-card-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: 0.4;
+      transition: opacity 0.2s ease, transform 0.3s ease;
+    }
 
-.theme-card-overlay {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.85rem 1rem;
-}
+    .theme-card:hover .theme-card-bg {
+      opacity: 0.6;
+      transform: scale(1.05);
+    }
 
-.theme-card.active-theme {
-  border-color: var(--theme-primary);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
-}
-    /* Clases de utilidad vinculadas a la paleta active */
+    .theme-card-overlay {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1rem;
+    }
+
+    .theme-card.active-theme {
+      border-color: var(--theme-primary);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Clases de utilidad vinculadas a la paleta activa */
     .bg-theme-primary { background-color: var(--theme-primary) !important; }
     .hover\:bg-theme-primary-hover:hover { background-color: var(--theme-primary-hover) !important; }
-    .text-theme-primary { color: var(--theme-text) !important; }
+    .text-theme-primary { color: var(--theme-primary) !important; }
     .bg-theme-light { background-color: var(--theme-primary-light) !important; }
     .dark .bg-theme-light { background-color: var(--theme-primary-dark-light) !important; }
     .border-theme { border-color: var(--theme-border) !important; }
     .focus\:border-theme:focus { border-color: var(--theme-primary) !important; }
   </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200">
+<body class="min-h-screen transition-colors duration-200">
 
 <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-40 transition-colors">
   <div class="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2 overflow-hidden">
@@ -593,89 +616,89 @@ body {
         </div>
 
         <!-- Paleta de Colores y Temas Visuales -->
-<div>
-  <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
-    Selecciona una Personalidad / Tema
-  </label>
-  <div class="grid grid-cols-1 gap-3">
-    
-    <!-- Tema Esmeralda -->
-    <div onclick="setThemePalette('emerald')" id="card-theme-emerald" class="theme-card bg-emerald-900/90 text-white">
-      <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=600&q=80');"></div>
-      <div class="theme-card-overlay">
-        <div class="flex items-center gap-3">
-          <span class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-white shadow-sm shrink-0"></span>
-          <div>
-            <p class="text-xs font-bold text-white drop-shadow">Esmeralda Eco</p>
-            <p class="text-[10px] text-emerald-200">Naturaleza y frescura</p>
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
+            Selecciona una Personalidad / Tema
+          </label>
+          <div class="grid grid-cols-1 gap-3">
+            
+            <!-- Tema Esmeralda -->
+            <div onclick="setThemePalette('emerald')" id="card-theme-emerald" class="theme-card bg-emerald-900/90 text-white">
+              <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=600&q=80');"></div>
+              <div class="theme-card-overlay">
+                <div class="flex items-center gap-3">
+                  <span class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-white shadow-sm shrink-0"></span>
+                  <div>
+                    <p class="text-xs font-bold text-white drop-shadow">Esmeralda Eco</p>
+                    <p class="text-[10px] text-emerald-200">Naturaleza y frescura</p>
+                  </div>
+                </div>
+                <i id="check-emerald" class="fa-solid fa-circle-check text-emerald-400 text-lg hidden"></i>
+              </div>
+            </div>
+
+            <!-- Tema Océano Azul -->
+            <div onclick="setThemePalette('blue')" id="card-theme-blue" class="theme-card bg-blue-950/90 text-white">
+              <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80');"></div>
+              <div class="theme-card-overlay">
+                <div class="flex items-center gap-3">
+                  <span class="w-6 h-6 rounded-full bg-blue-500 border-2 border-white shadow-sm shrink-0"></span>
+                  <div>
+                    <p class="text-xs font-bold text-white drop-shadow">Océano Profundo</p>
+                    <p class="text-[10px] text-blue-200">Corporativo y tecnológico</p>
+                  </div>
+                </div>
+                <i id="check-blue" class="fa-solid fa-circle-check text-blue-400 text-lg hidden"></i>
+              </div>
+            </div>
+
+            <!-- Tema Violeta Moderno -->
+            <div onclick="setThemePalette('violet')" id="card-theme-violet" class="theme-card bg-purple-950/90 text-white">
+              <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=600&q=80');"></div>
+              <div class="theme-card-overlay">
+                <div class="flex items-center gap-3">
+                  <span class="w-6 h-6 rounded-full bg-violet-500 border-2 border-white shadow-sm shrink-0"></span>
+                  <div>
+                    <p class="text-xs font-bold text-white drop-shadow">Cyber Violeta</p>
+                    <p class="text-[10px] text-violet-200">Creativo y moderno</p>
+                  </div>
+                </div>
+                <i id="check-violet" class="fa-solid fa-circle-check text-violet-400 text-lg hidden"></i>
+              </div>
+            </div>
+
+            <!-- Tema Ámbar Cálido -->
+            <div onclick="setThemePalette('amber')" id="card-theme-amber" class="theme-card bg-amber-950/90 text-white">
+              <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&q=80');"></div>
+              <div class="theme-card-overlay">
+                <div class="flex items-center gap-3">
+                  <span class="w-6 h-6 rounded-full bg-amber-500 border-2 border-white shadow-sm shrink-0"></span>
+                  <div>
+                    <p class="text-xs font-bold text-white drop-shadow">Ámbar Atardecer</p>
+                    <p class="text-[10px] text-amber-200">Cálido y dinámico</p>
+                  </div>
+                </div>
+                <i id="check-amber" class="fa-solid fa-circle-check text-amber-400 text-lg hidden"></i>
+              </div>
+            </div>
+
+            <!-- Tema Slate Clásico -->
+            <div onclick="setThemePalette('slate')" id="card-theme-slate" class="theme-card bg-slate-900/90 text-white">
+              <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80');"></div>
+              <div class="theme-card-overlay">
+                <div class="flex items-center gap-3">
+                  <span class="w-6 h-6 rounded-full bg-slate-400 border-2 border-white shadow-sm shrink-0"></span>
+                  <div>
+                    <p class="text-xs font-bold text-white drop-shadow">Slate Urbano</p>
+                    <p class="text-[10px] text-slate-300">Elegante y neutro</p>
+                  </div>
+                </div>
+                <i id="check-slate" class="fa-solid fa-circle-check text-slate-300 text-lg hidden"></i>
+              </div>
+            </div>
+
           </div>
         </div>
-        <i id="check-emerald" class="fa-solid fa-circle-check text-emerald-400 text-lg hidden"></i>
-      </div>
-    </div>
-
-    <!-- Tema Océano Azul -->
-    <div onclick="setThemePalette('blue')" id="card-theme-blue" class="theme-card bg-blue-950/90 text-white">
-      <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80');"></div>
-      <div class="theme-card-overlay">
-        <div class="flex items-center gap-3">
-          <span class="w-6 h-6 rounded-full bg-blue-500 border-2 border-white shadow-sm shrink-0"></span>
-          <div>
-            <p class="text-xs font-bold text-white drop-shadow">Océano Profundo</p>
-            <p class="text-[10px] text-blue-200">Corporativo y tecnológico</p>
-          </div>
-        </div>
-        <i id="check-blue" class="fa-solid fa-circle-check text-blue-400 text-lg hidden"></i>
-      </div>
-    </div>
-
-    <!-- Tema Violeta Moderno -->
-    <div onclick="setThemePalette('violet')" id="card-theme-violet" class="theme-card bg-purple-950/90 text-white">
-      <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=600&q=80');"></div>
-      <div class="theme-card-overlay">
-        <div class="flex items-center gap-3">
-          <span class="w-6 h-6 rounded-full bg-violet-500 border-2 border-white shadow-sm shrink-0"></span>
-          <div>
-            <p class="text-xs font-bold text-white drop-shadow">Cyber Violeta</p>
-            <p class="text-[10px] text-violet-200">Creativo y moderno</p>
-          </div>
-        </div>
-        <i id="check-violet" class="fa-solid fa-circle-check text-violet-400 text-lg hidden"></i>
-      </div>
-    </div>
-
-    <!-- Tema Ámbar Cálido -->
-    <div onclick="setThemePalette('amber')" id="card-theme-amber" class="theme-card bg-amber-950/90 text-white">
-      <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&q=80');"></div>
-      <div class="theme-card-overlay">
-        <div class="flex items-center gap-3">
-          <span class="w-6 h-6 rounded-full bg-amber-500 border-2 border-white shadow-sm shrink-0"></span>
-          <div>
-            <p class="text-xs font-bold text-white drop-shadow">Ámbar Atardecer</p>
-            <p class="text-[10px] text-amber-200">Cálido y dinámico</p>
-          </div>
-        </div>
-        <i id="check-amber" class="fa-solid fa-circle-check text-amber-400 text-lg hidden"></i>
-      </div>
-    </div>
-
-    <!-- Tema Slate Clásico -->
-    <div onclick="setThemePalette('slate')" id="card-theme-slate" class="theme-card bg-slate-900/90 text-white">
-      <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80');"></div>
-      <div class="theme-card-overlay">
-        <div class="flex items-center gap-3">
-          <span class="w-6 h-6 rounded-full bg-slate-400 border-2 border-white shadow-sm shrink-0"></span>
-          <div>
-            <p class="text-xs font-bold text-white drop-shadow">Slate Urbano</p>
-            <p class="text-[10px] text-slate-300">Elegante y neutro</p>
-          </div>
-        </div>
-        <i id="check-slate" class="fa-solid fa-circle-check text-slate-300 text-lg hidden"></i>
-      </div>
-    </div>
-
-  </div>
-</div>
       </div>
     </div>
   </div>
@@ -859,6 +882,7 @@ body {
       puede_editar_comentarios: true,
       puede_gestionar_acciones: true
     };
+
     const prices = {
       basico: { monthly: "₡20,000", annualEquiv: "₡16,667", annualTotal: "₡200,000" },
       pro: { monthly: "₡35,000", annualEquiv: "₡29,167", annualTotal: "₡350,000" },
@@ -931,11 +955,12 @@ body {
     }
     
     /* GESTIÓN DE APARIENCIA, PALETA Y MODO OSCURO */
-   (function initTheme() {
-      const savedPalette = localStorage.getItem('theme-palette') || 'emerald';
+    (function initTheme() {
       const savedTheme = localStorage.getItem('theme') || 'light';
-      setThemePalette(savedPalette);
       setDarkMode(savedTheme === 'dark');
+
+      const savedPalette = localStorage.getItem('theme-palette') || 'emerald';
+      setThemePalette(savedPalette);
     })();
 
     function setDarkMode(isDark) {
@@ -1295,52 +1320,77 @@ body {
 
     uploadForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const rawFile = fileInput.files[0];
-      if (!rawFile) return showAlert('Selecciona un archivo primero.', 'error');
-      if (!currentSession) return showAlert('Debes iniciar sesión.', 'error');
+      if (!currentUserPermissions.puede_cargar_comprobantes) {
+        alert("No tienes permiso para cargar comprobantes.");
+        return;
+      }
+      const file = fileInput.files[0];
+      if (!file) {
+        showAlert('Selecciona un archivo primero', 'error');
+        return;
+      }
 
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Procesando...`;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
 
       try {
-        const compressedFile = await compressImage(rawFile);
+        const fileToUpload = await compressImage(file);
         const formData = new FormData();
-        formData.append('comprobante', compressedFile);
+        formData.append('comprobante', fileToUpload);
         formData.append('comentario', document.getElementById('initialComment').value);
 
-        const response = await fetch('/api/procesar', { 
-          method: 'POST', 
+        const res = await fetch('/api/procesar_comprobante', {
+          method: 'POST',
           headers: { 'Authorization': `Bearer ${currentSession.access_token}` },
-          body: formData 
+          body: formData
         });
 
-        const result = await response.json();
-        if (!result.success) throw new Error(result.error);
-
-        showAlert(`✅ Comprobante Ref: ${result.data.numero_referencia} procesado.`, 'success');
-        uploadForm.reset();
-        document.getElementById('previewContainer').classList.add('hidden');
-        loadRecords();
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showAlert('¡Comprobante procesado exitosamente!');
+          uploadForm.reset();
+          document.getElementById('previewContainer').classList.add('hidden');
+          loadRecords();
+        } else {
+          showAlert(data.error || 'Error al procesar el comprobante', 'error');
+        }
       } catch (err) {
-        showAlert(`⚠️ Error: ${err.message}`, 'error');
+        showAlert('Error en la solicitud: ' + err.message, 'error');
       } finally {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = `<i class="fa-solid fa-bolt"></i> <span>Procesar SINPE</span>`;
+        submitBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> <span>Procesar SINPE</span>';
       }
     });
 
     async function loadRecords() {
       if (!currentSession) return;
-      const success = await checkUserPermissions();
-      if (!success) {
-        showAlert('⚠️ No tienes permisos para consultar la información.', 'error');
+      try {
+        const res = await fetch('/api/obtener_registros', {
+          headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+        });
+        const resData = await res.json();
+        if (res.ok) {
+          if (resData.permisos) currentUserPermissions = resData.permisos;
+          rawRecordsData = resData.data || [];
+          populateBankFilter(rawRecordsData);
+          renderTable();
+        }
+      } catch (e) {
+        console.error('Error al cargar registros:', e);
       }
     }
 
     function populateBankFilter(data) {
-      const banks = [...new Set(data.map(d => d.nombre_emisor).filter(Boolean))];
+      const banks = [...new Set(data.map(item => item.banco_emisor).filter(Boolean))];
+      const currentVal = bankFilter.value;
       bankFilter.innerHTML = '<option value="">Todos los Bancos</option>';
-      banks.forEach(b => bankFilter.innerHTML += `<option value="${b}">${b}</option>`);
+      banks.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b;
+        opt.textContent = b;
+        bankFilter.appendChild(opt);
+      });
+      bankFilter.value = currentVal;
     }
 
     function resetFilters() {
@@ -1353,227 +1403,138 @@ body {
       renderTable();
     }
 
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const d = new Date(dateStr);
+      return d.toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' });
+    }
+
+    function formatOnlyDate(dateStr) {
+      if (!dateStr) return '-';
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('es-CR');
+    }
+
     function renderTable() {
-      const search = searchFilter.value.toLowerCase();
+      const search = searchFilter.value.toLowerCase().trim();
       const bank = bankFilter.value;
       const status = statusFilter.value;
       const created = createdFilter.value;
-      const txDate = txFilter.value;
-      const factDate = factFilter.value;
-      
-      const filtered = rawRecordsData.filter(row => {
-        const matchesSearch = !search || 
-          (row.cliente && row.cliente.toLowerCase().includes(search)) ||
-          (row.numero_referencia && row.numero_referencia.toLowerCase().includes(search)) ||
-          (row.monto && row.monto.toString().includes(search)) ||
-          (row.nombre_creacion && row.nombre_creacion.toLowerCase().includes(search)) ||
-          (row.nombre_aprobacion && row.nombre_aprobacion.toLowerCase().includes(search)) ||
-          (row.nombre_facturacion && row.nombre_facturacion.toLowerCase().includes(search));
-        
-        const matchesBank = !bank || row.nombre_emisor === bank;
-        const matchesStatus = !status || (row.estado || 'Pendiente') === status;
-        const matchesCreated = !created || (row.created_at && row.created_at.startsWith(created));
-        const matchesTx = !txDate || (row.fecha_transferencia && row.fecha_transferencia.includes(txDate));
-        const matchesFact = !factDate || (row.fecha_facturacion && row.fecha_facturacion.startsWith(factDate));
-        
-        return matchesSearch && matchesBank && matchesStatus && matchesCreated && matchesTx && matchesFact;
-      });
-      
-      const tableHeader = document.querySelector('table thead tr');
-      if (currentUserPermissions.puede_gestionar_acciones) {
-        tableHeader.innerHTML = `
-          <th class="p-3">Detalle del SINPE</th>
-          <th class="p-3">Banco</th>
-          <th class="p-3">Trazabilidad / Fechas</th>
-          <th class="p-3">Comentarios</th>
-          <th class="p-3 text-center">Acciones</th>
-        `;
-      } else {
-        tableHeader.innerHTML = `
-          <th class="p-3">Detalle del SINPE</th>
-          <th class="p-3">Banco</th>
-          <th class="p-3">Trazabilidad / Fechas</th>
-          <th class="p-3">Comentarios</th>
-        `;
-      }
-      recordsTable.innerHTML = '';
+      const tx = txFilter.value;
+      const fact = factFilter.value;
+
       let totalMonto = 0;
-      
-      if (filtered.length > 0) {
-        filtered.forEach(row => {
-          totalMonto += parseFloat(row.monto || 0);
-          const currentStatus = row.estado || 'Pendiente';
-          const isFacturado = !!row.fecha_facturacion;
-          const isAprobado = currentStatus === 'Aprobado';
-        
-          let statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 font-semibold inline-block">Pendiente</span>`;
-          if (isAprobado) statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-theme-light text-theme-primary font-semibold inline-block">Aprobado</span>`;
-          if (currentStatus === 'Rechazado') statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 font-semibold inline-block">Rechazado</span>`;
-        
-          let facturadoBadge = isFacturado 
-            ? `<span class="px-2 py-0.5 text-[10px] rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-semibold inline-block"><i class="fa-solid fa-file-circle-check mr-1"></i>Facturado</span>` 
-            : '';
+      let count = 0;
 
-          const commentCell = currentUserPermissions.puede_editar_comentarios
-            ? `<input type="text" value="${row.comentario || ''}" 
-                 placeholder="Añadir comentario..." 
-                 onchange="updateRecordData('${row.id}', { comentario: this.value })"
-                 class="w-full text-xs p-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-theme" />`
-            : `<span class="text-xs text-slate-700 dark:text-slate-300">${row.comentario || '-'}</span>`;
-    
-          const actionsCell = currentUserPermissions.puede_gestionar_acciones
-            ? `<td class="p-3 align-top text-center">
-                <div class="flex items-center justify-center gap-1.5 flex-wrap">
-                  <button onclick="updateRecordData('${row.id}', { estado: 'Aprobado' })" class="px-2 py-1 text-xs font-semibold bg-theme-light text-theme-primary rounded-lg transition-colors flex items-center gap-1 ${isAprobado ? 'opacity-40 cursor-not-allowed' : ''}" ${isAprobado ? 'disabled' : ''} title="Aprobar">
-                    <i class="fa-solid fa-check text-[10px]"></i> Aprobar
-                  </button>
-    
-                  <button onclick="updateRecordData('${row.id}', { estado: 'Rechazado' })" class="px-2 py-1 text-xs font-semibold bg-red-100 hover:bg-red-200 dark:bg-red-900/50 dark:hover:bg-red-800 text-red-800 dark:text-red-200 rounded-lg transition-colors flex items-center gap-1 ${currentStatus === 'Rechazado' ? 'opacity-40 cursor-not-allowed' : ''}" ${currentStatus === 'Rechazado' ? 'disabled' : ''} title="Rechazar">
-                    <i class="fa-solid fa-xmark text-[10px]"></i> Rechazar
-                  </button>
-    
-                  <button onclick="toggleFacturadoRecord('${row.id}', ${isFacturado})" 
-                    class="px-2 py-1 text-xs font-semibold bg-indigo-100 hover:bg-indigo-200 dark:bg-indigo-900/50 dark:hover:bg-indigo-800 text-indigo-800 dark:text-indigo-200 rounded-lg transition-colors flex items-center gap-1 ${!isAprobado ? 'opacity-40 cursor-not-allowed' : ''}" 
-                    ${!isAprobado ? 'disabled title="Debe estar Aprobado para poder facturar"' : `title="${isFacturado ? 'Desmarcar Facturado' : 'Marcar como Facturado'}"`}>
-                    <i class="fa-solid ${isFacturado ? 'fa-file-circle-xmark text-red-500' : 'fa-file-invoice'} text-[10px]"></i>
-                    ${isFacturado ? 'Desmarcar' : 'Facturar'}
-                  </button>
-    
-                  <button onclick="openModal('${row.imagen_url}')" class="px-2 py-1 text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg transition-colors flex items-center gap-1" title="Ver comprobante">
-                    <i class="fa-solid fa-eye text-[10px]"></i> Ver
-                  </button>
-                </div>
-              </td>`
-            : '';
-          
-          const tr = document.createElement('tr');
-          tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors";
-          
-          const formattedMonto = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(row.monto || 0);
-          const createdDateStr = row.created_at ? new Date(row.created_at).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' }) : '-';
-          const factDateStr = row.fecha_facturacion ? new Date(row.fecha_facturacion).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' }) : '-';
-          const aprobDateStr = row.fecha_aprobacion ? new Date(row.fecha_aprobacion).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' }) : '-';
-          
-          let payDateStr = '-';
-          if (row.fecha_transferencia) {
-            const str = String(row.fecha_transferencia).trim();
-            const hasTime = /\d{1,2}:\d{2}/.test(str);
-          
-            if (hasTime) {
-              const dateObj = new Date(str.replace(' ', 'T'));
-              payDateStr = !isNaN(dateObj.getTime())
-                ? dateObj.toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' })
-                : str;
-            } else {
-              const dateParts = str.split('T')[0].split(' ')[0].split('-');
-              if (dateParts.length === 3) {
-                const [year, month, day] = dateParts;
-                const dateObj = new Date(year, month - 1, day);
-                payDateStr = !isNaN(dateObj.getTime())
-                  ? dateObj.toLocaleDateString('es-CR', { dateStyle: 'short' })
-                  : str;
-              } else {
-                payDateStr = str;
-              }
-            }
-          }
+      const filtered = rawRecordsData.filter(item => {
+        if (bank && item.banco_emisor !== bank) return false;
+        if (status && item.estado !== status) return false;
 
-          // Bloques de Nombres/Responsables por evento
-          const creadoPor = row.nombre_creacion 
-            ? `<span class="text-slate-500 font-normal">(${row.nombre_creacion})</span>` 
-            : '';
-          const aprobadoPor = row.nombre_aprobacion 
-            ? `<span class="text-theme-primary font-medium">(${row.nombre_aprobacion})</span>` 
-            : '';
-          const facturadoPor = row.nombre_facturacion 
-            ? `<span class="text-indigo-600 dark:text-indigo-400 font-medium">(${row.nombre_facturacion})</span>` 
-            : '';
-
-          tr.innerHTML = `
-          <td class="p-3.5">
-            <div class="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white leading-snug">
-              ${row.cliente || 'Desconocido'}
-            </div>
-            <div class="text-xs text-slate-500 dark:text-slate-400 font-mono font-medium mt-0.5">
-              Ref: ${row.numero_referencia || 'N/A'}
-            </div>
-            <div class="font-bold text-base text-theme-primary mt-1">
-              ${formattedMonto}
-            </div>
-            <div class="flex items-center gap-1.5 mt-1.5">
-              ${statusBadge}
-              ${facturadoBadge}
-              </div>
-            </td>
-            <td class="p-3 align-top">
-              <span class="text-xs text-slate-700 dark:text-slate-300 font-medium">${row.nombre_emisor || 'N/A'}</span>
-            </td>
-            <td class="p-3 align-top space-y-1 text-[11px]">
-              <div><span class="text-slate-400">Pago:</span> <span class="text-slate-700 dark:text-slate-300 font-medium">${payDateStr}</span></div>
-              <div><span class="text-slate-400">Ingr:</span> <span class="text-slate-700 dark:text-slate-300">${createdDateStr}</span> ${creadoPor}</div>
-              ${isAprobado || currentStatus === 'Rechazado' ? `<div><span class="text-slate-400">Aprob:</span> <span class="text-slate-700 dark:text-slate-300">${aprobDateStr}</span>${aprobadoPor}</div>` : ''}
-              ${isFacturado ? `<div><span class="text-slate-400">Fact:</span> <span class="text-slate-700 dark:text-slate-300">${factDateStr}</span>${facturadoPor}</div>` : ''}
-            </td>
-            <td class="p-3 align-top max-w-[200px]">
-              ${commentCell}
-            </td>
-            ${actionsCell}
-          `;
-          recordsTable.appendChild(tr);
-        });
-      } else {
-        recordsTable.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400 dark:text-slate-500">No se encontraron comprobantes registrado(s).</td></tr>`;
-      }
-    
-      document.getElementById('totalCount').innerText = filtered.length;
-      document.getElementById('totalAmount').innerText = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(totalMonto);
-    }
-
-    function toggleFacturadoRecord(id, currentlyFacturado) {
-      updateRecordData(id, { facturar: !currentlyFacturado });
-    }
-
-    async function updateRecordData(id, payloadData) {
-      if (!currentSession) return;
-      try {
-        const response = await fetch('/api/actualizar_registro', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentSession.access_token}` 
-          },
-          body: JSON.stringify({ id, ...payloadData })
-        });
-        
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          throw new Error(`El servidor devolvió una respuesta no válida (${response.status}).`);
+        if (created) {
+          const itemDate = item.created_at ? item.created_at.split('T')[0] : '';
+          if (itemDate !== created) return false;
+        }
+        if (tx) {
+          const itemTxDate = item.fecha_transaccion ? item.fecha_transaccion.split('T')[0] : '';
+          if (itemTxDate !== tx) return false;
+        }
+        if (fact) {
+          const itemFactDate = item.fecha_facturado ? item.fecha_facturado.split('T')[0] : '';
+          if (itemFactDate !== fact) return false;
         }
 
-        const result = await response.json();
-        if (!result.success) throw new Error(result.error);
-        
-        if (payloadData.estado) showAlert(`✅ Estado actualizado a ${payloadData.estado}`, 'success');
-        if ('fecha_facturacion' in payloadData || 'facturar' in payloadData) {
-          showAlert(payloadData.facturar !== false ? '✅ Comprobante marcado como facturado' : '✅ Comprobante desmarcado como facturado', 'success');
+        if (search) {
+          const matchClient = (item.nombre_cliente || '').toLowerCase().includes(search);
+          const matchRef = (item.numero_referencia || '').toLowerCase().includes(search);
+          const matchMonto = (item.monto || '').toString().includes(search);
+          const matchObs = (item.observaciones || '').toLowerCase().includes(search);
+          if (!matchClient && !matchRef && !matchMonto && !matchObs) return false;
         }
-        
-        loadRecords();
-      } catch (err) {
-        showAlert(`⚠️ Error al actualizar: ${err.message}`, 'error');
+
+        return true;
+      });
+
+      recordsTable.innerHTML = '';
+
+      if (filtered.length === 0) {
+        recordsTable.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">No se encontraron comprobantes con los filtros seleccionados.</td></tr>`;
+        document.getElementById('totalCount').innerText = '0';
+        document.getElementById('totalAmount').innerText = '₡0.00';
+        return;
       }
+
+      filtered.forEach(item => {
+        count++;
+        totalMonto += parseFloat(item.monto || 0);
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors";
+
+        let statusBadge = '';
+        if (item.estado === 'Aprobado') {
+          statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">Aprobado</span>`;
+        } else if (item.estado === 'Rechazado') {
+          statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300">Rechazado</span>`;
+        } else {
+          statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300">Pendiente</span>`;
+        }
+
+        let factBadge = item.facturado 
+          ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300"><i class="fa-solid fa-file-circle-check mr-1"></i>Facturado</span>`
+          : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400">Sin Facturar</span>`;
+
+        tr.innerHTML = `
+          <td class="p-3">
+            <div class="font-bold text-slate-900 dark:text-white">${item.nombre_cliente || 'Cliente no identificado'}</div>
+            <div class="text-[11px] text-slate-500 dark:text-slate-400">Ref: <span class="font-mono">${item.numero_referencia || 'N/A'}</span></div>
+            <div class="font-extrabold text-theme-primary text-sm mt-0.5">₡${parseFloat(item.monto || 0).toLocaleString('es-CR', { minimumFractionDigits: 2 })}</div>
+          </td>
+          <td class="p-3 font-medium text-slate-700 dark:text-slate-300">
+            ${item.banco_emisor || 'Desconocido'}
+          </td>
+          <td class="p-3 text-[11px] space-y-1">
+            <div><span class="text-slate-400">Pago:</span> ${formatOnlyDate(item.fecha_transaccion)}</div>
+            <div><span class="text-slate-400">Ingreso:</span> ${formatDate(item.created_at)}</div>
+            <div><span class="text-slate-400">Facturado:</span> ${formatDate(item.fecha_facturado)}</div>
+          </td>
+          <td class="p-3 max-w-[200px]">
+            <div class="flex items-center gap-1 mb-1">${statusBadge} ${factBadge}</div>
+            <div id="obs-text-${item.id}" class="text-slate-600 dark:text-slate-300 truncate" title="${item.observaciones || ''}">${item.observaciones || 'Sin comentarios'}</div>
+          </td>
+          <td class="p-3 text-center space-y-1">
+            <button onclick="viewFile('${item.url_comprobante}')" class="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-[11px] font-bold px-2.5 py-1 rounded-lg transition-colors flex items-center justify-center gap-1">
+              <i class="fa-solid fa-eye"></i> Ver
+            </button>
+            ${currentUserPermissions.puede_editar_comentarios ? `
+            <button onclick="editObservation('${item.id}', '${(item.observaciones || '').replace(/'/g, "\\'")}')" class="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-[11px] font-bold px-2.5 py-1 rounded-lg transition-colors flex items-center justify-center gap-1">
+              <i class="fa-solid fa-pen"></i> Nota
+            </button>` : ''}
+            ${currentUserPermissions.puede_gestionar_acciones ? `
+            <div class="flex gap-1">
+              <button onclick="updateStatus('${item.id}', 'Aprobado')" class="flex-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold p-1 rounded transition-colors" title="Aprobar"><i class="fa-solid fa-check"></i></button>
+              <button onclick="updateStatus('${item.id}', 'Rechazado')" class="flex-1 bg-red-50 hover:bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 text-[10px] font-bold p-1 rounded transition-colors" title="Rechazar"><i class="fa-solid fa-xmark"></i></button>
+              <button onclick="toggleFacturado('${item.id}',${!item.facturado})" class="flex-1 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold p-1 rounded transition-colors" title="Alternar Facturación"><i class="fa-solid fa-file-invoice"></i></button>
+            </div>` : ''}
+          </td>
+        `;
+        recordsTable.appendChild(tr);
+      });
+
+      document.getElementById('totalCount').innerText = count.toString();
+      document.getElementById('totalAmount').innerText = '₡' + totalMonto.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
-    function openModal(url) {
+    function viewFile(url) {
+      if (!url) return;
       modalExternalLink.href = url;
       if (url.toLowerCase().endsWith('.pdf')) {
         modalImage.classList.add('hidden');
-        modalPdf.src = url;
         modalPdf.classList.remove('hidden');
+        modalPdf.src = url;
       } else {
         modalPdf.classList.add('hidden');
-        modalImage.src = url;
         modalImage.classList.remove('hidden');
+        modalImage.src = url;
       }
       viewerModal.classList.remove('hidden');
     }
@@ -1584,6 +1545,70 @@ body {
       modalPdf.src = '';
     }
 
+    async function editObservation(id, currentObs) {
+      const newObs = prompt('Editar observación / nota:', currentObs);
+      if (newObs === null) return;
+      
+      try {
+        const res = await fetch('/api/actualizar_registro', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentSession.access_token}` 
+          },
+          body: JSON.stringify({ id, observaciones: newObs })
+        });
+        if (res.ok) {
+          loadRecords();
+        } else {
+          alert('Error al actualizar observación');
+        }
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    async function updateStatus(id, estado) {
+      try {
+        const res = await fetch('/api/actualizar_registro', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentSession.access_token}` 
+          },
+          body: JSON.stringify({ id, estado })
+        });
+        if (res.ok) {
+          loadRecords();
+        } else {
+          alert('Error al actualizar estado');
+        }
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    async function toggleFacturado(id, facturado) {
+      try {
+        const res = await fetch('/api/actualizar_registro', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentSession.access_token}` 
+          },
+          body: JSON.stringify({ id, facturado })
+        });
+        if (res.ok) {
+          loadRecords();
+        } else {
+          alert('Error al actualizar estado de facturación');
+        }
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    /* LÓGICA CIERRE DIARIO */
     function openCierreModal() {
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('cierreFechaInput').value = today;
@@ -1596,39 +1621,40 @@ body {
     }
 
     function calcularCierre() {
-      const fecha = document.getElementById('cierreFechaInput').value;
+      const selectedDate = document.getElementById('cierreFechaInput').value;
       const cierreTableBody = document.getElementById('cierreTableBody');
       cierreTableBody.innerHTML = '';
 
-      if (!fecha) return;
+      if (!selectedDate) return;
 
-      const facturados = rawRecordsData.filter(row => row.fecha_facturacion && row.fecha_facturacion.startsWith(fecha));
+      const facturadosFecha = rawRecordsData.filter(item => {
+        if (!item.facturado || !item.fecha_facturado) return false;
+        const itemFactDate = item.fecha_facturado.split('T')[0];
+        return itemFactDate === selectedDate;
+      });
+
       let totalMonto = 0;
+      facturadosFecha.forEach(item => {
+        totalMonto += parseFloat(item.monto || 0);
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50";
+        tr.innerHTML = `
+          <td class="p-3">
+            <div class="font-bold text-slate-800 dark:text-slate-200">${item.nombre_cliente || 'N/A'}</div>
+            <div class="text-[10px] text-slate-400 font-mono">Ref: ${item.numero_referencia || 'N/A'}</div>
+          </td>
+          <td class="p-3 text-slate-600 dark:text-slate-300">
+            ${formatDate(item.fecha_facturado)}
+          </td>
+          <td class="p-3 text-right font-extrabold text-theme-primary">
+            ₡${parseFloat(item.monto || 0).toLocaleString('es-CR', { minimumFractionDigits: 2 })}
+          </td>
+        `;
+        cierreTableBody.appendChild(tr);
+      });
 
-      if (facturados.length > 0) {
-        facturados.forEach(row => {
-          totalMonto += parseFloat(row.monto || 0);
-          const hora = new Date(row.fecha_facturacion).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' });
-          const montoFmt = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(row.monto || 0);
-
-          const tr = document.createElement('tr');
-          tr.className = "border-b border-slate-100 dark:border-slate-700/50";
-          tr.innerHTML = `
-            <td class="p-3">
-              <div class="font-bold text-slate-800 dark:text-slate-200">${row.cliente || 'Desconocido'}</div>
-              <div class="text-[10px] font-mono text-slate-400">Ref: ${row.numero_referencia || 'N/A'}</div>
-            </td>
-            <td class="p-3 text-slate-600 dark:text-slate-300">${hora}</td>
-            <td class="p-3 text-right font-bold text-theme-primary">${montoFmt}</td>
-          `;
-          cierreTableBody.appendChild(tr);
-        });
-      } else {
-        cierreTableBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">No hay comprobantes facturados para esta fecha.</td></tr>`;
-      }
-
-      document.getElementById('cierreTotalCount').innerText = facturados.length;
-      document.getElementById('cierreTotalMonto').innerText = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(totalMonto);
+      document.getElementById('cierreTotalCount').innerText = facturadosFecha.length.toString();
+      document.getElementById('cierreTotalMonto').innerText = '₡' + totalMonto.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
     /* LÓGICA MANTENIMIENTO DE USUARIOS */
@@ -1644,142 +1670,148 @@ body {
 
     function resetUsuarioForm() {
       document.getElementById('usuarioForm').reset();
+      document.getElementById('usrCorreo').removeAttribute('readonly');
+      document.getElementById('btnSaveUsuario').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Usuario';
     }
 
     async function loadUsuariosList() {
       const tbody = document.getElementById('usuariosTableBody');
-      if (!currentSession) return;
+      tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-400">Cargando usuarios...</td></tr>';
+      
       try {
-        const response = await fetch('/api/obtener_usuarios', {
+        const res = await fetch('/api/gestion_usuarios', {
           headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
         });
-        const resData = await response.json();
+        const data = await res.json();
         
-        if (!resData.success) throw new Error(resData.error || 'Error al obtener lista de usuarios.');
-
-        usuariosCache = resData.data || [];
-        tbody.innerHTML = '';
-
-        if (usuariosCache.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">No hay usuarios registrados.</td></tr>`;
-          return;
+        if (res.ok && data.data) {
+          usuariosCache = data.data;
+          renderUsuariosTable(data.data);
+        } else {
+          tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500">${data.error || 'Error al cargar usuarios'}</td></tr>`;
         }
-
-        usuariosCache.forEach(usr => {
-          const perms = [];
-          if (usr.puede_cargar_comprobantes) perms.push('<span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded text-[10px] font-semibold">Cargar</span>');
-          if (usr.puede_editar_comentarios) perms.push('<span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[10px] font-semibold">Comentar</span>');
-          if (usr.puede_gestionar_acciones) perms.push('<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-semibold">Gestionar</span>');
-
-          const tr = document.createElement('tr');
-          tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors border-b border-slate-100 dark:border-slate-700/50";
-          tr.innerHTML = `
-            <td class="p-3">
-              <div class="font-bold text-slate-800 dark:text-slate-200">${usr.nombre || 'Sin nombre'}</div>
-              <div class="text-[11px] text-slate-500 font-mono">${usr.correo}</div>
-            </td>
-            <td class="p-3">
-              <div class="flex flex-wrap gap-1">${perms.length > 0 ? perms.join(' ') : '<span class="text-slate-400 italic">Sin permisos</span>'}</div>
-            </td>
-            <td class="p-3 text-center">
-              <div class="flex items-center justify-center gap-2">
-                <button onclick="editUsuario('${usr.id}')" class="text-xs bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold px-2 py-1 rounded transition-colors" title="Editar">
-                  <i class="fa-solid fa-pen-to-square"></i>
-                </button>
-                <button onclick="deleteUsuario('${usr.id}')" class="text-xs bg-red-100 hover:bg-red-200 dark:bg-red-900/50 dark:hover:bg-red-800 text-red-700 dark:text-red-300 font-semibold px-2 py-1 rounded transition-colors" title="Eliminar">
-                  <i class="fa-solid fa-trash-can"></i>
-                </button>
-              </div>
-            </td>
-          `;
-          tbody.appendChild(tr);
-        });
-      } catch (err) {
-        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500">Error: ${err.message}</td></tr>`;
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500">Error: ${e.message}</td></tr>`;
       }
+    }
+
+    function renderUsuariosTable(lista) {
+      const tbody = document.getElementById('usuariosTableBody');
+      tbody.innerHTML = '';
+
+      if (lista.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-400">No hay usuarios registrados.</td></tr>';
+        return;
+      }
+
+      lista.forEach(usr => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors";
+
+        let permisosBadges = '';
+        if (usr.puede_cargar_comprobantes) permisosBadges += '<span class="px-2 py-0.5 rounded text-[10px] bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 font-semibold mr-1">Cargar</span>';
+        if (usr.puede_editar_comentarios) permisosBadges += '<span class="px-2 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-semibold mr-1">Comentar</span>';
+        if (usr.puede_gestionar_acciones) permisosBadges += '<span class="px-2 py-0.5 rounded text-[10px] bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 font-semibold mr-1">Acciones</span>';
+
+        tr.innerHTML = `
+          <td class="p-3">
+            <div class="font-bold text-slate-800 dark:text-slate-200">${usr.nombre_usuario || 'Sin nombre'}</div>
+            <div class="text-[11px] text-slate-500 dark:text-slate-400">${usr.correo_gmail}</div>
+          </td>
+          <td class="p-3">
+            <div class="flex flex-wrap gap-1">${permisosBadges || '<span class="text-slate-400 italic">Sin permisos</span>'}</div>
+          </td>
+          <td class="p-3 text-center">
+            <div class="flex items-center justify-center gap-2">
+              <button onclick="editUsuarioClick('${usr.correo_gmail}')" class="text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 p-1" title="Editar">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </button>
+              <button onclick="deleteUsuarioClick('${usr.correo_gmail}')" class="text-slate-400 hover:text-red-600 dark:hover:text-red-400 p-1" title="Eliminar">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function editUsuarioClick(correo) {
+      const usr = usuariosCache.find(u => u.correo_gmail === correo);
+      if (!usr) return;
+
+      document.getElementById('usrNombre').value = usr.nombre_usuario || '';
+      document.getElementById('usrCorreo').value = usr.correo_gmail || '';
+      document.getElementById('usrCorreo').setAttribute('readonly', 'true');
+
+      document.getElementById('permCargar').checked = !!usr.puede_cargar_comprobantes;
+      document.getElementById('permEditarComentarios').checked = !!usr.puede_editar_comentarios;
+      document.getElementById('permGestionarAcciones').checked = !!usr.puede_gestionar_acciones;
+
+      document.getElementById('btnSaveUsuario').innerHTML = '<i class="fa-solid fa-rotate"></i> Actualizar Usuario';
     }
 
     async function saveUsuario(e) {
       e.preventDefault();
-      if (!currentSession) return;
+      const nombre_usuario = document.getElementById('usrNombre').value;
+      const correo_gmail = document.getElementById('usrCorreo').value;
 
-      const nombre = document.getElementById('usrNombre').value;
-      const correo = document.getElementById('usrCorreo').value;
       const puede_cargar_comprobantes = document.getElementById('permCargar').checked;
       const puede_editar_comentarios = document.getElementById('permEditarComentarios').checked;
       const puede_gestionar_acciones = document.getElementById('permGestionarAcciones').checked;
 
-      const btnSave = document.getElementById('btnSaveUsuario');
-      btnSave.disabled = true;
-      btnSave.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Guardando...`;
+      const payload = {
+        nombre_usuario,
+        correo_gmail,
+        puede_cargar_comprobantes,
+        puede_editar_comentarios,
+        puede_gestionar_acciones
+      };
 
       try {
-        const response = await fetch('/api/guardar_usuario', {
+        const res = await fetch('/api/gestion_usuarios', {
           method: 'POST',
-          headers: {
+          headers: { 
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentSession.access_token}`
+            'Authorization': `Bearer ${currentSession.access_token}` 
           },
-          body: JSON.stringify({
-            nombre,
-            correo,
-            puede_cargar_comprobantes,
-            puede_editar_comentarios,
-            puede_gestionar_acciones
-          })
+          body: JSON.stringify(payload)
         });
 
-        const resData = await response.json();
-        if (!resData.success) throw new Error(resData.error || 'No se pudo guardar el usuario.');
-
-        showAlert('✅ Usuario guardado con éxito.', 'success');
-        resetUsuarioForm();
-        loadUsuariosList();
+        const data = await res.json();
+        if (res.ok && data.success) {
+          alert('Usuario guardado exitosamente');
+          resetUsuarioForm();
+          loadUsuariosList();
+        } else {
+          alert('Error: ' + (data.error || 'No se pudo guardar el usuario'));
+        }
       } catch (err) {
-        showAlert(`⚠️ Error al guardar usuario: ${err.message}`, 'error');
-      } finally {
-        btnSave.disabled = false;
-        btnSave.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar Usuario`;
+        alert('Error en la solicitud: ' + err.message);
       }
     }
 
-    function editUsuario(id) {
-      const usr = usuariosCache.find(u => u.id === id);
-      if (!usr) return;
-
-      document.getElementById('usrNombre').value = usr.nombre || '';
-      document.getElementById('usrCorreo').value = usr.correo || '';
-      document.getElementById('permCargar').checked = !!usr.puede_cargar_comprobantes;
-      document.getElementById('permEditarComentarios').checked = !!usr.puede_editar_comentarios;
-      document.getElementById('permGestionarAcciones').checked = !!usr.puede_gestionar_acciones;
-    }
-
-    async function deleteUsuario(id) {
-      if (!confirm('¿Estás seguro de que deseas eliminar este usuario?')) return;
-      if (!currentSession) return;
+    async function deleteUsuarioClick(correo) {
+      if (!confirm(`¿Estás seguro de que deseas eliminar al usuario ${correo}?`)) return;
 
       try {
-        const response = await fetch('/api/eliminar_usuario', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentSession.access_token}`
-          },
-          body: JSON.stringify({ id })
+        const res = await fetch(`/api/gestion_usuarios?correo=${encodeURIComponent(correo)}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
         });
 
-        const resData = await response.json();
-        if (!resData.success) throw new Error(resData.error || 'No se pudo eliminar el usuario.');
-
-        showAlert('✅ Usuario eliminado con éxito.', 'success');
-        loadUsuariosList();
-      } catch (err) {
-        showAlert(`⚠️ Error al eliminar: ${err.message}`, 'error');
+        const data = await res.json();
+        if (res.ok && data.success) {
+          loadUsuariosList();
+        } else {
+          alert('Error: ' + (data.error || 'No se pudo eliminar el usuario'));
+        }
+      } catch (e) {
+        alert('Error: ' + e.message);
       }
     }
 
-    // Inicializar autenticación al cargar
-    initAuth();
+    window.addEventListener('DOMContentLoaded', initAuth);
   </script>
 </body>
 </html>
