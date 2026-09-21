@@ -22,20 +22,16 @@
       font-family: 'Inter', sans-serif;
     }
 
-    /* --- ESTILO GLASSMORPHISM Y PALETAS CON FONDOS DINÁMICOS --- */
+    /* --- ESTILO GLASSMORPHISM Y PALETAS SIN IMÁGENES DE FONDO --- */
 
-    /* Capa de fondo global */
+    /* Capa de fondo global con degradados */
     #app-bg {
       position: fixed;
       inset: 0;
       z-index: -1;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      transition: background-image 0.5s ease-in-out;
+      transition: background 0.5s ease-in-out;
     }
 
-    /* Overlay oscuro/claro de fondo para asegurar legibilidad */
     #app-bg-overlay {
       position: fixed;
       inset: 0;
@@ -45,102 +41,112 @@
 
     /* Esmeralda */
     html.theme-emerald {
-      --bg-image: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1920&q=80');
-      --theme-surface: rgba(255, 255, 255, 0.75);
+      --app-bg-gradient: linear-gradient(135deg, #e6fffa 0%, #e6f4ea 50%, #d1fae5 100%);
+      --theme-surface: rgba(255, 255, 255, 0.85);
       --theme-text-main: #064e3b;
       --theme-primary: #059669;
       --theme-primary-hover: #047857;
-      --theme-border: rgba(167, 243, 208, 0.6);
+      --theme-border: rgba(167, 243, 208, 0.8);
       --glass-overlay: rgba(236, 253, 245, 0.45);
+      --card-preview-bg: linear-gradient(135deg, #059669 0%, #047857 100%);
     }
     html.theme-emerald.dark {
-      --bg-image: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1920&q=80');
+      --app-bg-gradient: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #0f291e 100%);
       --theme-surface: rgba(6, 78, 59, 0.75);
       --theme-text-main: #ecfdf5;
       --theme-primary: #10b981;
       --theme-primary-hover: #059669;
       --theme-border: rgba(4, 120, 87, 0.6);
       --glass-overlay: rgba(2, 44, 34, 0.75);
+      --card-preview-bg: linear-gradient(135deg, #047857 0%, #022c22 100%);
     }
 
     /* Océano Azul */
     html.theme-blue {
-      --bg-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80');
-      --theme-surface: rgba(255, 255, 255, 0.75);
+      --app-bg-gradient: linear-gradient(135deg, #ebf8ff 0%, #e0f2fe 50%, #dbeafe 100%);
+      --theme-surface: rgba(255, 255, 255, 0.85);
       --theme-text-main: #1e3a8a;
       --theme-primary: #2563eb;
       --theme-primary-hover: #1d4ed8;
-      --theme-border: rgba(191, 219, 254, 0.6);
+      --theme-border: rgba(191, 219, 254, 0.8);
       --glass-overlay: rgba(239, 246, 255, 0.45);
+      --card-preview-bg: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
     }
     html.theme-blue.dark {
-      --bg-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80');
+      --app-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #172554 100%);
       --theme-surface: rgba(30, 41, 59, 0.78);
       --theme-text-main: #eff6ff;
       --theme-primary: #3b82f6;
       --theme-primary-hover: #2563eb;
       --theme-border: rgba(51, 65, 85, 0.6);
       --glass-overlay: rgba(15, 23, 42, 0.8);
+      --card-preview-bg: linear-gradient(135deg, #1d4ed8 0%, #0f172a 100%);
     }
 
     /* Cyber Violeta */
     html.theme-violet {
-      --bg-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1920&q=80');
-      --theme-surface: rgba(255, 255, 255, 0.75);
+      --app-bg-gradient: linear-gradient(135deg, #f3e8ff 0%, #fae8ff 50%, #f5f3ff 100%);
+      --theme-surface: rgba(255, 255, 255, 0.85);
       --theme-text-main: #4c1d95;
       --theme-primary: #7c3aed;
       --theme-primary-hover: #6d28d9;
-      --theme-border: rgba(221, 214, 254, 0.6);
+      --theme-border: rgba(221, 214, 254, 0.8);
       --glass-overlay: rgba(245, 243, 255, 0.45);
+      --card-preview-bg: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
     }
     html.theme-violet.dark {
-      --bg-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1920&q=80');
+      --app-bg-gradient: linear-gradient(135deg, #2e1065 0%, #4c1d95 50%, #1e1b4b 100%);
       --theme-surface: rgba(76, 29, 149, 0.75);
       --theme-text-main: #f5f3ff;
       --theme-primary: #8b5cf6;
       --theme-primary-hover: #7c3aed;
       --theme-border: rgba(91, 33, 182, 0.6);
       --glass-overlay: rgba(46, 16, 101, 0.8);
+      --card-preview-bg: linear-gradient(135deg, #6d28d9 0%, #2e1065 100%);
     }
 
     /* Ámbar Atardecer */
     html.theme-amber {
-      --bg-image: url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80');
-      --theme-surface: rgba(255, 255, 255, 0.75);
+      --app-bg-gradient: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fef3c7 100%);
+      --theme-surface: rgba(255, 255, 255, 0.85);
       --theme-text-main: #78350f;
       --theme-primary: #d97706;
       --theme-primary-hover: #b45309;
-      --theme-border: rgba(253, 230, 138, 0.6);
+      --theme-border: rgba(253, 230, 138, 0.8);
       --glass-overlay: rgba(255, 251, 235, 0.45);
+      --card-preview-bg: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     }
     html.theme-amber.dark {
-      --bg-image: url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80');
+      --app-bg-gradient: linear-gradient(135deg, #451a03 0%, #78350f 50%, #291002 100%);
       --theme-surface: rgba(120, 53, 15, 0.75);
       --theme-text-main: #fffbeb;
       --theme-primary: #f59e0b;
       --theme-primary-hover: #d97706;
       --theme-border: rgba(146, 64, 14, 0.6);
       --glass-overlay: rgba(69, 26, 3, 0.8);
+      --card-preview-bg: linear-gradient(135deg, #b45309 0%, #451a03 100%);
     }
 
     /* Slate Urbano */
     html.theme-slate {
-      --bg-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80');
-      --theme-surface: rgba(255, 255, 255, 0.75);
+      --app-bg-gradient: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+      --theme-surface: rgba(255, 255, 255, 0.85);
       --theme-text-main: #0f172a;
       --theme-primary: #475569;
       --theme-primary-hover: #334155;
-      --theme-border: rgba(203, 213, 225, 0.6);
+      --theme-border: rgba(203, 213, 225, 0.8);
       --glass-overlay: rgba(248, 250, 252, 0.45);
+      --card-preview-bg: linear-gradient(135deg, #475569 0%, #334155 100%);
     }
     html.theme-slate.dark {
-      --bg-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80');
+      --app-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #020617 100%);
       --theme-surface: rgba(30, 41, 59, 0.78);
       --theme-text-main: #f8fafc;
       --theme-primary: #64748b;
       --theme-primary-hover: #475569;
       --theme-border: rgba(51, 65, 85, 0.6);
       --glass-overlay: rgba(15, 23, 42, 0.8);
+      --card-preview-bg: linear-gradient(135deg, #334155 0%, #0f172a 100%);
     }
 
     /* TARJETAS CON EFECTO GLASSMORPHISM */
@@ -149,7 +155,7 @@
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--theme-border);
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.12);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
       transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
     }
 
@@ -160,7 +166,6 @@
       border-bottom: 1px solid var(--theme-border);
     }
 
-    /* Clases de utilidad vinculadas a la paleta activa */
     body {
       color: var(--theme-text-main);
       min-height: 100vh;
@@ -174,7 +179,7 @@
     .border-theme { border-color: var(--theme-border) !important; }
     .focus\:border-theme:focus { border-color: var(--theme-primary) !important; }
 
-    /* Tarjetas de Selección en el Modal */
+    /* Tarjetas de Selección en el Modal sin Imágenes */
     .theme-card {
       position: relative;
       overflow: hidden;
@@ -187,15 +192,13 @@
     .theme-card-bg {
       position: absolute;
       inset: 0;
-      background-size: cover;
-      background-position: center;
-      opacity: 0.4;
+      opacity: 0.9;
       transition: opacity 0.2s ease, transform 0.3s ease;
     }
 
     .theme-card:hover .theme-card-bg {
-      opacity: 0.6;
-      transform: scale(1.05);
+      opacity: 1;
+      transform: scale(1.02);
     }
 
     .theme-card-overlay {
@@ -215,7 +218,7 @@
 </head>
 <body class="min-h-screen transition-colors duration-200 relative">
 
-<!-- Capas de fondo con imagen y difuminado esmerilado -->
+<!-- Capas de fondo con degradados dinámicos libres de imágenes -->
 <div id="app-bg"></div>
 <div id="app-bg-overlay"></div>
 
@@ -645,77 +648,77 @@
           <div class="grid grid-cols-1 gap-3">
             
             <!-- Tema Esmeralda -->
-            <div onclick="setThemePalette('emerald')" id="card-theme-emerald" class="theme-card bg-emerald-900/90 text-white">
-              <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=600&q=80');"></div>
+            <div onclick="setThemePalette('emerald')" id="card-theme-emerald" class="theme-card text-white">
+              <div class="theme-card-bg" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);"></div>
               <div class="theme-card-overlay">
                 <div class="flex items-center gap-3">
-                  <span class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-white shadow-sm shrink-0"></span>
+                  <span class="w-6 h-6 rounded-full bg-emerald-400 border-2 border-white shadow-sm shrink-0"></span>
                   <div>
                     <p class="text-xs font-bold text-white drop-shadow">Esmeralda Eco</p>
-                    <p class="text-[10px] text-emerald-200">Naturaleza y frescura</p>
+                    <p class="text-[10px] text-emerald-100">Naturaleza y frescura</p>
                   </div>
                 </div>
-                <i id="check-emerald" class="fa-solid fa-circle-check text-emerald-400 text-lg hidden"></i>
+                <i id="check-emerald" class="fa-solid fa-circle-check text-white text-lg hidden"></i>
               </div>
             </div>
 
             <!-- Tema Océano Azul -->
-            <div onclick="setThemePalette('blue')" id="card-theme-blue" class="theme-card bg-blue-950/90 text-white">
-              <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80');"></div>
+            <div onclick="setThemePalette('blue')" id="card-theme-blue" class="theme-card text-white">
+              <div class="theme-card-bg" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);"></div>
               <div class="theme-card-overlay">
                 <div class="flex items-center gap-3">
-                  <span class="w-6 h-6 rounded-full bg-blue-500 border-2 border-white shadow-sm shrink-0"></span>
+                  <span class="w-6 h-6 rounded-full bg-blue-400 border-2 border-white shadow-sm shrink-0"></span>
                   <div>
                     <p class="text-xs font-bold text-white drop-shadow">Océano Profundo</p>
-                    <p class="text-[10px] text-blue-200">Corporativo y tecnológico</p>
+                    <p class="text-[10px] text-blue-100">Corporativo y tecnológico</p>
                   </div>
                 </div>
-                <i id="check-blue" class="fa-solid fa-circle-check text-blue-400 text-lg hidden"></i>
+                <i id="check-blue" class="fa-solid fa-circle-check text-white text-lg hidden"></i>
               </div>
             </div>
 
             <!-- Tema Violeta Moderno -->
-            <div onclick="setThemePalette('violet')" id="card-theme-violet" class="theme-card bg-purple-950/90 text-white">
-              <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=600&q=80');"></div>
+            <div onclick="setThemePalette('violet')" id="card-theme-violet" class="theme-card text-white">
+              <div class="theme-card-bg" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);"></div>
               <div class="theme-card-overlay">
                 <div class="flex items-center gap-3">
-                  <span class="w-6 h-6 rounded-full bg-violet-500 border-2 border-white shadow-sm shrink-0"></span>
+                  <span class="w-6 h-6 rounded-full bg-violet-400 border-2 border-white shadow-sm shrink-0"></span>
                   <div>
                     <p class="text-xs font-bold text-white drop-shadow">Cyber Violeta</p>
-                    <p class="text-[10px] text-violet-200">Creativo y moderno</p>
+                    <p class="text-[10px] text-violet-100">Creativo y moderno</p>
                   </div>
                 </div>
-                <i id="check-violet" class="fa-solid fa-circle-check text-violet-400 text-lg hidden"></i>
+                <i id="check-violet" class="fa-solid fa-circle-check text-white text-lg hidden"></i>
               </div>
             </div>
 
             <!-- Tema Ámbar Cálido -->
-            <div onclick="setThemePalette('amber')" id="card-theme-amber" class="theme-card bg-amber-950/90 text-white">
-              <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&q=80');"></div>
+            <div onclick="setThemePalette('amber')" id="card-theme-amber" class="theme-card text-white">
+              <div class="theme-card-bg" style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%);"></div>
               <div class="theme-card-overlay">
                 <div class="flex items-center gap-3">
-                  <span class="w-6 h-6 rounded-full bg-amber-500 border-2 border-white shadow-sm shrink-0"></span>
+                  <span class="w-6 h-6 rounded-full bg-amber-400 border-2 border-white shadow-sm shrink-0"></span>
                   <div>
                     <p class="text-xs font-bold text-white drop-shadow">Ámbar Atardecer</p>
-                    <p class="text-[10px] text-amber-200">Cálido y dinámico</p>
+                    <p class="text-[10px] text-amber-100">Cálido y dinámico</p>
                   </div>
                 </div>
-                <i id="check-amber" class="fa-solid fa-circle-check text-amber-400 text-lg hidden"></i>
+                <i id="check-amber" class="fa-solid fa-circle-check text-white text-lg hidden"></i>
               </div>
             </div>
 
             <!-- Tema Slate Clásico -->
-            <div onclick="setThemePalette('slate')" id="card-theme-slate" class="theme-card bg-slate-900/90 text-white">
-              <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80');"></div>
+            <div onclick="setThemePalette('slate')" id="card-theme-slate" class="theme-card text-white">
+              <div class="theme-card-bg" style="background: linear-gradient(135deg, #475569 0%, #334155 100%);"></div>
               <div class="theme-card-overlay">
                 <div class="flex items-center gap-3">
-                  <span class="w-6 h-6 rounded-full bg-slate-400 border-2 border-white shadow-sm shrink-0"></span>
+                  <span class="w-6 h-6 rounded-full bg-slate-300 border-2 border-white shadow-sm shrink-0"></span>
                   <div>
                     <p class="text-xs font-bold text-white drop-shadow">Slate Urbano</p>
-                    <p class="text-[10px] text-slate-300">Elegante y neutro</p>
+                    <p class="text-[10px] text-slate-200">Elegante y neutro</p>
                   </div>
                 </div>
-                <i id="check-slate" class="fa-solid fa-circle-check text-slate-300 text-lg hidden"></i>
+                <i id="check-slate" class="fa-solid fa-circle-check text-white text-lg hidden"></i>
               </div>
             </div>
 
@@ -975,7 +978,7 @@
       }
     }
     
-    /* GESTIÓN DE APARIENCIA, PALETA Y MODO OSCURO */
+    /* GESTIÓN DE APARIENCIA, PALETA Y MODO OSCURO (SIN IMÁGENES) */
     (function initTheme() {
       const savedPalette = localStorage.getItem('theme-palette') || 'emerald';
       const savedTheme = localStorage.getItem('theme') || 'light';
@@ -1014,10 +1017,10 @@
       // Guardar preferencia
       localStorage.setItem('theme-palette', paletteName);
       
-      // Actualizar imagen de fondo dinámica desde la variable CSS
+      // Actualizar fondo degradado dinámico desde la variable CSS
       if (appBg) {
-        const bgImg = getComputedStyle(html).getPropertyValue('--bg-image');
-        appBg.style.backgroundImage = bgImg;
+        const bgGradient = getComputedStyle(html).getPropertyValue('--app-bg-gradient');
+        appBg.style.background = bgGradient;
       }
 
       // Actualizar la interfaz del modal
@@ -1558,16 +1561,16 @@
               ${facturadoBadge}
               </div>
             </td>
+            <td class="p-3 align-top text-xs font-semibold text-slate-700 dark:text-slate-300">
+              ${row.nombre_emisor || 'N/A'}
+            </td>
+            <td class="p-3 align-top space-y-1 text-[11px] text-slate-600 dark:text-slate-400">
+              <div><strong class="text-slate-800 dark:text-slate-200">Pago:</strong> ${payDateStr}</div>
+              <div><strong class="text-slate-800 dark:text-slate-200">Registro:</strong> ${createdDateStr} ${creadoPor}</div>
+              ${row.fecha_aprobacion ? `<div><strong class="text-emerald-700 dark:text-emerald-300">Aprobación:</strong> ${aprobDateStr}${aprobadoPor}</div>` : ''}
+              ${row.fecha_facturacion ? `<div><strong class="text-indigo-700 dark:text-indigo-300">Facturación:</strong> ${factDateStr}${facturadoPor}</div>` : ''}
+            </td>
             <td class="p-3 align-top">
-              <span class="text-xs text-slate-800 dark:text-slate-200 font-bold">${row.nombre_emisor || 'N/A'}</span>
-            </td>
-            <td class="p-3 align-top space-y-1 text-[11px] font-medium">
-              <div><span class="text-slate-500 dark:text-slate-400 font-bold">Pago:</span> <span class="text-slate-800 dark:text-slate-200">${payDateStr}</span></div>
-              <div><span class="text-slate-500 dark:text-slate-400 font-bold">Ingr:</span> <span class="text-slate-800 dark:text-slate-200">${createdDateStr}</span> ${creadoPor}</div>
-              ${isAprobado || currentStatus === 'Rechazado' ? `<div><span class="text-slate-500 dark:text-slate-400 font-bold">Aprob:</span> <span class="text-slate-800 dark:text-slate-200">${aprobDateStr}</span>${aprobadoPor}</div>` : ''}
-              ${isFacturado ? `<div><span class="text-slate-500 dark:text-slate-400 font-bold">Fact:</span> <span class="text-slate-800 dark:text-slate-200">${factDateStr}</span>${facturadoPor}</div>` : ''}
-            </td>
-            <td class="p-3 align-top max-w-[200px]">
               ${commentCell}
             </td>
             ${actionsCell}
@@ -1575,58 +1578,70 @@
           recordsTable.appendChild(tr);
         });
       } else {
-        recordsTable.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500 dark:text-slate-400 font-medium">No se encontraron comprobantes registrado(s).</td></tr>`;
+        recordsTable.innerHTML = `
+          <tr>
+            <td colspan="${currentUserPermissions.puede_gestionar_acciones ? 5 : 4}" class="p-8 text-center text-slate-500 font-medium">
+              No se encontraron registros con los filtros seleccionados.
+            </td>
+          </tr>
+        `;
       }
-    
+
       document.getElementById('totalCount').innerText = filtered.length;
       document.getElementById('totalAmount').innerText = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(totalMonto);
     }
 
-    function toggleFacturadoRecord(id, currentlyFacturado) {
-      updateRecordData(id, { facturar: !currentlyFacturado });
-    }
-
-    async function updateRecordData(id, payloadData) {
+    async function updateRecordData(id, updateObj) {
       if (!currentSession) return;
       try {
         const response = await fetch('/api/actualizar_registro', {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentSession.access_token}` 
+            'Authorization': `Bearer ${currentSession.access_token}`
           },
-          body: JSON.stringify({ id, ...payloadData })
+          body: JSON.stringify({ id, ...updateObj })
         });
-        
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          throw new Error(`El servidor devolvió una respuesta no válida (${response.status}).`);
-        }
-
-        const result = await response.json();
-        if (!result.success) throw new Error(result.error);
-        
-        if (payloadData.estado) showAlert(`✅ Estado actualizado a ${payloadData.estado}`, 'success');
-        if ('fecha_facturacion' in payloadData || 'facturar' in payloadData) {
-          showAlert(payloadData.facturar !== false ? '✅ Comprobante marcado como facturado' : '✅ Comprobante desmarcado como facturado', 'success');
-        }
+        const res = await response.json();
+        if (!res.success) throw new Error(res.error);
         
         loadRecords();
-      } catch (err) {
-        showAlert(`⚠️ Error al actualizar: ${err.message}`, 'error');
+      } catch (e) {
+        showAlert(`⚠️ Error al actualizar: ${e.message}`, 'error');
+      }
+    }
+
+    async function toggleFacturadoRecord(id, isFacturado) {
+      if (!currentSession) return;
+      try {
+        const action = isFacturado ? 'unmark' : 'mark';
+        const response = await fetch('/api/marcar_facturado', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentSession.access_token}`
+          },
+          body: JSON.stringify({ id, action })
+        });
+        const res = await response.json();
+        if (!res.success) throw new Error(res.error);
+
+        loadRecords();
+      } catch (e) {
+        showAlert(`⚠️ Error al actualizar estado de facturación: ${e.message}`, 'error');
       }
     }
 
     function openModal(url) {
       modalExternalLink.href = url;
-      if (url.toLowerCase().endsWith('.pdf')) {
+      if (url.toLowerCase().includes('.pdf')) {
         modalImage.classList.add('hidden');
-        modalPdf.src = url;
         modalPdf.classList.remove('hidden');
+        modalPdf.src = url;
       } else {
         modalPdf.classList.add('hidden');
-        modalImage.src = url;
         modalImage.classList.remove('hidden');
+        modalImage.src = url;
       }
       viewerModal.classList.remove('hidden');
     }
@@ -1649,43 +1664,205 @@
     }
 
     function calcularCierre() {
-      const fecha = document.getElementById('cierreFechaInput').value;
-      const cierreTableBody = document.getElementById('cierreTableBody');
-      cierreTableBody.innerHTML = '';
+      const selectedDate = document.getElementById('cierreFechaInput').value;
+      if (!selectedDate) return;
 
-      if (!fecha) return;
+      const facturadosFecha = rawRecordsData.filter(row => {
+        if (!row.fecha_facturacion) return false;
+        return row.fecha_facturacion.startsWith(selectedDate);
+      });
 
-      const facturados = rawRecordsData.filter(row => row.fecha_facturacion && row.fecha_facturacion.startsWith(fecha));
       let totalMonto = 0;
+      const tbody = document.getElementById('cierreTableBody');
+      tbody.innerHTML = '';
 
-      if (facturados.length > 0) {
-        facturados.forEach(row => {
+      if (facturadosFecha.length > 0) {
+        facturadosFecha.forEach(row => {
           totalMonto += parseFloat(row.monto || 0);
-          const hora = new Date(row.fecha_facturacion).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' });
-          const montoFmt = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(row.monto || 0);
+          const factTimeStr = new Date(row.fecha_facturacion).toLocaleTimeString('es-CR', { timeStyle: 'short' });
+          const formattedMonto = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(row.monto || 0);
 
           const tr = document.createElement('tr');
-          tr.className = "border-b border-slate-200/40 dark:border-slate-700/40";
+          tr.className = "hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors";
           tr.innerHTML = `
             <td class="p-3">
-              <div class="font-bold text-slate-900 dark:text-slate-100">${row.cliente || 'Desconocido'}</div>
-              <div class="text-[10px] font-mono text-slate-500">Ref: ${row.numero_referencia || 'N/A'}</div>
+              <div class="font-bold text-slate-900 dark:text-white">${row.cliente || 'Desconocido'}</div>
+              <div class="text-[10px] text-slate-500 font-mono">Ref: ${row.numero_referencia || 'N/A'}</div>
             </td>
-            <td class="p-3 text-slate-700 dark:text-slate-300 font-medium">${hora}</td>
-            <td class="p-3 text-right font-extrabold text-theme-primary">${montoFmt}</td>
+            <td class="p-3 font-medium text-slate-700 dark:text-slate-300">${factTimeStr}</td>
+            <td class="p-3 text-right font-extrabold text-theme-primary">${formattedMonto}</td>
           `;
-          cierreTableBody.appendChild(tr);
+          tbody.appendChild(tr);
         });
       } else {
-        cierreTableBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium">No hay comprobantes facturados para esta fecha.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium">No hay comprobantes facturados registrados en esta fecha.</td></tr>`;
       }
 
-      document.getElementById('cierreTotalCount').innerText = facturados.length;
+      document.getElementById('cierreTotalCount').innerText = facturadosFecha.length;
       document.getElementById('cierreTotalMonto').innerText = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(totalMonto);
     }
 
-    // Inicializar autenticación al cargar la página
-    initAuth();
+    // GESTIÓN DE USUARIOS
+    function openUsuariosModal() {
+      resetUsuarioForm();
+      loadUsuariosList();
+      usuariosModal.classList.remove('hidden');
+    }
+
+    function closeUsuariosModal() {
+      usuariosModal.classList.add('hidden');
+    }
+
+    function resetUsuarioForm() {
+      document.getElementById('usuarioForm').reset();
+      document.getElementById('usuarioForm').dataset.editId = "";
+      document.getElementById('btnSaveUsuario').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar Usuario`;
+    }
+
+    async function loadUsuariosList() {
+      const tbody = document.getElementById('usuariosTableBody');
+      tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium"><i class="fa-solid fa-spinner animate-spin mr-1"></i> Cargando usuarios...</td></tr>`;
+
+      try {
+        const res = await fetch('/api/obtener_usuarios', {
+          headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+        });
+        const resData = await res.json();
+        
+        if (!resData.success) throw new Error(resData.error);
+        
+        usuariosCache = resData.data || [];
+        renderUsuariosTable(usuariosCache);
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500 font-medium">Error al cargar usuarios: ${e.message}</td></tr>`;
+      }
+    }
+
+    function renderUsuariosTable(usuarios) {
+      const tbody = document.getElementById('usuariosTableBody');
+      tbody.innerHTML = '';
+
+      if (usuarios.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium">No hay usuarios registrados.</td></tr>`;
+        return;
+      }
+
+      usuarios.forEach(u => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors";
+
+        const permCargar = u.puede_cargar_comprobantes ? `<span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">Cargar</span>` : '';
+        const permComentarios = u.puede_editar_comentarios ? `<span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-500/30">Comentar</span>` : '';
+        const permAcciones = u.puede_gestionar_acciones ? `<span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/30">Acciones</span>` : '';
+
+        tr.innerHTML = `
+          <td class="p-3">
+            <div class="font-bold text-slate-900 dark:text-white text-xs">${u.nombre || 'Sin Nombre'}</div>
+            <div class="text-[11px] text-slate-600 dark:text-slate-400 font-mono">${u.email}</div>
+          </td>
+          <td class="p-3">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              ${permCargar}
+              ${permComentarios}
+              ${permAcciones}
+              ${(!u.puede_cargar_comprobantes && !u.puede_editar_comentarios && !u.puede_gestionar_acciones) ? '<span class="text-slate-400 text-xs">Sin permisos</span>' : ''}
+            </div>
+          </td>
+          <td class="p-3 text-center">
+            <div class="flex items-center justify-center gap-1">
+              <button onclick="editUsuario('${u.id}')" class="p-1.5 text-xs font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 rounded-lg transition-colors" title="Editar">
+                <i class="fa-solid fa-pen"></i>
+              </button>
+              <button onclick="deleteUsuario('${u.id}', '${u.email}')" class="p-1.5 text-xs font-bold bg-red-500/20 text-red-700 dark:text-red-300 border border-red-500/30 hover:bg-red-500/30 rounded-lg transition-colors" title="Eliminar">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function editUsuario(id) {
+      const u = usuariosCache.find(item => item.id === id);
+      if (!u) return;
+
+      document.getElementById('usrNombre').value = u.nombre || '';
+      document.getElementById('usrCorreo').value = u.email || '';
+      document.getElementById('permCargar').checked = !!u.puede_cargar_comprobantes;
+      document.getElementById('permEditarComentarios').checked = !!u.puede_editar_comentarios;
+      document.getElementById('permGestionarAcciones').checked = !!u.puede_gestionar_acciones;
+
+      document.getElementById('usuarioForm').dataset.editId = id;
+      document.getElementById('btnSaveUsuario').innerHTML = `<i class="fa-solid fa-arrows-rotate"></i> Actualizar Usuario`;
+    }
+
+    async function saveUsuario(e) {
+      e.preventDefault();
+      const id = document.getElementById('usuarioForm').dataset.editId;
+      const nombre = document.getElementById('usrNombre').value.trim();
+      const email = document.getElementById('usrCorreo').value.trim();
+      const puede_cargar_comprobantes = document.getElementById('permCargar').checked;
+      const puede_editar_comentarios = document.getElementById('permEditarComentarios').checked;
+      const puede_gestionar_acciones = document.getElementById('permGestionarAcciones').checked;
+
+      const btn = document.getElementById('btnSaveUsuario');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Guardando...`;
+
+      try {
+        const response = await fetch('/api/guardar_usuario', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentSession.access_token}`
+          },
+          body: JSON.stringify({
+            id,
+            nombre,
+            email,
+            puede_cargar_comprobantes,
+            puede_editar_comentarios,
+            puede_gestionar_acciones
+          })
+        });
+
+        const resData = await response.json();
+        if (!resData.success) throw new Error(resData.error);
+
+        resetUsuarioForm();
+        loadUsuariosList();
+      } catch (err) {
+        alert(`Error al guardar el usuario: ${err.message}`);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function deleteUsuario(id, email) {
+      if (!confirm(`¿Estás seguro de que deseas eliminar los permisos del usuario ${email}?`)) return;
+
+      try {
+        const response = await fetch('/api/eliminar_usuario', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentSession.access_token}`
+          },
+          body: JSON.stringify({ id })
+        });
+
+        const resData = await response.json();
+        if (!resData.success) throw new Error(resData.error);
+
+        loadUsuariosList();
+      } catch (err) {
+        alert(`Error al eliminar el usuario: ${err.message}`);
+      }
+    }
+
+    // Inicializar aplicación
+    window.addEventListener('DOMContentLoaded', initAuth);
   </script>
 </body>
 </html>
