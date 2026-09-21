@@ -34,7 +34,7 @@ try {
     }
 
     $cleanBaseUrl = preg_replace('/\/rest\/v1\/?$/', '', rtrim(trim($rawSupabaseUrl), '/'));
-    $dbUrl = $cleanBaseUrl . "/rest/v1/usuarios?correo=eq." . urlencode($correo);
+    $dbUrl = $cleanBaseUrl . "/rest/v1/usuarios?email=eq." . urlencode($correo);
 
     $ch = curl_init($dbUrl);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
