@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestor de SINPE Móvil</title>
+  <title>Gestor de SINPE Móvil - SINPEControl</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -16,136 +16,163 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css"/>
   <script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+    }
 
-    /* --- TEMAS CON FONDOS Y TEXTOS PERSONALIZADOS --- */
+    /* --- ESTILO GLASSMORPHISM Y PALETAS CON FONDOS DINÁMICOS --- */
+
+    /* Capa de fondo global */
+    #app-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: background-image 0.5s ease-in-out;
+    }
+
+    /* Overlay oscuro/claro de fondo para asegurar legibilidad */
+    #app-bg-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      transition: background 0.3s ease;
+    }
 
     /* Esmeralda */
     html.theme-emerald {
-      --theme-bg: #ecfdf5;                   /* Fondo general claro */
-      --theme-surface: #ffffff;              /* Fondo de tarjetas/paneles */
-      --theme-text-main: #064e3b;           /* Texto oscuro de alto contraste */
-      --theme-primary: #059669;             /* Color principal/botones */
+      --bg-image: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1920&q=80');
+      --theme-surface: rgba(255, 255, 255, 0.75);
+      --theme-text-main: #064e3b;
+      --theme-primary: #059669;
       --theme-primary-hover: #047857;
-      --theme-primary-light: #d1fae5;
-      --theme-primary-dark-light: #064e3b;
-      --theme-border: #a7f3d0;
+      --theme-border: rgba(167, 243, 208, 0.6);
+      --glass-overlay: rgba(236, 253, 245, 0.45);
     }
     html.theme-emerald.dark {
-      --theme-bg: #022c22;                   /* Fondo general oscuro temático */
-      --theme-surface: #064e3b;              /* Tarjetas oscuras */
-      --theme-text-main: #ecfdf5;           /* Texto claro de alto contraste */
+      --bg-image: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1920&q=80');
+      --theme-surface: rgba(6, 78, 59, 0.75);
+      --theme-text-main: #ecfdf5;
       --theme-primary: #10b981;
       --theme-primary-hover: #059669;
-      --theme-primary-light: #065f46;
-      --theme-primary-dark-light: #064e3b;
-      --theme-border: #047857;
+      --theme-border: rgba(4, 120, 87, 0.6);
+      --glass-overlay: rgba(2, 44, 34, 0.75);
     }
 
     /* Océano Azul */
     html.theme-blue {
-      --theme-bg: #eff6ff;
-      --theme-surface: #ffffff;
+      --bg-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80');
+      --theme-surface: rgba(255, 255, 255, 0.75);
       --theme-text-main: #1e3a8a;
       --theme-primary: #2563eb;
       --theme-primary-hover: #1d4ed8;
-      --theme-primary-light: #dbeafe;
-      --theme-primary-dark-light: #1e3a8a;
-      --theme-border: #bfdbfe;
+      --theme-border: rgba(191, 219, 254, 0.6);
+      --glass-overlay: rgba(239, 246, 255, 0.45);
     }
     html.theme-blue.dark {
-      --theme-bg: #0f172a;
-      --theme-surface: #1e293b;
+      --bg-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80');
+      --theme-surface: rgba(30, 41, 59, 0.78);
       --theme-text-main: #eff6ff;
       --theme-primary: #3b82f6;
       --theme-primary-hover: #2563eb;
-      --theme-primary-light: #1e3a8a;
-      --theme-primary-dark-light: #0f172a;
-      --theme-border: #334155;
+      --theme-border: rgba(51, 65, 85, 0.6);
+      --glass-overlay: rgba(15, 23, 42, 0.8);
     }
 
     /* Cyber Violeta */
     html.theme-violet {
-      --theme-bg: #f5f3ff;
-      --theme-surface: #ffffff;
+      --bg-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1920&q=80');
+      --theme-surface: rgba(255, 255, 255, 0.75);
       --theme-text-main: #4c1d95;
       --theme-primary: #7c3aed;
       --theme-primary-hover: #6d28d9;
-      --theme-primary-light: #ede9fe;
-      --theme-primary-dark-light: #4c1d95;
-      --theme-border: #ddd6fe;
+      --theme-border: rgba(221, 214, 254, 0.6);
+      --glass-overlay: rgba(245, 243, 255, 0.45);
     }
     html.theme-violet.dark {
-      --theme-bg: #2e1065;
-      --theme-surface: #4c1d95;
+      --bg-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=1920&q=80');
+      --theme-surface: rgba(76, 29, 149, 0.75);
       --theme-text-main: #f5f3ff;
       --theme-primary: #8b5cf6;
       --theme-primary-hover: #7c3aed;
-      --theme-primary-light: #5b21b6;
-      --theme-primary-dark-light: #2e1065;
-      --theme-border: #5b21b6;
+      --theme-border: rgba(91, 33, 182, 0.6);
+      --glass-overlay: rgba(46, 16, 101, 0.8);
     }
 
     /* Ámbar Atardecer */
     html.theme-amber {
-      --theme-bg: #fffbeb;
-      --theme-surface: #ffffff;
+      --bg-image: url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80');
+      --theme-surface: rgba(255, 255, 255, 0.75);
       --theme-text-main: #78350f;
       --theme-primary: #d97706;
       --theme-primary-hover: #b45309;
-      --theme-primary-light: #fef3c7;
-      --theme-primary-dark-light: #78350f;
-      --theme-border: #fde68a;
+      --theme-border: rgba(253, 230, 138, 0.6);
+      --glass-overlay: rgba(255, 251, 235, 0.45);
     }
     html.theme-amber.dark {
-      --theme-bg: #451a03;
-      --theme-surface: #78350f;
+      --bg-image: url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=80');
+      --theme-surface: rgba(120, 53, 15, 0.75);
       --theme-text-main: #fffbeb;
       --theme-primary: #f59e0b;
       --theme-primary-hover: #d97706;
-      --theme-primary-light: #92400e;
-      --theme-primary-dark-light: #451a03;
-      --theme-border: #92400e;
+      --theme-border: rgba(146, 64, 14, 0.6);
+      --glass-overlay: rgba(69, 26, 3, 0.8);
     }
 
     /* Slate Urbano */
     html.theme-slate {
-      --theme-bg: #f8fafc;
-      --theme-surface: #ffffff;
+      --bg-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80');
+      --theme-surface: rgba(255, 255, 255, 0.75);
       --theme-text-main: #0f172a;
       --theme-primary: #475569;
       --theme-primary-hover: #334155;
-      --theme-primary-light: #f1f5f9;
-      --theme-primary-dark-light: #1e293b;
-      --theme-border: #cbd5e1;
+      --theme-border: rgba(203, 213, 225, 0.6);
+      --glass-overlay: rgba(248, 250, 252, 0.45);
     }
     html.theme-slate.dark {
-      --theme-bg: #0f172a;
-      --theme-surface: #1e293b;
+      --bg-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80');
+      --theme-surface: rgba(30, 41, 59, 0.78);
       --theme-text-main: #f8fafc;
       --theme-primary: #64748b;
       --theme-primary-hover: #475569;
-      --theme-primary-light: #334155;
-      --theme-primary-dark-light: #0f172a;
-      --theme-border: #334155;
+      --theme-border: rgba(51, 65, 85, 0.6);
+      --glass-overlay: rgba(15, 23, 42, 0.8);
     }
 
-    /* --- APLICACIÓN GLOBAL DEL FONDO Y TEXTO --- */
+    /* TARJETAS CON EFECTO GLASSMORPHISM */
+    .glass-card {
+      background: var(--theme-surface);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--theme-border);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.12);
+      transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    header.glass-header {
+      background: var(--theme-surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--theme-border);
+    }
+
+    /* Clases de utilidad vinculadas a la paleta activa */
     body {
-      background-color: var(--theme-bg) !important;
-      color: var(--theme-text-main) !important;
-      transition: background-color 0.3s ease, color 0.3s ease;
-      font-family: 'Inter', sans-serif;
+      color: var(--theme-text-main);
+      min-height: 100vh;
     }
 
-    /* Clase de utilidad para aplicar el fondo de tarjeta temático */
-    .bg-theme-surface {
-      background-color: var(--theme-surface) !important;
-    }
-
-    .text-theme-main {
-      color: var(--theme-text-main) !important;
-    }
+    .bg-theme-surface { background-color: var(--theme-surface) !important; }
+    .text-theme-main { color: var(--theme-text-main) !important; }
+    .bg-theme-primary { background-color: var(--theme-primary) !important; }
+    .hover\:bg-theme-primary-hover:hover { background-color: var(--theme-primary-hover) !important; }
+    .text-theme-primary { color: var(--theme-primary) !important; }
+    .border-theme { border-color: var(--theme-border) !important; }
+    .focus\:border-theme:focus { border-color: var(--theme-primary) !important; }
 
     /* Tarjetas de Selección en el Modal */
     .theme-card {
@@ -182,30 +209,25 @@
 
     .theme-card.active-theme {
       border-color: var(--theme-primary);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
     }
-
-    /* Clases de utilidad vinculadas a la paleta activa */
-    .bg-theme-primary { background-color: var(--theme-primary) !important; }
-    .hover\:bg-theme-primary-hover:hover { background-color: var(--theme-primary-hover) !important; }
-    .text-theme-primary { color: var(--theme-primary) !important; }
-    .bg-theme-light { background-color: var(--theme-primary-light) !important; }
-    .dark .bg-theme-light { background-color: var(--theme-primary-dark-light) !important; }
-    .border-theme { border-color: var(--theme-border) !important; }
-    .focus\:border-theme:focus { border-color: var(--theme-primary) !important; }
   </style>
 </head>
-<body class="min-h-screen transition-colors duration-200">
+<body class="min-h-screen transition-colors duration-200 relative">
 
-<header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-40 transition-colors">
+<!-- Capas de fondo con imagen y difuminado esmerilado -->
+<div id="app-bg"></div>
+<div id="app-bg-overlay"></div>
+
+<header class="glass-header sticky top-0 z-40 transition-colors">
   <div class="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2 overflow-hidden">
     
     <!-- Logotipo y Título -->
     <div class="flex items-center gap-2 min-w-0">
-      <div class="bg-theme-primary text-white p-1.5 sm:p-2 rounded-xl shrink-0 transition-colors">
+      <div class="bg-theme-primary text-white p-1.5 sm:p-2 rounded-xl shrink-0 transition-colors shadow-md">
         <i class="fa-solid fa-wallet text-base sm:text-xl"></i>
       </div>
-      <h1 class="text-base sm:text-xl font-bold text-slate-900 dark:text-white tracking-tight leading-none truncate">
+      <h1 class="text-base sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-none truncate drop-shadow-sm">
         SINPE<span class="text-theme-primary transition-colors">Control</span>
       </h1>
     </div>
@@ -216,41 +238,41 @@
       <!-- Grupo de botones visibles solo cuando hay sesión -->
       <div id="userNavGroup" class="hidden flex items-center gap-1.5 sm:gap-3">
         <!-- Botón Mantenimiento de Usuarios -->
-        <button id="usuariosBtn" onclick="openUsuariosModal()" class="text-xs bg-purple-50 dark:bg-purple-900/40 hover:bg-purple-100 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 font-bold px-2.5 sm:px-3 py-1.5 rounded-lg border border-purple-200 dark:border-purple-800 transition-all flex items-center gap-1.5" title="Mantenimiento de Usuarios">
+        <button id="usuariosBtn" onclick="openUsuariosModal()" class="text-xs bg-purple-50/80 dark:bg-purple-950/60 hover:bg-purple-100 dark:hover:bg-purple-900/80 text-purple-700 dark:text-purple-300 font-bold px-2.5 sm:px-3 py-1.5 rounded-lg border border-purple-200/60 dark:border-purple-800/60 transition-all flex items-center gap-1.5 shadow-sm backdrop-blur-sm" title="Mantenimiento de Usuarios">
           <i class="fa-solid fa-users-gear text-xs"></i>
           <span class="hidden sm:inline">Usuarios</span>
         </button>
 
         <!-- Botón Selector de Temas / Apariencia -->
-        <button id="themeSelectorBtn" onclick="openThemeModal()" class="text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold px-2.5 sm:px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 transition-all flex items-center gap-1.5" title="Personalizar Apariencia">
+        <button id="themeSelectorBtn" onclick="openThemeModal()" class="text-xs bg-white/70 dark:bg-slate-800/70 hover:bg-white/90 dark:hover:bg-slate-700/90 text-slate-800 dark:text-slate-100 font-bold px-2.5 sm:px-3 py-1.5 rounded-lg border border-slate-200/60 dark:border-slate-700/60 transition-all flex items-center gap-1.5 shadow-sm backdrop-blur-sm" title="Personalizar Apariencia">
           <i class="fa-solid fa-palette text-theme-primary"></i>
           <span class="hidden sm:inline">Tema</span>
         </button>
 
         <!-- Botón Demo Guiada con Driver.js -->
-        <button id="demoGuideBtn" onclick="startDemoTour()" class="text-xs bg-amber-50 dark:bg-amber-900/40 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-700 dark:text-amber-300 font-bold px-2.5 sm:px-3 py-1.5 rounded-lg border border-amber-200 dark:border-amber-800 transition-all flex items-center gap-1.5" title="Ver Demo Guiada">
+        <button id="demoGuideBtn" onclick="startDemoTour()" class="text-xs bg-amber-50/80 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/80 text-amber-700 dark:text-amber-300 font-bold px-2.5 sm:px-3 py-1.5 rounded-lg border border-amber-200/60 dark:border-amber-800/60 transition-all flex items-center gap-1.5 shadow-sm backdrop-blur-sm" title="Ver Demo Guiada">
           <i class="fa-solid fa-circle-play text-xs"></i>
           <span>Demo</span>
         </button>
     
         <!-- Toggle Planes y Precios -->
-        <button id="planesNavBtn" onclick="togglePlanes()" class="text-xs bg-theme-light text-theme-primary font-bold px-2.5 sm:px-3 py-1.5 rounded-lg border border-theme transition-all flex items-center gap-1.5" title="Ver Planes">
+        <button id="planesNavBtn" onclick="togglePlanes()" class="text-xs bg-theme-primary text-white font-bold px-2.5 sm:px-3 py-1.5 rounded-lg border border-theme transition-all flex items-center gap-1.5 shadow-sm" title="Ver Planes">
           <i class="fa-solid fa-tags text-xs"></i>
           <span>Planes</span>
         </button>
       </div>
     
       <!-- Nombre del usuario -->
-      <span id="userName" class="text-xs font-medium text-slate-600 dark:text-slate-300 hidden md:inline truncate max-w-[160px]"></span>
+      <span id="userName" class="text-xs font-semibold text-slate-700 dark:text-slate-200 hidden md:inline truncate max-w-[160px]"></span>
       
       <!-- Botón Cierre -->
-      <button id="cierreBtn" onclick="openCierreModal()" class="text-xs bg-indigo-50 dark:bg-indigo-900/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 font-bold px-2 sm:px-3 py-1.5 rounded-lg border border-indigo-200 dark:border-indigo-800 transition-all flex items-center gap-1 hidden">
+      <button id="cierreBtn" onclick="openCierreModal()" class="text-xs bg-indigo-50/80 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 font-bold px-2 sm:px-3 py-1.5 rounded-lg border border-indigo-200/60 dark:border-indigo-800/60 transition-all flex items-center gap-1 hidden shadow-sm backdrop-blur-sm">
         <i class="fa-solid fa-calculator text-xs"></i>
         <span class="hidden xs:inline sm:inline">Cierre</span>
       </button>
     
       <!-- Botón Salir -->
-      <button id="logoutBtn" class="hidden text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold px-2 sm:px-3 py-1.5 rounded-lg transition-all flex items-center gap-1">
+      <button id="logoutBtn" class="hidden text-xs bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-semibold px-2 sm:px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 border border-red-200 dark:border-red-900/50">
         <i class="fa-solid fa-right-from-bracket"></i>
         <span class="hidden xs:inline sm:inline">Salir</span>
       </button>
@@ -260,26 +282,26 @@
 </header>
 
   <!-- Login Screen -->
-  <div id="loginScreen" class="hidden max-w-md mx-auto mt-20 p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 text-center">
-    <div class="bg-theme-light text-theme-primary w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+  <div id="loginScreen" class="hidden max-w-md mx-auto mt-20 p-8 glass-card rounded-3xl shadow-xl text-center">
+    <div class="bg-theme-primary text-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
       <i class="fa-solid fa-lock text-2xl"></i>
     </div>
-    <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Acceso Restringido</h2>
-    <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Debes iniciar sesión con tu cuenta autorizada de Google.</p>
-    <button id="loginBtn" class="w-full bg-slate-900 dark:bg-theme-primary dark:hover:bg-theme-primary-hover hover:bg-slate-800 text-white font-medium py-3 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-3">
+    <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white mb-2">Acceso Restringido</h2>
+    <p class="text-sm text-slate-600 dark:text-slate-300 mb-6 font-medium">Debes iniciar sesión con tu cuenta autorizada de Google.</p>
+    <button id="loginBtn" class="w-full bg-slate-900 dark:bg-theme-primary dark:hover:bg-theme-primary-hover hover:bg-slate-800 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-3">
       <i class="fa-brands fa-google text-lg"></i>
       <span>Continuar con Google</span>
     </button>
   </div>
 
   <!-- Access Denied Screen -->
-  <div id="deniedScreen" class="hidden max-w-md mx-auto mt-20 p-6 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 text-center">
-    <div class="bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+  <div id="deniedScreen" class="hidden max-w-md mx-auto mt-20 p-8 glass-card rounded-3xl shadow-xl text-center">
+    <div class="bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
       <i class="fa-solid fa-user-slash text-2xl"></i>
     </div>
-    <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Acceso No Autorizado</h2>
-    <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Tu cuenta de Google (<span id="deniedEmail" class="font-semibold text-slate-700 dark:text-slate-200"></span>) no tiene permisos para acceder a la aplicación.</p>
-    <button onclick="supabaseClient.auth.signOut()" class="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold py-2.5 px-4 rounded-xl transition-all">
+    <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white mb-2">Acceso No Autorizado</h2>
+    <p class="text-sm text-slate-600 dark:text-slate-300 mb-6 font-medium">Tu cuenta de Google (<span id="deniedEmail" class="font-bold text-slate-900 dark:text-white"></span>) no tiene permisos para acceder a la aplicación.</p>
+    <button onclick="supabaseClient.auth.signOut()" class="w-full bg-slate-200/80 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-3 px-4 rounded-2xl transition-all">
       Probar con otra cuenta
     </button>
   </div>
@@ -287,7 +309,7 @@
   <!-- App Main Screen -->
   <main id="appScreen" class="hidden max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
      
- <!-- GRID PRINCIPAL OPTIMIZADO -->
+ <!-- GRID PRINCIPAL OPTIMIZADO CON ESTILO GLASS -->
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
   
   <!-- COLUMNA IZQUIERDA -->
@@ -295,65 +317,65 @@
     
     <!-- 1. PANEL DE CARGA -->
     <div class="order-1" id="tourPanelCarga">
-      <section class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
+      <section class="glass-card rounded-2xl p-5">
         <h2 class="text-base font-bold text-slate-900 dark:text-white mb-1">Registrar Comprobante</h2>
-        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Sube la foto del comprobante para procesarla.</p>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mb-4 font-medium">Sube la foto del comprobante para procesarla.</p>
         
         <form id="uploadForm" class="space-y-4">
-          <div id="dropzone" class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-4 text-center hover:border-theme transition-colors cursor-pointer bg-slate-50 dark:bg-slate-900/50">
+          <div id="dropzone" class="border-2 border-dashed border-slate-300/80 dark:border-slate-600/80 rounded-xl p-4 text-center hover:border-theme transition-colors cursor-pointer bg-white/40 dark:bg-slate-900/40">
             <input type="file" id="fileInput" name="comprobante" accept="image/*,application/pdf" class="hidden">
-            <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400 dark:text-slate-500 mb-1"></i>
-            <p class="text-xs font-medium text-slate-700 dark:text-slate-300">Haz clic para elegir foto o PDF</p>
+            <i class="fa-solid fa-cloud-arrow-up text-2xl text-theme-primary mb-1"></i>
+            <p class="text-xs font-semibold text-slate-700 dark:text-slate-200">Haz clic para elegir foto o PDF</p>
           </div>
 
           <div id="previewContainer" class="hidden">
             <img id="imagePreview" src="" class="w-full h-40 object-cover rounded-xl border border-slate-200 dark:border-slate-700 hidden">
-            <div id="pdfPreview" class="hidden flex items-center justify-center gap-2 p-3 bg-slate-100 dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600">
+            <div id="pdfPreview" class="hidden flex items-center justify-center gap-2 p-3 bg-white/50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
               <i class="fa-solid fa-file-pdf text-red-500 text-2xl"></i>
               <span id="pdfFileName" class="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[150px]"></span>
             </div>
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Comentario Previo</label>
-            <textarea id="initialComment" name="comentario" rows="2" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-theme" placeholder="Ej: Pago de pedido #1234..."></textarea>
+            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Comentario Previo</label>
+            <textarea id="initialComment" name="comentario" rows="2" class="w-full text-xs p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-white/60 dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme backdrop-blur-sm" placeholder="Ej: Pago de pedido #1234..."></textarea>
           </div>
 
-          <button type="submit" id="submitBtn" class="w-full bg-theme-primary hover:bg-theme-primary-hover text-white font-medium py-2.5 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-xs">
+          <button type="submit" id="submitBtn" class="w-full bg-theme-primary hover:bg-theme-primary-hover text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-xs">
             <i class="fa-solid fa-bolt"></i> <span>Procesar SINPE</span>
           </button>
         </form>
 
-        <div id="alertBox" class="mt-4 hidden p-3 rounded-xl text-xs"></div>
+        <div id="alertBox" class="mt-4 hidden p-3 rounded-xl text-xs font-semibold shadow-sm"></div>
       </section>
     </div>
 
     <!-- 2. PANEL DE FILTROS -->
     <div class="order-3 lg:order-2" id="tourPanelFiltros">
-      <section class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5 space-y-4">
-        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+      <section class="glass-card rounded-2xl p-5 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-200/50 dark:border-slate-700/50 pb-3">
           <h3 class="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wider flex items-center gap-2">
             <i class="fa-solid fa-filter text-theme-primary"></i> Filtros de Búsqueda
           </h3>
-          <button onclick="resetFilters()" class="text-[10px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 underline">Limpiar</button>
+          <button onclick="resetFilters()" class="text-[10px] font-bold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white underline">Limpiar</button>
         </div>
 
         <div class="space-y-3">
           <div>
-            <label class="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500">Búsqueda Global</label>
-            <input type="text" id="searchFilter" placeholder="Cliente, ref, monto..." class="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-theme" oninput="renderTable()">
+            <label class="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400">Búsqueda Global</label>
+            <input type="text" id="searchFilter" placeholder="Cliente, ref, monto..." class="w-full text-xs p-2 rounded-lg border border-slate-200/80 dark:border-slate-700/80 bg-white/60 dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" oninput="renderTable()">
           </div>
 
           <div>
-            <label class="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500">Banco Emisor</label>
-            <select id="bankFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-theme" onchange="renderTable()">
+            <label class="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400">Banco Emisor</label>
+            <select id="bankFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200/80 dark:border-slate-700/80 bg-white/60 dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" onchange="renderTable()">
               <option value="">Todos los Bancos</option>
             </select>
           </div>
 
           <div>
-            <label class="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500">Estado</label>
-            <select id="statusFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-theme" onchange="renderTable()">
+            <label class="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400">Estado</label>
+            <select id="statusFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200/80 dark:border-slate-700/80 bg-white/60 dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" onchange="renderTable()">
               <option value="">Todos los Estados</option>
               <option value="Pendiente">Pendiente</option>
               <option value="Aprobado">Aprobado</option>
@@ -361,20 +383,20 @@
             </select>
           </div>
 
-          <div class="pt-2 border-t border-slate-100 dark:border-slate-700 space-y-2">
+          <div class="pt-2 border-t border-slate-200/50 dark:border-slate-700/50 space-y-2">
             <div>
-              <label class="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500">Fecha Ingresado</label>
-              <input type="date" id="createdFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-theme" onchange="renderTable()">
+              <label class="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400">Fecha Ingresado</label>
+              <input type="date" id="createdFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200/80 dark:border-slate-700/80 bg-white/60 dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" onchange="renderTable()">
             </div>
           
             <div>
-              <label class="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500">Fecha Pago</label>
-              <input type="date" id="txFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-theme" onchange="renderTable()">
+              <label class="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400">Fecha Pago</label>
+              <input type="date" id="txFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200/80 dark:border-slate-700/80 bg-white/60 dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" onchange="renderTable()">
             </div>
           
             <div>
-              <label class="text-[10px] font-bold uppercase text-slate-400 dark:text-slate-500">Fecha Facturado</label>
-              <input type="date" id="factFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-theme" onchange="renderTable()">
+              <label class="text-[10px] font-bold uppercase text-slate-600 dark:text-slate-400">Fecha Facturado</label>
+              <input type="date" id="factFilter" class="w-full text-xs p-2 rounded-lg border border-slate-200/80 dark:border-slate-700/80 bg-white/60 dark:bg-slate-900/60 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" onchange="renderTable()">
             </div>
           </div>
         </div>
@@ -387,21 +409,21 @@
   <div class="order-2 lg:col-span-9 xl:col-span-10 space-y-6">
     <!-- Tarjetas Estadísticas -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="tourEstadisticas">
-      <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-        <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Total Comprobantes</span>
-        <div id="totalCount" class="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">0</div>
+      <div class="glass-card p-5 rounded-2xl">
+        <span class="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Total Comprobantes</span>
+        <div id="totalCount" class="text-3xl font-black text-slate-900 dark:text-white mt-1 drop-shadow-sm">0</div>
       </div>
-      <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
-        <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Monto Total Acumulado</span>
-        <div id="totalAmount" class="text-2xl font-bold text-theme-primary mt-0.5">₡0.00</div>
+      <div class="glass-card p-5 rounded-2xl">
+        <span class="text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Monto Total Acumulado</span>
+        <div id="totalAmount" class="text-3xl font-black text-theme-primary mt-1 drop-shadow-sm">₡0.00</div>
       </div>
     </div>
 
     <!-- Tabla de Registros -->
-    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden transition-colors" id="tourTablaRegistros">
-      <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+    <div class="glass-card rounded-2xl overflow-hidden" id="tourTablaRegistros">
+      <div class="p-4 border-b border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between">
         <h3 class="font-bold text-slate-900 dark:text-white text-sm">Histórico de Transacciones</h3>
-        <button id="refreshBtn" onclick="loadRecords()" class="text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium px-3 py-1.5 rounded-lg transition-colors">
+        <button id="refreshBtn" onclick="loadRecords()" class="text-xs bg-white/60 dark:bg-slate-700/60 hover:bg-white dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold px-3 py-1.5 rounded-lg border border-slate-200/60 dark:border-slate-600 transition-all shadow-sm">
           <i class="fa-solid fa-rotate-right mr-1"></i> Actualizar
         </button>
       </div>
@@ -409,7 +431,7 @@
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
-            <tr class="bg-slate-100 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 uppercase text-[11px] tracking-wider border-b border-slate-200 dark:border-slate-700">
+            <tr class="bg-white/40 dark:bg-slate-900/50 text-slate-700 dark:text-slate-300 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200/50 dark:border-slate-700/50">
               <th class="p-3">Detalle del SINPE</th>
               <th class="p-3">Banco</th>
               <th class="p-3">Trazabilidad / Fechas</th>
@@ -417,7 +439,7 @@
               <th class="p-3 text-center">Acciones</th>
             </tr>
           </thead>
-          <tbody id="recordsTable" class="divide-y divide-slate-100 dark:divide-slate-700 text-xs"></tbody>
+          <tbody id="recordsTable" class="divide-y divide-slate-200/40 dark:divide-slate-700/40 text-xs"></tbody>
         </table>
       </div>
     </div>
@@ -427,35 +449,35 @@
 </div>
 
    <!-- SECCIÓN DE PLANES Y PRECIOS -->
-<section id="planesSection" class="hidden border-t border-slate-200 dark:border-slate-700 pt-10">
+<section id="planesSection" class="hidden border-t border-slate-200/50 dark:border-slate-700/50 pt-10">
   <div class="text-center max-w-2xl mx-auto mb-10">
-    <span class="text-xs font-bold uppercase tracking-widest text-theme-primary bg-theme-light px-3 py-1 rounded-full border border-theme">
+    <span class="text-xs font-bold uppercase tracking-widest text-theme-primary bg-white/80 dark:bg-slate-800/80 px-3.5 py-1.5 rounded-full border border-theme shadow-sm">
       Planes y Flexibilidad
     </span>
-    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-3 tracking-tight">
+    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-4 tracking-tight drop-shadow-sm">
       Elige cómo quieres usar SINPEControl
     </h2>
-    <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
+    <p class="text-sm font-medium text-slate-600 dark:text-slate-300 mt-2">
       Alquila por mensualidades ajustadas a tu volumen o adquiere el código/derechos de por vida.
     </p>
 
-    <div class="inline-flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-700 mt-6 shadow-inner">
-      <button id="btnAlquiler" onclick="switchPlanMode('alquiler')" class="plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-theme-primary text-slate-900 dark:text-white">
-        <i class="fa-solid fa-repeat mr-1.5 text-theme-primary dark:text-white"></i> Alquiler (SaaS)
+    <div class="inline-flex items-center glass-card p-1.5 rounded-2xl mt-6 shadow-md">
+      <button id="btnAlquiler" onclick="switchPlanMode('alquiler')" class="plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-theme-primary text-white">
+        <i class="fa-solid fa-repeat mr-1.5"></i> Alquiler (SaaS)
       </button>
-      <button id="btnCompra" onclick="switchPlanMode('compra')" class="plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+      <button id="btnCompra" onclick="switchPlanMode('compra')" class="plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white">
         <i class="fa-solid fa-key mr-1.5"></i> Compra / Código Fuente
       </button>
     </div>
 
     <div id="billingCycleToggle" class="flex items-center justify-center gap-3 mt-6">
-      <span class="text-xs font-semibold text-slate-600 dark:text-slate-400">Mensual</span>
+      <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Mensual</span>
       <button id="btnBillingCycle" onclick="toggleBillingCycle()" role="switch" aria-checked="false" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-slate-300 dark:bg-slate-700 transition-colors duration-200 ease-in-out focus:outline-none">
         <span id="billingCycleDot" class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-0"></span>
       </button>
       <span class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
         Anual
-        <span class="bg-theme-light text-theme-primary text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-theme">
+        <span class="bg-theme-primary text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-sm">
           Ahorra 2 meses
         </span>
       </span>
@@ -464,22 +486,22 @@
 
   <!-- VISTA 1: PLANES DE ALQUILER -->
   <div id="viewAlquiler" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative overflow-hidden">
+    <div class="glass-card rounded-3xl p-6 shadow-md flex flex-col justify-between">
       <div>
         <div class="flex justify-between items-center mb-4">
           <h3 class="text-lg font-bold text-slate-900 dark:text-white">Plan Básico</h3>
-          <span class="text-[11px] font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded-full">Estándar</span>
+          <span class="text-[11px] font-bold bg-slate-200/80 dark:bg-slate-700/80 text-slate-700 dark:text-slate-200 px-2.5 py-1 rounded-full">Estándar</span>
         </div>
         <div class="mb-6">
           <div id="basicoPriceContainer">
             <span class="price-val text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">₡20,000</span>
-            <span class="price-period text-xs text-slate-500 dark:text-slate-400 font-medium">/ mes</span>
+            <span class="price-period text-xs text-slate-600 dark:text-slate-400 font-medium">/ mes</span>
           </div>
-          <p id="basicoAnnualDetail" class="hidden text-[11px] font-medium text-theme-primary mt-1">
+          <p id="basicoAnnualDetail" class="hidden text-[11px] font-bold text-theme-primary mt-1">
             Cobrado anualmente: <strong>₡200,000 / año</strong>
           </p>
         </div>
-        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+        <ul class="space-y-3 text-xs font-medium text-slate-700 dark:text-slate-200 mb-6">
           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-theme-primary"></i> Hasta <strong>500 comprobantes</strong>/día</li>
           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-theme-primary"></i> Hosting y base de datos</li>
           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-theme-primary"></i> Soporte técnico e infraestructura</li>
@@ -488,24 +510,24 @@
       </div>
     </div>
 
-    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border-2 border-theme shadow-lg flex flex-col justify-between relative overflow-hidden">
+    <div class="glass-card rounded-3xl p-6 border-2 border-theme shadow-xl flex flex-col justify-between relative overflow-hidden">
       <div class="absolute top-0 right-0 bg-theme-primary text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
         Recomendado
       </div>
       <div>
         <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Plan Pro</h3>
+          <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">Plan Pro</h3>
         </div>
         <div class="mb-6">
           <div id="proPriceContainer">
-            <span class="price-val text-3xl sm:text-4xl font-extrabold text-theme-primary">₡35,000</span>
-            <span class="price-period text-xs text-slate-500 dark:text-slate-400 font-medium">/ mes</span>
+            <span class="price-val text-3xl sm:text-4xl font-black text-theme-primary drop-shadow-sm">₡35,000</span>
+            <span class="price-period text-xs text-slate-600 dark:text-slate-400 font-medium">/ mes</span>
           </div>
-          <p id="proAnnualDetail" class="hidden text-[11px] font-medium text-theme-primary mt-1">
+          <p id="proAnnualDetail" class="hidden text-[11px] font-bold text-theme-primary mt-1">
             Cobrado anualmente: <strong>₡350,000 / año</strong>
           </p>
         </div>
-        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+        <ul class="space-y-3 text-xs font-semibold text-slate-800 dark:text-slate-100 mb-6">
           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-theme-primary"></i> Hasta <strong>1.000 comprobantes</strong>/día</li>
           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-theme-primary"></i> Hosting e infraestructura en la nube</li>
           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-theme-primary"></i> Soporte técnico prioritario</li>
@@ -514,22 +536,22 @@
       </div>
     </div>
 
-    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+    <div class="glass-card rounded-3xl p-6 shadow-md flex flex-col justify-between">
       <div>
         <div class="flex justify-between items-center mb-4">
           <h3 class="text-lg font-bold text-slate-900 dark:text-white">Plan Empresarial</h3>
-          <span class="text-[11px] font-semibold bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-full">Ilimitado</span>
+          <span class="text-[11px] font-bold bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-full">Ilimitado</span>
         </div>
         <div class="mb-6">
           <div id="empresarialPriceContainer">
             <span class="price-val text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">₡60,000</span>
-            <span class="price-period text-xs text-slate-500 dark:text-slate-400 font-medium">/ mes</span>
+            <span class="price-period text-xs text-slate-600 dark:text-slate-400 font-medium">/ mes</span>
           </div>
-          <p id="empresarialAnnualDetail" class="hidden text-[11px] font-medium text-theme-primary mt-1">
+          <p id="empresarialAnnualDetail" class="hidden text-[11px] font-bold text-theme-primary mt-1">
             Cobrado anualmente: <strong>₡600,000 / año</strong>
           </p>
         </div>
-        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+        <ul class="space-y-3 text-xs font-medium text-slate-700 dark:text-slate-200 mb-6">
           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Comprobantes <strong>ilimitados</strong></li>
           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Infraestructura dedicada</li>
           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Soporte técnico prioritario</li>
@@ -541,17 +563,17 @@
 
   <!-- VISTA 2: PLANES DE COMPRA DEFINITIVA -->
   <div id="viewCompra" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+    <div class="glass-card rounded-3xl p-6 shadow-md flex flex-col justify-between">
       <div>
         <div class="flex justify-between items-center mb-4">
           <h3 class="text-lg font-bold text-slate-900 dark:text-white">Licencia Código Fuente</h3>
-          <span class="text-[11px] font-semibold bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-full">Pago Único</span>
+          <span class="text-[11px] font-bold bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-2.5 py-1 rounded-full">Pago Único</span>
         </div>
         <div class="mb-6">
           <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">₡750,000</span>
-          <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ único</span>
+          <span class="text-xs text-slate-600 dark:text-slate-400 font-medium">/ único</span>
         </div>
-        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+        <ul class="space-y-3 text-xs font-medium text-slate-700 dark:text-slate-200 mb-6">
           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Entrega de archivos completos (HTML, JS, CSS, APIs)</li>
           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Despliegue e instalación en servidor propio</li>
           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-indigo-500"></i> Permite adaptaciones internas e integración ERP</li>
@@ -560,20 +582,20 @@
       </div>
     </div>
 
-    <div class="bg-white dark:bg-slate-800 rounded-3xl p-6 border-2 border-theme shadow-lg flex flex-col justify-between relative overflow-hidden">
+    <div class="glass-card rounded-3xl p-6 border-2 border-theme shadow-xl flex flex-col justify-between relative overflow-hidden">
       <div class="absolute top-0 right-0 bg-theme-primary text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
         Cesión Total
       </div>
       <div>
         <div class="flex justify-between items-center mb-4">
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Exclusividad Total</h3>
-          <span class="text-[11px] font-semibold bg-theme-light text-theme-primary px-2.5 py-1 rounded-full">Propiedad Intelectual</span>
+          <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">Exclusividad Total</h3>
+          <span class="text-[11px] font-bold bg-theme-primary text-white px-2.5 py-1 rounded-full">Propiedad Intelectual</span>
         </div>
         <div class="mb-6">
-          <span class="text-3xl sm:text-4xl font-extrabold text-theme-primary">₡1,800,000</span>
-          <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">/ único</span>
+          <span class="text-3xl sm:text-4xl font-black text-theme-primary drop-shadow-sm">₡1,800,000</span>
+          <span class="text-xs text-slate-600 dark:text-slate-400 font-medium">/ único</span>
         </div>
-        <ul class="space-y-3 text-xs text-slate-600 dark:text-slate-300 mb-6">
+        <ul class="space-y-3 text-xs font-semibold text-slate-800 dark:text-slate-100 mb-6">
           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-theme-primary"></i> Cesión total de derechos patrimoniales y de autor</li>
           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-theme-primary"></i> Garantía de no comercialización a terceros</li>
           <li class="flex items-center gap-2"><i class="fa-solid fa-check text-theme-primary"></i> Código fuente y documentación técnica completa</li>
@@ -586,14 +608,14 @@
   </main>
 
   <!-- MODAL DE SELECCIÓN DE TEMAS Y MODO OSCURO -->
-  <div id="themeModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-md w-full overflow-hidden flex flex-col border border-slate-200 dark:border-slate-700">
+  <div id="themeModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-card rounded-3xl shadow-2xl max-w-md w-full overflow-hidden flex flex-col border border-slate-200/50 dark:border-slate-700/50">
       
-      <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
-        <h3 class="font-bold text-slate-800 dark:text-white text-sm flex items-center gap-2">
+      <div class="p-4 border-b border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between bg-white/40 dark:bg-slate-900/40">
+        <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
           <i class="fa-solid fa-palette text-theme-primary"></i> Apariencia y Temas
         </h3>
-        <button onclick="closeThemeModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg transition-colors">
+        <button onclick="closeThemeModal()" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 p-1.5 rounded-lg transition-colors">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
@@ -601,23 +623,23 @@
       <div class="p-6 space-y-6">
         <!-- Modo Claro / Oscuro -->
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Modo de Pantalla</label>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-3">Modo de Pantalla</label>
           <div class="grid grid-cols-2 gap-3">
-            <button onclick="setDarkMode(false)" id="btnModeLight" class="flex items-center justify-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-theme transition-all">
+            <button onclick="setDarkMode(false)" id="btnModeLight" class="flex items-center justify-center gap-2 p-3 rounded-xl border border-slate-200/80 dark:border-slate-700/80 hover:border-theme transition-all bg-white/50 dark:bg-slate-800/50">
               <i class="fa-solid fa-sun text-amber-500 text-base"></i>
-              <span class="text-xs font-bold text-slate-700 dark:text-slate-200">Claro</span>
+              <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Claro</span>
             </button>
 
-            <button onclick="setDarkMode(true)" id="btnModeDark" class="flex items-center justify-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-theme transition-all">
+            <button onclick="setDarkMode(true)" id="btnModeDark" class="flex items-center justify-center gap-2 p-3 rounded-xl border border-slate-200/80 dark:border-slate-700/80 hover:border-theme transition-all bg-white/50 dark:bg-slate-800/50">
               <i class="fa-solid fa-moon text-indigo-400 text-base"></i>
-              <span class="text-xs font-bold text-slate-700 dark:text-slate-200">Oscuro</span>
+              <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Oscuro</span>
             </button>
           </div>
         </div>
 
         <!-- Paleta de Colores y Temas Visuales -->
         <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-3">
             Selecciona una Personalidad / Tema
           </label>
           <div class="grid grid-cols-1 gap-3">
@@ -704,67 +726,67 @@
   </div>
 
   <!-- MODAL PARA VER EL COMPROBANTE -->
-  <div id="viewerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-slate-200 dark:border-slate-700">
-      <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
-        <h3 class="font-bold text-slate-800 dark:text-white text-sm flex items-center gap-2">
+  <div id="viewerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-card rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-slate-200/50 dark:border-slate-700/50">
+      <div class="p-4 border-b border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between bg-white/40 dark:bg-slate-900/40">
+        <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
           <i class="fa-solid fa-file-invoice text-theme-primary"></i> Vista Previa del Comprobante
         </h3>
         <div class="flex items-center gap-2">
-          <a id="modalExternalLink" href="#" target="_blank" class="text-xs bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium px-2.5 py-1.5 rounded-lg">
+          <a id="modalExternalLink" href="#" target="_blank" class="text-xs bg-white/70 dark:bg-slate-700/70 hover:bg-white dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold px-2.5 py-1.5 rounded-lg border border-slate-200/60 dark:border-slate-600 transition-all shadow-sm">
             <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Abrir Original
           </a>
-          <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg">
+          <button onclick="closeModal()" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 p-1.5 rounded-lg">
             <i class="fa-solid fa-xmark text-lg"></i>
           </button>
         </div>
       </div>
-      <div class="p-4 flex-1 overflow-auto bg-slate-100 dark:bg-slate-900 flex items-center justify-center min-h-[300px]">
-        <img id="modalImage" src="" class="max-w-full max-h-[70vh] object-contain rounded-lg shadow-sm hidden">
-        <iframe id="modalPdf" src="" class="w-full h-[70vh] rounded-lg hidden border-0"></iframe>
+      <div class="p-4 flex-1 overflow-auto bg-black/10 dark:bg-black/30 flex items-center justify-center min-h-[300px]">
+        <img id="modalImage" src="" class="max-w-full max-h-[70vh] object-contain rounded-xl shadow-lg hidden">
+        <iframe id="modalPdf" src="" class="w-full h-[70vh] rounded-xl hidden border-0"></iframe>
       </div>
     </div>
   </div>
 
   <!-- MODAL DE CIERRE DIARIO -->
-  <div id="cierreModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-slate-200 dark:border-slate-700">
-      <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
-        <h3 class="font-bold text-slate-800 dark:text-white text-sm flex items-center gap-2">
+  <div id="cierreModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-card rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-slate-200/50 dark:border-slate-700/50">
+      <div class="p-4 border-b border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between bg-white/40 dark:bg-slate-900/40">
+        <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
           <i class="fa-solid fa-calculator text-indigo-600 dark:text-indigo-400"></i> Cierre de Comprobantes Facturados
         </h3>
-        <button onclick="closeCierreModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg">
+        <button onclick="closeCierreModal()" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 p-1.5 rounded-lg">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
       
       <div class="p-6 overflow-auto space-y-4">
-        <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
-          <label class="text-xs font-bold uppercase text-slate-600 dark:text-slate-400 whitespace-nowrap">Fecha de Facturación:</label>
-          <input type="date" id="cierreFechaInput" class="text-xs p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500" onchange="calcularCierre()">
+        <div class="flex items-center gap-4 bg-white/50 dark:bg-slate-900/50 p-3 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+          <label class="text-xs font-bold uppercase text-slate-700 dark:text-slate-300 whitespace-nowrap">Fecha de Facturación:</label>
+          <input type="date" id="cierreFechaInput" class="text-xs p-2 rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-white/80 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500" onchange="calcularCierre()">
         </div>
 
         <div class="grid grid-cols-2 gap-4">
-          <div class="bg-indigo-50/50 dark:bg-indigo-950/30 p-4 rounded-xl border border-indigo-100 dark:border-indigo-900/50">
-            <span class="text-[10px] font-bold uppercase text-indigo-500 dark:text-indigo-400">Total Comprobantes</span>
-            <div id="cierreTotalCount" class="text-xl font-bold text-indigo-900 dark:text-indigo-200 mt-1">0</div>
+          <div class="bg-indigo-50/70 dark:bg-indigo-950/40 p-4 rounded-2xl border border-indigo-200/60 dark:border-indigo-800/60">
+            <span class="text-[10px] font-bold uppercase text-indigo-600 dark:text-indigo-300">Total Comprobantes</span>
+            <div id="cierreTotalCount" class="text-2xl font-black text-indigo-950 dark:text-indigo-100 mt-1">0</div>
           </div>
-          <div class="bg-theme-light p-4 rounded-xl border border-theme">
+          <div class="glass-card p-4 rounded-2xl border border-theme">
             <span class="text-[10px] font-bold uppercase text-theme-primary">Monto Facturado</span>
-            <div id="cierreTotalMonto" class="text-xl font-bold text-theme-primary mt-1">₡0.00</div>
+            <div id="cierreTotalMonto" class="text-2xl font-black text-theme-primary mt-1">₡0.00</div>
           </div>
         </div>
 
-        <div class="border rounded-xl overflow-hidden border-slate-200 dark:border-slate-700 max-h-[300px] overflow-y-auto">
+        <div class="border rounded-2xl overflow-hidden border-slate-200/60 dark:border-slate-700/60 max-h-[300px] overflow-y-auto">
           <table class="w-full text-left border-collapse text-xs">
-            <thead class="bg-slate-100 dark:bg-slate-900/80 text-slate-600 dark:text-slate-400 uppercase">
+            <thead class="bg-white/60 dark:bg-slate-900/80 text-slate-700 dark:text-slate-300 uppercase font-bold">
               <tr>
                 <th class="p-3">Cliente / Ref</th>
                 <th class="p-3">Hora Facturación</th>
                 <th class="p-3 text-right">Monto</th>
               </tr>
             </thead>
-            <tbody id="cierreTableBody" class="divide-y divide-slate-100 dark:divide-slate-700"></tbody>
+            <tbody id="cierreTableBody" class="divide-y divide-slate-200/40 dark:divide-slate-700/40"></tbody>
           </table>
         </div>
       </div>
@@ -772,15 +794,15 @@
   </div>
 
   <!-- MODAL DE MANTENIMIENTO DE USUARIOS -->
-  <div id="usuariosModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-slate-200 dark:border-slate-700">
+  <div id="usuariosModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-card rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-slate-200/50 dark:border-slate-700/50">
       
       <!-- Encabezado Modal -->
-      <div class="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
-        <h3 class="font-bold text-slate-800 dark:text-white text-sm flex items-center gap-2">
+      <div class="p-4 border-b border-slate-200/50 dark:border-slate-700/50 flex items-center justify-between bg-white/40 dark:bg-slate-900/40">
+        <h3 class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
           <i class="fa-solid fa-users-gear text-purple-600 dark:text-purple-400 text-base"></i> Mantenimiento de Usuarios y Permisos
         </h3>
-        <button onclick="closeUsuariosModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg transition-colors">
+        <button onclick="closeUsuariosModal()" class="text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 p-1.5 rounded-lg transition-colors">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
@@ -789,73 +811,73 @@
       <div class="p-6 overflow-auto space-y-6">
         
         <!-- Formulario Nuevo Usuario -->
-        <form id="usuarioForm" onsubmit="saveUsuario(event)" class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-4">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
+        <form id="usuarioForm" onsubmit="saveUsuario(event)" class="bg-white/40 dark:bg-slate-900/40 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 space-y-4">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-2">
             <i class="fa-solid fa-user-plus text-purple-500"></i> Registrar / Editar Usuario
           </h4>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Nombre de Usuario</label>
-              <input type="text" id="usrNombre" required placeholder="Ej: Juan Pérez" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-purple-500">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nombre de Usuario</label>
+              <input type="text" id="usrNombre" required placeholder="Ej: Juan Pérez" class="w-full text-xs p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-white/80 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-purple-500">
             </div>
 
             <div>
-              <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Correo Gmail Autorizado</label>
-              <input type="email" id="usrCorreo" required placeholder="ejemplo@gmail.com" class="w-full text-xs p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:border-purple-500">
+              <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Correo Gmail Autorizado</label>
+              <input type="email" id="usrCorreo" required placeholder="ejemplo@gmail.com" class="w-full text-xs p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-700/80 bg-white/80 dark:bg-slate-800/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-purple-500">
             </div>
           </div>
 
           <!-- Permisos del Usuario -->
           <div>
-            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">Permisos asignados:</label>
+            <label class="block text-xs font-bold text-slate-800 dark:text-slate-200 mb-2">Permisos asignados:</label>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <label class="flex items-center gap-2 bg-white dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-purple-50/50 dark:hover:bg-purple-900/20 transition-colors">
+              <label class="flex items-center gap-2 bg-white/60 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-200/60 dark:border-slate-700/60 cursor-pointer hover:bg-purple-50/50 dark:hover:bg-purple-900/20 transition-colors">
                 <input type="checkbox" id="permCargar" class="w-4 h-4 text-purple-600 rounded border-slate-300 focus:ring-purple-500">
-                <span class="text-xs font-medium text-slate-700 dark:text-slate-200">Cargar Comprobantes</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Cargar Comprobantes</span>
               </label>
 
-              <label class="flex items-center gap-2 bg-white dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-purple-50/50 dark:hover:bg-purple-900/20 transition-colors">
+              <label class="flex items-center gap-2 bg-white/60 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-200/60 dark:border-slate-700/60 cursor-pointer hover:bg-purple-50/50 dark:hover:bg-purple-900/20 transition-colors">
                 <input type="checkbox" id="permEditarComentarios" class="w-4 h-4 text-purple-600 rounded border-slate-300 focus:ring-purple-500">
-                <span class="text-xs font-medium text-slate-700 dark:text-slate-200">Editar Comentarios</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Editar Comentarios</span>
               </label>
 
-              <label class="flex items-center gap-2 bg-white dark:bg-slate-800 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-purple-50/50 dark:hover:bg-purple-900/20 transition-colors">
+              <label class="flex items-center gap-2 bg-white/60 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-200/60 dark:border-slate-700/60 cursor-pointer hover:bg-purple-50/50 dark:hover:bg-purple-900/20 transition-colors">
                 <input type="checkbox" id="permGestionarAcciones" class="w-4 h-4 text-purple-600 rounded border-slate-300 focus:ring-purple-500">
-                <span class="text-xs font-medium text-slate-700 dark:text-slate-200">Gestionar Acciones (Aprobar/Facturar)</span>
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Gestionar Acciones</span>
               </label>
             </div>
           </div>
 
           <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="resetUsuarioForm()" class="px-3 py-2 text-xs font-semibold bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl transition-colors">
+            <button type="button" onclick="resetUsuarioForm()" class="px-3 py-2 text-xs font-bold bg-slate-200/80 dark:bg-slate-700/80 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-xl transition-colors">
               Limpiar Formulario
             </button>
-            <button type="submit" id="btnSaveUsuario" class="px-4 py-2 text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+            <button type="submit" id="btnSaveUsuario" class="px-4 py-2 text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-md transition-all flex items-center gap-1.5">
               <i class="fa-solid fa-floppy-disk"></i> Guardar Usuario
             </button>
           </div>
         </form>
 
         <!-- Tabla de Usuarios Registrados -->
-        <div class="border rounded-xl overflow-hidden border-slate-200 dark:border-slate-700">
-          <div class="p-3 bg-slate-100 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-700 font-bold text-xs text-slate-700 dark:text-slate-200 flex items-center justify-between">
+        <div class="border rounded-2xl overflow-hidden border-slate-200/60 dark:border-slate-700/60">
+          <div class="p-3 bg-white/60 dark:bg-slate-900/80 border-b border-slate-200/60 dark:border-slate-700/60 font-bold text-xs text-slate-800 dark:text-slate-200 flex items-center justify-between">
             <span>Usuarios Registrados</span>
-            <button onclick="loadUsuariosList()" class="text-[11px] text-purple-600 dark:text-purple-400 hover:underline">
+            <button onclick="loadUsuariosList()" class="text-[11px] font-bold text-purple-600 dark:text-purple-400 hover:underline">
               <i class="fa-solid fa-rotate-right mr-1"></i> Refrescar Listado
             </button>
           </div>
           <div class="max-h-[300px] overflow-y-auto">
             <table class="w-full text-left border-collapse text-xs">
-              <thead class="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 uppercase text-[10px] tracking-wider">
+              <thead class="bg-white/40 dark:bg-slate-900/50 text-slate-600 dark:text-slate-400 uppercase text-[10px] font-bold tracking-wider">
                 <tr>
                   <th class="p-3">Usuario / Correo Gmail</th>
                   <th class="p-3">Permisos Habilitados</th>
                   <th class="p-3 text-center">Acciones</th>
                 </tr>
               </thead>
-              <tbody id="usuariosTableBody" class="divide-y divide-slate-100 dark:divide-slate-700">
-                <tr><td colspan="3" class="p-4 text-center text-slate-400">Cargando usuarios...</td></tr>
+              <tbody id="usuariosTableBody" class="divide-y divide-slate-200/40 dark:divide-slate-700/40">
+                <tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium">Cargando usuarios...</td></tr>
               </tbody>
             </table>
           </div>
@@ -882,7 +904,6 @@
       puede_editar_comentarios: true,
       puede_gestionar_acciones: true
     };
-
     const prices = {
       basico: { monthly: "₡20,000", annualEquiv: "₡16,667", annualTotal: "₡200,000" },
       pro: { monthly: "₡35,000", annualEquiv: "₡29,167", annualTotal: "₡350,000" },
@@ -956,10 +977,13 @@
     
     /* GESTIÓN DE APARIENCIA, PALETA Y MODO OSCURO */
     (function initTheme() {
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      setDarkMode(savedTheme === 'dark');
-
       const savedPalette = localStorage.getItem('theme-palette') || 'emerald';
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
       setThemePalette(savedPalette);
     })();
 
@@ -979,6 +1003,7 @@
 
     function setThemePalette(paletteName) {
       const html = document.documentElement;
+      const appBg = document.getElementById('app-bg');
       
       // Remover temas anteriores
       html.classList.remove('theme-emerald', 'theme-blue', 'theme-violet', 'theme-amber', 'theme-slate');
@@ -989,6 +1014,12 @@
       // Guardar preferencia
       localStorage.setItem('theme-palette', paletteName);
       
+      // Actualizar imagen de fondo dinámica desde la variable CSS
+      if (appBg) {
+        const bgImg = getComputedStyle(html).getPropertyValue('--bg-image');
+        appBg.style.backgroundImage = bgImg;
+      }
+
       // Actualizar la interfaz del modal
       if (typeof updateThemeModalUI === 'function') {
         updateThemeModalUI();
@@ -1014,11 +1045,11 @@
 
       if (btnLight && btnDark) {
         if (isDark) {
-          btnDark.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-theme bg-theme-light text-theme-primary transition-all';
-          btnLight.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-theme transition-all';
+          btnDark.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-theme bg-theme-primary text-white font-bold transition-all';
+          btnLight.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border border-slate-200/80 dark:border-slate-700/80 hover:border-theme transition-all bg-white/50 dark:bg-slate-800/50';
         } else {
-          btnLight.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-theme bg-theme-light text-theme-primary transition-all';
-          btnDark.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-theme transition-all';
+          btnLight.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-theme bg-theme-primary text-white font-bold transition-all';
+          btnDark.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border border-slate-200/80 dark:border-slate-700/80 hover:border-theme transition-all bg-white/50 dark:bg-slate-800/50';
         }
       }
 
@@ -1098,15 +1129,15 @@
         viewCompra.classList.add('hidden');
         toggleBilling.classList.remove('hidden');
         
-        btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-theme-primary text-slate-900 dark:text-white";
-        btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+        btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-theme-primary text-white";
+        btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white";
       } else {
         viewAlquiler.classList.add('hidden');
         viewCompra.classList.remove('hidden');
         toggleBilling.classList.add('hidden');
         
-        btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-white dark:bg-theme-primary text-slate-900 dark:text-white";
-        btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+        btnCompra.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-theme-primary text-white";
+        btnAlquiler.className = "plan-toggle-btn px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white";
       }
     }
 
@@ -1148,11 +1179,11 @@
 
     function showAlert(message, type = 'success') {
       alertBox.innerText = message;
-      alertBox.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-theme-light', 'text-theme-primary', 'dark:bg-red-900/50', 'dark:text-red-300');
+      alertBox.classList.remove('hidden', 'bg-red-500/20', 'text-red-700', 'dark:text-red-300', 'bg-emerald-500/20', 'text-emerald-800', 'dark:text-emerald-200');
       if (type === 'error') {
-        alertBox.classList.add('bg-red-100', 'text-red-700', 'dark:bg-red-900/50', 'dark:text-red-300');
+        alertBox.classList.add('bg-red-500/20', 'text-red-700', 'dark:text-red-300', 'border', 'border-red-500/30');
       } else {
-        alertBox.classList.add('bg-theme-light', 'text-theme-primary');
+        alertBox.classList.add('bg-emerald-500/20', 'text-emerald-800', 'dark:text-emerald-200', 'border', 'border-emerald-500/30');
       }
     }
 
@@ -1190,7 +1221,6 @@
           const displayName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email;
           userName.innerText = displayName;
           
-          // Mostrar controles e interfaz de la app
           userName.classList.remove('hidden');
           logoutBtn.classList.remove('hidden');
           cierreBtn.classList.remove('hidden');
@@ -1210,7 +1240,6 @@
           deniedScreen.classList.remove('hidden');
         }
       } else {
-        // Si NO está logueado, ocultar navegación de usuario y sección de planes
         userName.classList.add('hidden');
         logoutBtn.classList.add('hidden');
         cierreBtn.classList.add('hidden');
@@ -1320,77 +1349,52 @@
 
     uploadForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!currentUserPermissions.puede_cargar_comprobantes) {
-        alert("No tienes permiso para cargar comprobantes.");
-        return;
-      }
-      const file = fileInput.files[0];
-      if (!file) {
-        showAlert('Selecciona un archivo primero', 'error');
-        return;
-      }
+      const rawFile = fileInput.files[0];
+      if (!rawFile) return showAlert('Selecciona un archivo primero.', 'error');
+      if (!currentSession) return showAlert('Debes iniciar sesión.', 'error');
 
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
+      submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Procesando...`;
 
       try {
-        const fileToUpload = await compressImage(file);
+        const compressedFile = await compressImage(rawFile);
         const formData = new FormData();
-        formData.append('comprobante', fileToUpload);
+        formData.append('comprobante', compressedFile);
         formData.append('comentario', document.getElementById('initialComment').value);
 
-        const res = await fetch('/api/procesar_comprobante', {
-          method: 'POST',
+        const response = await fetch('/api/procesar', { 
+          method: 'POST', 
           headers: { 'Authorization': `Bearer ${currentSession.access_token}` },
-          body: formData
+          body: formData 
         });
 
-        const data = await res.json();
-        if (res.ok && data.success) {
-          showAlert('¡Comprobante procesado exitosamente!');
-          uploadForm.reset();
-          document.getElementById('previewContainer').classList.add('hidden');
-          loadRecords();
-        } else {
-          showAlert(data.error || 'Error al procesar el comprobante', 'error');
-        }
+        const result = await response.json();
+        if (!result.success) throw new Error(result.error);
+
+        showAlert(`✅ Comprobante Ref: ${result.data.numero_referencia} procesado.`, 'success');
+        uploadForm.reset();
+        document.getElementById('previewContainer').classList.add('hidden');
+        loadRecords();
       } catch (err) {
-        showAlert('Error en la solicitud: ' + err.message, 'error');
+        showAlert(`⚠️ Error: ${err.message}`, 'error');
       } finally {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> <span>Procesar SINPE</span>';
+        submitBtn.innerHTML = `<i class="fa-solid fa-bolt"></i> <span>Procesar SINPE</span>`;
       }
     });
 
     async function loadRecords() {
       if (!currentSession) return;
-      try {
-        const res = await fetch('/api/obtener_registros', {
-          headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
-        });
-        const resData = await res.json();
-        if (res.ok) {
-          if (resData.permisos) currentUserPermissions = resData.permisos;
-          rawRecordsData = resData.data || [];
-          populateBankFilter(rawRecordsData);
-          renderTable();
-        }
-      } catch (e) {
-        console.error('Error al cargar registros:', e);
+      const success = await checkUserPermissions();
+      if (!success) {
+        showAlert('⚠️ No tienes permisos para consultar la información.', 'error');
       }
     }
 
     function populateBankFilter(data) {
-      const banks = [...new Set(data.map(item => item.banco_emisor).filter(Boolean))];
-      const currentVal = bankFilter.value;
+      const banks = [...new Set(data.map(d => d.nombre_emisor).filter(Boolean))];
       bankFilter.innerHTML = '<option value="">Todos los Bancos</option>';
-      banks.forEach(b => {
-        const opt = document.createElement('option');
-        opt.value = b;
-        opt.textContent = b;
-        bankFilter.appendChild(opt);
-      });
-      bankFilter.value = currentVal;
+      banks.forEach(b => bankFilter.innerHTML += `<option value="${b}">${b}</option>`);
     }
 
     function resetFilters() {
@@ -1403,138 +1407,226 @@
       renderTable();
     }
 
-    function formatDate(dateStr) {
-      if (!dateStr) return '-';
-      const d = new Date(dateStr);
-      return d.toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' });
-    }
-
-    function formatOnlyDate(dateStr) {
-      if (!dateStr) return '-';
-      const d = new Date(dateStr);
-      return d.toLocaleDateString('es-CR');
-    }
-
     function renderTable() {
-      const search = searchFilter.value.toLowerCase().trim();
+      const search = searchFilter.value.toLowerCase();
       const bank = bankFilter.value;
       const status = statusFilter.value;
       const created = createdFilter.value;
-      const tx = txFilter.value;
-      const fact = factFilter.value;
-
-      let totalMonto = 0;
-      let count = 0;
-
-      const filtered = rawRecordsData.filter(item => {
-        if (bank && item.banco_emisor !== bank) return false;
-        if (status && item.estado !== status) return false;
-
-        if (created) {
-          const itemDate = item.created_at ? item.created_at.split('T')[0] : '';
-          if (itemDate !== created) return false;
-        }
-        if (tx) {
-          const itemTxDate = item.fecha_transaccion ? item.fecha_transaccion.split('T')[0] : '';
-          if (itemTxDate !== tx) return false;
-        }
-        if (fact) {
-          const itemFactDate = item.fecha_facturado ? item.fecha_facturado.split('T')[0] : '';
-          if (itemFactDate !== fact) return false;
-        }
-
-        if (search) {
-          const matchClient = (item.nombre_cliente || '').toLowerCase().includes(search);
-          const matchRef = (item.numero_referencia || '').toLowerCase().includes(search);
-          const matchMonto = (item.monto || '').toString().includes(search);
-          const matchObs = (item.observaciones || '').toLowerCase().includes(search);
-          if (!matchClient && !matchRef && !matchMonto && !matchObs) return false;
-        }
-
-        return true;
+      const txDate = txFilter.value;
+      const factDate = factFilter.value;
+      
+      const filtered = rawRecordsData.filter(row => {
+        const matchesSearch = !search || 
+          (row.cliente && row.cliente.toLowerCase().includes(search)) ||
+          (row.numero_referencia && row.numero_referencia.toLowerCase().includes(search)) ||
+          (row.monto && row.monto.toString().includes(search)) ||
+          (row.nombre_creacion && row.nombre_creacion.toLowerCase().includes(search)) ||
+          (row.nombre_aprobacion && row.nombre_aprobacion.toLowerCase().includes(search)) ||
+          (row.nombre_facturacion && row.nombre_facturacion.toLowerCase().includes(search))
+        
+        const matchesBank = !bank || row.nombre_emisor === bank;
+        const matchesStatus = !status || (row.estado || 'Pendiente') === status;
+        const matchesCreated = !created || (row.created_at && row.created_at.startsWith(created));
+        const matchesTx = !txDate || (row.fecha_transferencia && row.fecha_transferencia.includes(txDate));
+        const matchesFact = !factDate || (row.fecha_facturacion && row.fecha_facturacion.startsWith(factDate));
+        
+        return matchesSearch && matchesBank && matchesStatus && matchesCreated && matchesTx && matchesFact;
       });
-
-      recordsTable.innerHTML = '';
-
-      if (filtered.length === 0) {
-        recordsTable.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">No se encontraron comprobantes con los filtros seleccionados.</td></tr>`;
-        document.getElementById('totalCount').innerText = '0';
-        document.getElementById('totalAmount').innerText = '₡0.00';
-        return;
-      }
-
-      filtered.forEach(item => {
-        count++;
-        totalMonto += parseFloat(item.monto || 0);
-
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors";
-
-        let statusBadge = '';
-        if (item.estado === 'Aprobado') {
-          statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300">Aprobado</span>`;
-        } else if (item.estado === 'Rechazado') {
-          statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300">Rechazado</span>`;
-        } else {
-          statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300">Pendiente</span>`;
-        }
-
-        let factBadge = item.facturado 
-          ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-300"><i class="fa-solid fa-file-circle-check mr-1"></i>Facturado</span>`
-          : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400">Sin Facturar</span>`;
-
-        tr.innerHTML = `
-          <td class="p-3">
-            <div class="font-bold text-slate-900 dark:text-white">${item.nombre_cliente || 'Cliente no identificado'}</div>
-            <div class="text-[11px] text-slate-500 dark:text-slate-400">Ref: <span class="font-mono">${item.numero_referencia || 'N/A'}</span></div>
-            <div class="font-extrabold text-theme-primary text-sm mt-0.5">₡${parseFloat(item.monto || 0).toLocaleString('es-CR', { minimumFractionDigits: 2 })}</div>
-          </td>
-          <td class="p-3 font-medium text-slate-700 dark:text-slate-300">
-            ${item.banco_emisor || 'Desconocido'}
-          </td>
-          <td class="p-3 text-[11px] space-y-1">
-            <div><span class="text-slate-400">Pago:</span> ${formatOnlyDate(item.fecha_transaccion)}</div>
-            <div><span class="text-slate-400">Ingreso:</span> ${formatDate(item.created_at)}</div>
-            <div><span class="text-slate-400">Facturado:</span> ${formatDate(item.fecha_facturado)}</div>
-          </td>
-          <td class="p-3 max-w-[200px]">
-            <div class="flex items-center gap-1 mb-1">${statusBadge} ${factBadge}</div>
-            <div id="obs-text-${item.id}" class="text-slate-600 dark:text-slate-300 truncate" title="${item.observaciones || ''}">${item.observaciones || 'Sin comentarios'}</div>
-          </td>
-          <td class="p-3 text-center space-y-1">
-            <button onclick="viewFile('${item.url_comprobante}')" class="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-[11px] font-bold px-2.5 py-1 rounded-lg transition-colors flex items-center justify-center gap-1">
-              <i class="fa-solid fa-eye"></i> Ver
-            </button>
-            ${currentUserPermissions.puede_editar_comentarios ? `
-            <button onclick="editObservation('${item.id}', '${(item.observaciones || '').replace(/'/g, "\\'")}')" class="w-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-[11px] font-bold px-2.5 py-1 rounded-lg transition-colors flex items-center justify-center gap-1">
-              <i class="fa-solid fa-pen"></i> Nota
-            </button>` : ''}
-            ${currentUserPermissions.puede_gestionar_acciones ? `
-            <div class="flex gap-1">
-              <button onclick="updateStatus('${item.id}', 'Aprobado')" class="flex-1 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold p-1 rounded transition-colors" title="Aprobar"><i class="fa-solid fa-check"></i></button>
-              <button onclick="updateStatus('${item.id}', 'Rechazado')" class="flex-1 bg-red-50 hover:bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 text-[10px] font-bold p-1 rounded transition-colors" title="Rechazar"><i class="fa-solid fa-xmark"></i></button>
-              <button onclick="toggleFacturado('${item.id}',${!item.facturado})" class="flex-1 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold p-1 rounded transition-colors" title="Alternar Facturación"><i class="fa-solid fa-file-invoice"></i></button>
-            </div>` : ''}
-          </td>
+      
+      const tableHeader = document.querySelector('table thead tr');
+      if (currentUserPermissions.puede_gestionar_acciones) {
+        tableHeader.innerHTML = `
+          <th class="p-3">Detalle del SINPE</th>
+          <th class="p-3">Banco</th>
+          <th class="p-3">Trazabilidad / Fechas</th>
+          <th class="p-3">Comentarios</th>
+          <th class="p-3 text-center">Acciones</th>
         `;
-        recordsTable.appendChild(tr);
-      });
+      } else {
+        tableHeader.innerHTML = `
+          <th class="p-3">Detalle del SINPE</th>
+          <th class="p-3">Banco</th>
+          <th class="p-3">Trazabilidad / Fechas</th>
+          <th class="p-3">Comentarios</th>
+        `;
+      }
+      recordsTable.innerHTML = '';
+      let totalMonto = 0;
+      
+      if (filtered.length > 0) {
+        filtered.forEach(row => {
+          totalMonto += parseFloat(row.monto || 0);
+          const currentStatus = row.estado || 'Pendiente';
+          const isFacturado = !!row.fecha_facturacion;
+          const isAprobado = currentStatus === 'Aprobado';
+        
+          let statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-bold inline-block">Pendiente</span>`;
+          if (isAprobado) statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30 font-bold inline-block">Aprobado</span>`;
+          if (currentStatus === 'Rechazado') statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-red-500/20 text-red-800 dark:text-red-300 border border-red-500/30 font-bold inline-block">Rechazado</span>`;
+        
+          let facturadoBadge = isFacturado 
+            ? `<span class="px-2 py-0.5 text-[10px] rounded-full bg-indigo-500/20 text-indigo-800 dark:text-indigo-300 border border-indigo-500/30 font-bold inline-block"><i class="fa-solid fa-file-circle-check mr-1"></i>Facturado</span>` 
+            : '';
 
-      document.getElementById('totalCount').innerText = count.toString();
-      document.getElementById('totalAmount').innerText = '₡' + totalMonto.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+          const commentCell = currentUserPermissions.puede_editar_comentarios
+            ? `<input type="text" value="${row.comentario || ''}" 
+                 placeholder="Añadir comentario..." 
+                 onchange="updateRecordData('${row.id}', { comentario: this.value })"
+                 class="w-full text-xs p-1.5 rounded-lg border border-slate-200/80 dark:border-slate-700/80 bg-white/70 dark:bg-slate-900/70 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" />`
+            : `<span class="text-xs font-medium text-slate-800 dark:text-slate-200">${row.comentario || '-'}</span>`;
+    
+          const actionsCell = currentUserPermissions.puede_gestionar_acciones
+            ? `<td class="p-3 align-top text-center">
+                <div class="flex items-center justify-center gap-1.5 flex-wrap">
+                  <button onclick="updateRecordData('${row.id}', { estado: 'Aprobado' })" class="px-2 py-1 text-xs font-bold bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 rounded-lg transition-colors flex items-center gap-1 ${isAprobado ? 'opacity-40 cursor-not-allowed' : ''}" ${isAprobado ? 'disabled' : ''} title="Aprobar">
+                    <i class="fa-solid fa-check text-[10px]"></i> Aprobar
+                  </button>
+    
+                  <button onclick="updateRecordData('${row.id}', { estado: 'Rechazado' })" class="px-2 py-1 text-xs font-bold bg-red-500/20 text-red-800 dark:text-red-300 border border-red-500/30 hover:bg-red-500/30 rounded-lg transition-colors flex items-center gap-1 ${currentStatus === 'Rechazado' ? 'opacity-40 cursor-not-allowed' : ''}" ${currentStatus === 'Rechazado' ? 'disabled' : ''} title="Rechazar">
+                    <i class="fa-solid fa-xmark text-[10px]"></i> Rechazar
+                  </button>
+    
+                  <button onclick="toggleFacturadoRecord('${row.id}', ${isFacturado})" 
+                    class="px-2 py-1 text-xs font-bold bg-indigo-500/20 text-indigo-800 dark:text-indigo-300 border border-indigo-500/30 hover:bg-indigo-500/30 rounded-lg transition-colors flex items-center gap-1 ${!isAprobado ? 'opacity-40 cursor-not-allowed' : ''}" 
+                    ${!isAprobado ? 'disabled title="Debe estar Aprobado para poder facturar"' : `title="${isFacturado ? 'Desmarcar Facturado' : 'Marcar como Facturado'}"`}>
+                    <i class="fa-solid ${isFacturado ? 'fa-file-circle-xmark text-red-500' : 'fa-file-invoice'} text-[10px]"></i>
+                    ${isFacturado ? 'Desmarcar' : 'Facturar'}
+                  </button>
+    
+                  <button onclick="openModal('${row.imagen_url}')" class="px-2 py-1 text-xs font-bold bg-white/80 dark:bg-slate-700/80 text-slate-800 dark:text-slate-200 border border-slate-200/60 dark:border-slate-600 rounded-lg transition-colors flex items-center gap-1 shadow-sm" title="Ver comprobante">
+                    <i class="fa-solid fa-eye text-[10px]"></i> Ver
+                  </button>
+                </div>
+              </td>`
+            : '';
+          
+          const tr = document.createElement('tr');
+          tr.className = "hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors";
+          
+          const formattedMonto = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(row.monto || 0);
+          const createdDateStr = row.created_at ? new Date(row.created_at).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' }) : '-';
+          const factDateStr = row.fecha_facturacion ? new Date(row.fecha_facturacion).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' }) : '-';
+          const aprobDateStr = row.fecha_aprobacion ? new Date(row.fecha_aprobacion).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' }) : '-';
+          
+          let payDateStr = '-';
+          if (row.fecha_transferencia) {
+            const str = String(row.fecha_transferencia).trim();
+            const hasTime = /\d{1,2}:\d{2}/.test(str);
+          
+            if (hasTime) {
+              const dateObj = new Date(str.replace(' ', 'T'));
+              payDateStr = !isNaN(dateObj.getTime())
+                ? dateObj.toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' })
+                : str;
+            } else {
+              const dateParts = str.split('T')[0].split(' ')[0].split('-');
+              if (dateParts.length === 3) {
+                const [year, month, day] = dateParts;
+                const dateObj = new Date(year, month - 1, day);
+                payDateStr = !isNaN(dateObj.getTime())
+                  ? dateObj.toLocaleDateString('es-CR', { dateStyle: 'short' })
+                  : str;
+              } else {
+                payDateStr = str;
+              }
+            }
+          }
+
+          const creadoPor = row.nombre_creacion 
+            ? `<span class="text-slate-500 font-semibold">(${row.nombre_creacion})</span>` 
+            : '';
+          const aprobadoPor = row.nombre_aprobacion 
+            ? `<span class="text-theme-primary font-bold">(${row.nombre_aprobacion})</span>` 
+            : '';
+          const facturadoPor = row.nombre_facturacion 
+            ? `<span class="text-indigo-600 dark:text-indigo-400 font-bold">(${row.nombre_facturacion})</span>` 
+            : '';
+
+          tr.innerHTML = `
+          <td class="p-3.5">
+            <div class="font-black text-sm sm:text-base text-slate-900 dark:text-white leading-snug">
+              ${row.cliente || 'Desconocido'}
+            </div>
+            <div class="text-xs text-slate-600 dark:text-slate-400 font-mono font-semibold mt-0.5">
+              Ref: ${row.numero_referencia || 'N/A'}
+            </div>
+            <div class="font-extrabold text-base text-theme-primary mt-1">
+              ${formattedMonto}
+            </div>
+            <div class="flex items-center gap-1.5 mt-1.5">
+              ${statusBadge}
+              ${facturadoBadge}
+              </div>
+            </td>
+            <td class="p-3 align-top">
+              <span class="text-xs text-slate-800 dark:text-slate-200 font-bold">${row.nombre_emisor || 'N/A'}</span>
+            </td>
+            <td class="p-3 align-top space-y-1 text-[11px] font-medium">
+              <div><span class="text-slate-500 dark:text-slate-400 font-bold">Pago:</span> <span class="text-slate-800 dark:text-slate-200">${payDateStr}</span></div>
+              <div><span class="text-slate-500 dark:text-slate-400 font-bold">Ingr:</span> <span class="text-slate-800 dark:text-slate-200">${createdDateStr}</span> ${creadoPor}</div>
+              ${isAprobado || currentStatus === 'Rechazado' ? `<div><span class="text-slate-500 dark:text-slate-400 font-bold">Aprob:</span> <span class="text-slate-800 dark:text-slate-200">${aprobDateStr}</span>${aprobadoPor}</div>` : ''}
+              ${isFacturado ? `<div><span class="text-slate-500 dark:text-slate-400 font-bold">Fact:</span> <span class="text-slate-800 dark:text-slate-200">${factDateStr}</span>${facturadoPor}</div>` : ''}
+            </td>
+            <td class="p-3 align-top max-w-[200px]">
+              ${commentCell}
+            </td>
+            ${actionsCell}
+          `;
+          recordsTable.appendChild(tr);
+        });
+      } else {
+        recordsTable.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-500 dark:text-slate-400 font-medium">No se encontraron comprobantes registrado(s).</td></tr>`;
+      }
+    
+      document.getElementById('totalCount').innerText = filtered.length;
+      document.getElementById('totalAmount').innerText = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(totalMonto);
     }
 
-    function viewFile(url) {
-      if (!url) return;
+    function toggleFacturadoRecord(id, currentlyFacturado) {
+      updateRecordData(id, { facturar: !currentlyFacturado });
+    }
+
+    async function updateRecordData(id, payloadData) {
+      if (!currentSession) return;
+      try {
+        const response = await fetch('/api/actualizar_registro', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentSession.access_token}` 
+          },
+          body: JSON.stringify({ id, ...payloadData })
+        });
+        
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error(`El servidor devolvió una respuesta no válida (${response.status}).`);
+        }
+
+        const result = await response.json();
+        if (!result.success) throw new Error(result.error);
+        
+        if (payloadData.estado) showAlert(`✅ Estado actualizado a ${payloadData.estado}`, 'success');
+        if ('fecha_facturacion' in payloadData || 'facturar' in payloadData) {
+          showAlert(payloadData.facturar !== false ? '✅ Comprobante marcado como facturado' : '✅ Comprobante desmarcado como facturado', 'success');
+        }
+        
+        loadRecords();
+      } catch (err) {
+        showAlert(`⚠️ Error al actualizar: ${err.message}`, 'error');
+      }
+    }
+
+    function openModal(url) {
       modalExternalLink.href = url;
       if (url.toLowerCase().endsWith('.pdf')) {
         modalImage.classList.add('hidden');
-        modalPdf.classList.remove('hidden');
         modalPdf.src = url;
+        modalPdf.classList.remove('hidden');
       } else {
         modalPdf.classList.add('hidden');
-        modalImage.classList.remove('hidden');
         modalImage.src = url;
+        modalImage.classList.remove('hidden');
       }
       viewerModal.classList.remove('hidden');
     }
@@ -1545,70 +1637,6 @@
       modalPdf.src = '';
     }
 
-    async function editObservation(id, currentObs) {
-      const newObs = prompt('Editar observación / nota:', currentObs);
-      if (newObs === null) return;
-      
-      try {
-        const res = await fetch('/api/actualizar_registro', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentSession.access_token}` 
-          },
-          body: JSON.stringify({ id, observaciones: newObs })
-        });
-        if (res.ok) {
-          loadRecords();
-        } else {
-          alert('Error al actualizar observación');
-        }
-      } catch (e) {
-        alert('Error: ' + e.message);
-      }
-    }
-
-    async function updateStatus(id, estado) {
-      try {
-        const res = await fetch('/api/actualizar_registro', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentSession.access_token}` 
-          },
-          body: JSON.stringify({ id, estado })
-        });
-        if (res.ok) {
-          loadRecords();
-        } else {
-          alert('Error al actualizar estado');
-        }
-      } catch (e) {
-        alert('Error: ' + e.message);
-      }
-    }
-
-    async function toggleFacturado(id, facturado) {
-      try {
-        const res = await fetch('/api/actualizar_registro', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentSession.access_token}` 
-          },
-          body: JSON.stringify({ id, facturado })
-        });
-        if (res.ok) {
-          loadRecords();
-        } else {
-          alert('Error al actualizar estado de facturación');
-        }
-      } catch (e) {
-        alert('Error: ' + e.message);
-      }
-    }
-
-    /* LÓGICA CIERRE DIARIO */
     function openCierreModal() {
       const today = new Date().toISOString().split('T')[0];
       document.getElementById('cierreFechaInput').value = today;
@@ -1621,197 +1649,43 @@
     }
 
     function calcularCierre() {
-      const selectedDate = document.getElementById('cierreFechaInput').value;
+      const fecha = document.getElementById('cierreFechaInput').value;
       const cierreTableBody = document.getElementById('cierreTableBody');
       cierreTableBody.innerHTML = '';
 
-      if (!selectedDate) return;
+      if (!fecha) return;
 
-      const facturadosFecha = rawRecordsData.filter(item => {
-        if (!item.facturado || !item.fecha_facturado) return false;
-        const itemFactDate = item.fecha_facturado.split('T')[0];
-        return itemFactDate === selectedDate;
-      });
-
+      const facturados = rawRecordsData.filter(row => row.fecha_facturacion && row.fecha_facturacion.startsWith(fecha));
       let totalMonto = 0;
-      facturadosFecha.forEach(item => {
-        totalMonto += parseFloat(item.monto || 0);
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50";
-        tr.innerHTML = `
-          <td class="p-3">
-            <div class="font-bold text-slate-800 dark:text-slate-200">${item.nombre_cliente || 'N/A'}</div>
-            <div class="text-[10px] text-slate-400 font-mono">Ref: ${item.numero_referencia || 'N/A'}</div>
-          </td>
-          <td class="p-3 text-slate-600 dark:text-slate-300">
-            ${formatDate(item.fecha_facturado)}
-          </td>
-          <td class="p-3 text-right font-extrabold text-theme-primary">
-            ₡${parseFloat(item.monto || 0).toLocaleString('es-CR', { minimumFractionDigits: 2 })}
-          </td>
-        `;
-        cierreTableBody.appendChild(tr);
-      });
 
-      document.getElementById('cierreTotalCount').innerText = facturadosFecha.length.toString();
-      document.getElementById('cierreTotalMonto').innerText = '₡' + totalMonto.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
+      if (facturados.length > 0) {
+        facturados.forEach(row => {
+          totalMonto += parseFloat(row.monto || 0);
+          const hora = new Date(row.fecha_facturacion).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' });
+          const montoFmt = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(row.monto || 0);
 
-    /* LÓGICA MANTENIMIENTO DE USUARIOS */
-    function openUsuariosModal() {
-      usuariosModal.classList.remove('hidden');
-      loadUsuariosList();
-    }
-
-    function closeUsuariosModal() {
-      usuariosModal.classList.add('hidden');
-      resetUsuarioForm();
-    }
-
-    function resetUsuarioForm() {
-      document.getElementById('usuarioForm').reset();
-      document.getElementById('usrCorreo').removeAttribute('readonly');
-      document.getElementById('btnSaveUsuario').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Usuario';
-    }
-
-    async function loadUsuariosList() {
-      const tbody = document.getElementById('usuariosTableBody');
-      tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-400">Cargando usuarios...</td></tr>';
-      
-      try {
-        const res = await fetch('/api/gestion_usuarios', {
-          headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+          const tr = document.createElement('tr');
+          tr.className = "border-b border-slate-200/40 dark:border-slate-700/40";
+          tr.innerHTML = `
+            <td class="p-3">
+              <div class="font-bold text-slate-900 dark:text-slate-100">${row.cliente || 'Desconocido'}</div>
+              <div class="text-[10px] font-mono text-slate-500">Ref: ${row.numero_referencia || 'N/A'}</div>
+            </td>
+            <td class="p-3 text-slate-700 dark:text-slate-300 font-medium">${hora}</td>
+            <td class="p-3 text-right font-extrabold text-theme-primary">${montoFmt}</td>
+          `;
+          cierreTableBody.appendChild(tr);
         });
-        const data = await res.json();
-        
-        if (res.ok && data.data) {
-          usuariosCache = data.data;
-          renderUsuariosTable(data.data);
-        } else {
-          tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500">${data.error || 'Error al cargar usuarios'}</td></tr>`;
-        }
-      } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500">Error: ${e.message}</td></tr>`;
-      }
-    }
-
-    function renderUsuariosTable(lista) {
-      const tbody = document.getElementById('usuariosTableBody');
-      tbody.innerHTML = '';
-
-      if (lista.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-400">No hay usuarios registrados.</td></tr>';
-        return;
+      } else {
+        cierreTableBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium">No hay comprobantes facturados para esta fecha.</td></tr>`;
       }
 
-      lista.forEach(usr => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors";
-
-        let permisosBadges = '';
-        if (usr.puede_cargar_comprobantes) permisosBadges += '<span class="px-2 py-0.5 rounded text-[10px] bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 font-semibold mr-1">Cargar</span>';
-        if (usr.puede_editar_comentarios) permisosBadges += '<span class="px-2 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 font-semibold mr-1">Comentar</span>';
-        if (usr.puede_gestionar_acciones) permisosBadges += '<span class="px-2 py-0.5 rounded text-[10px] bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 font-semibold mr-1">Acciones</span>';
-
-        tr.innerHTML = `
-          <td class="p-3">
-            <div class="font-bold text-slate-800 dark:text-slate-200">${usr.nombre_usuario || 'Sin nombre'}</div>
-            <div class="text-[11px] text-slate-500 dark:text-slate-400">${usr.correo_gmail}</div>
-          </td>
-          <td class="p-3">
-            <div class="flex flex-wrap gap-1">${permisosBadges || '<span class="text-slate-400 italic">Sin permisos</span>'}</div>
-          </td>
-          <td class="p-3 text-center">
-            <div class="flex items-center justify-center gap-2">
-              <button onclick="editUsuarioClick('${usr.correo_gmail}')" class="text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 p-1" title="Editar">
-                <i class="fa-solid fa-pen-to-square"></i>
-              </button>
-              <button onclick="deleteUsuarioClick('${usr.correo_gmail}')" class="text-slate-400 hover:text-red-600 dark:hover:text-red-400 p-1" title="Eliminar">
-                <i class="fa-solid fa-trash"></i>
-              </button>
-            </div>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
+      document.getElementById('cierreTotalCount').innerText = facturados.length;
+      document.getElementById('cierreTotalMonto').innerText = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(totalMonto);
     }
 
-    function editUsuarioClick(correo) {
-      const usr = usuariosCache.find(u => u.correo_gmail === correo);
-      if (!usr) return;
-
-      document.getElementById('usrNombre').value = usr.nombre_usuario || '';
-      document.getElementById('usrCorreo').value = usr.correo_gmail || '';
-      document.getElementById('usrCorreo').setAttribute('readonly', 'true');
-
-      document.getElementById('permCargar').checked = !!usr.puede_cargar_comprobantes;
-      document.getElementById('permEditarComentarios').checked = !!usr.puede_editar_comentarios;
-      document.getElementById('permGestionarAcciones').checked = !!usr.puede_gestionar_acciones;
-
-      document.getElementById('btnSaveUsuario').innerHTML = '<i class="fa-solid fa-rotate"></i> Actualizar Usuario';
-    }
-
-    async function saveUsuario(e) {
-      e.preventDefault();
-      const nombre_usuario = document.getElementById('usrNombre').value;
-      const correo_gmail = document.getElementById('usrCorreo').value;
-
-      const puede_cargar_comprobantes = document.getElementById('permCargar').checked;
-      const puede_editar_comentarios = document.getElementById('permEditarComentarios').checked;
-      const puede_gestionar_acciones = document.getElementById('permGestionarAcciones').checked;
-
-      const payload = {
-        nombre_usuario,
-        correo_gmail,
-        puede_cargar_comprobantes,
-        puede_editar_comentarios,
-        puede_gestionar_acciones
-      };
-
-      try {
-        const res = await fetch('/api/gestion_usuarios', {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentSession.access_token}` 
-          },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await res.json();
-        if (res.ok && data.success) {
-          alert('Usuario guardado exitosamente');
-          resetUsuarioForm();
-          loadUsuariosList();
-        } else {
-          alert('Error: ' + (data.error || 'No se pudo guardar el usuario'));
-        }
-      } catch (err) {
-        alert('Error en la solicitud: ' + err.message);
-      }
-    }
-
-    async function deleteUsuarioClick(correo) {
-      if (!confirm(`¿Estás seguro de que deseas eliminar al usuario ${correo}?`)) return;
-
-      try {
-        const res = await fetch(`/api/gestion_usuarios?correo=${encodeURIComponent(correo)}`, {
-          method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
-        });
-
-        const data = await res.json();
-        if (res.ok && data.success) {
-          loadUsuariosList();
-        } else {
-          alert('Error: ' + (data.error || 'No se pudo eliminar el usuario'));
-        }
-      } catch (e) {
-        alert('Error: ' + e.message);
-      }
-    }
-
-    window.addEventListener('DOMContentLoaded', initAuth);
+    // Inicializar autenticación al cargar la página
+    initAuth();
   </script>
 </body>
 </html>
