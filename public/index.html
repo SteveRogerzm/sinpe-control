@@ -19,13 +19,86 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     body { font-family: 'Inter', sans-serif; }
 
-    /* Mapeo dinámico de Variables de Color según Paleta */
-    html.theme-emerald { --theme-primary: #059669; --theme-primary-hover: #047857; --theme-primary-light: #ecfdf5; --theme-primary-dark-light: rgba(6, 78, 59, 0.4); --theme-text: #059669; --theme-border: #a7f3d0; }
-    html.theme-blue { --theme-primary: #2563eb; --theme-primary-hover: #1d4ed8; --theme-primary-light: #eff6ff; --theme-primary-dark-light: rgba(30, 58, 138, 0.4); --theme-text: #2563eb; --theme-border: #bfdbfe; }
-    html.theme-violet { --theme-primary: #7c3aed; --theme-primary-hover: #6d28d9; --theme-primary-light: #f5f3ff; --theme-primary-dark-light: rgba(91, 33, 182, 0.4); --theme-text: #7c3aed; --theme-border: #ddd6fe; }
-    html.theme-amber { --theme-primary: #d97706; --theme-primary-hover: #b45309; --theme-primary-light: #fffbeb; --theme-primary-dark-light: rgba(120, 53, 15, 0.4); --theme-text: #d97706; --theme-border: #fde68a; }
-    html.theme-slate { --theme-primary: #475569; --theme-primary-hover: #334155; --theme-primary-light: #f8fafc; --theme-primary-dark-light: rgba(30, 41, 59, 0.4); --theme-text: #475569; --theme-border: #cbd5e1; }
+    /* Mapeo dinámico de Variables de Color y Fondos por Tema */
+html.theme-emerald { 
+  --theme-primary: #059669; 
+  --theme-primary-hover: #047857; 
+  --theme-primary-light: #ecfdf5; 
+  --theme-primary-dark-light: rgba(6, 78, 59, 0.4); 
+  --theme-text: #059669; 
+  --theme-border: #a7f3d0; 
+}
+html.theme-blue { 
+  --theme-primary: #2563eb; 
+  --theme-primary-hover: #1d4ed8; 
+  --theme-primary-light: #eff6ff; 
+  --theme-primary-dark-light: rgba(30, 58, 138, 0.4); 
+  --theme-text: #2563eb; 
+  --theme-border: #bfdbfe; 
+}
+html.theme-violet { 
+  --theme-primary: #7c3aed; 
+  --theme-primary-hover: #6d28d9; 
+  --theme-primary-light: #f5f3ff; 
+  --theme-primary-dark-light: rgba(91, 33, 182, 0.4); 
+  --theme-text: #7c3aed; 
+  --theme-border: #ddd6fe; 
+}
+html.theme-amber { 
+  --theme-primary: #d97706; 
+  --theme-primary-hover: #b45309; 
+  --theme-primary-light: #fffbeb; 
+  --theme-primary-dark-light: rgba(120, 53, 15, 0.4); 
+  --theme-text: #d97706; 
+  --theme-border: #fde68a; 
+}
+html.theme-slate { 
+  --theme-primary: #475569; 
+  --theme-primary-hover: #334155; 
+  --theme-primary-light: #f8fafc; 
+  --theme-primary-dark-light: rgba(30, 41, 59, 0.4); 
+  --theme-text: #475569; 
+  --theme-border: #cbd5e1; 
+}
 
+/* Tarjetas de Selección de Tema con Personalidad e Imagen */
+.theme-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 2px solid transparent;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.theme-card-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.35;
+  transition: opacity 0.2s ease, transform 0.3s ease;
+}
+
+.theme-card:hover .theme-card-bg {
+  opacity: 0.5;
+  transform: scale(1.05);
+}
+
+.theme-card-overlay {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+}
+
+/* Indicador de Tema Seleccionado */
+.theme-card.active-theme {
+  border-color: var(--theme-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
     /* Clases de utilidad vinculadas a la paleta active */
     .bg-theme-primary { background-color: var(--theme-primary) !important; }
     .hover\:bg-theme-primary-hover:hover { background-color: var(--theme-primary-hover) !important; }
@@ -457,52 +530,90 @@
         </div>
 
         <!-- Paleta de Colores -->
-        <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Paleta Acentuada</label>
-          <div class="grid grid-cols-1 gap-2.5">
-            
-            <button onclick="setThemePalette('emerald')" class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all">
-              <div class="flex items-center gap-3">
-                <span class="w-5 h-5 rounded-full bg-emerald-600 inline-block shadow-sm"></span>
-                <span class="text-xs font-bold text-slate-700 dark:text-slate-200">Esmeralda (Predeterminado)</span>
-              </div>
-              <i id="check-emerald" class="fa-solid fa-circle-check text-emerald-600 hidden"></i>
-            </button>
-
-            <button onclick="setThemePalette('blue')" class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all">
-              <div class="flex items-center gap-3">
-                <span class="w-5 h-5 rounded-full bg-blue-600 inline-block shadow-sm"></span>
-                <span class="text-xs font-bold text-slate-700 dark:text-slate-200">Océano Azul</span>
-              </div>
-              <i id="check-blue" class="fa-solid fa-circle-check text-blue-600 hidden"></i>
-            </button>
-
-            <button onclick="setThemePalette('violet')" class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all">
-              <div class="flex items-center gap-3">
-                <span class="w-5 h-5 rounded-full bg-violet-600 inline-block shadow-sm"></span>
-                <span class="text-xs font-bold text-slate-700 dark:text-slate-200">Violeta Moderno</span>
-              </div>
-              <i id="check-violet" class="fa-solid fa-circle-check text-violet-600 hidden"></i>
-            </button>
-
-            <button onclick="setThemePalette('amber')" class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all">
-              <div class="flex items-center gap-3">
-                <span class="w-5 h-5 rounded-full bg-amber-600 inline-block shadow-sm"></span>
-                <span class="text-xs font-bold text-slate-700 dark:text-slate-200">Ámbar Cálido</span>
-              </div>
-              <i id="check-amber" class="fa-solid fa-circle-check text-amber-600 hidden"></i>
-            </button>
-
-            <button onclick="setThemePalette('slate')" class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all">
-              <div class="flex items-center gap-3">
-                <span class="w-5 h-5 rounded-full bg-slate-600 inline-block shadow-sm"></span>
-                <span class="text-xs font-bold text-slate-700 dark:text-slate-200">Slate Clásico</span>
-              </div>
-              <i id="check-slate" class="fa-solid fa-circle-check text-slate-600 hidden"></i>
-            </button>
-
+        <!-- Paleta de Colores y Temas Visuales -->
+<div>
+  <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
+    Selecciona una Personalidad / Tema
+  </label>
+  <div class="grid grid-cols-1 gap-3">
+    
+    <!-- Tema Esmeralda -->
+    <div onclick="setThemePalette('emerald')" id="card-theme-emerald" class="theme-card bg-emerald-900/90 text-white">
+      <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=600&q=80');"></div>
+      <div class="theme-card-overlay">
+        <div class="flex items-center gap-3">
+          <span class="w-6 h-6 rounded-full bg-emerald-500 border-2 border-white shadow-sm shrink-0"></span>
+          <div>
+            <p class="text-xs font-bold text-white drop-shadow">Esmeralda Eco</p>
+            <p class="text-[10px] text-emerald-200">Naturaleza y frescura</p>
           </div>
         </div>
+        <i id="check-emerald" class="fa-solid fa-circle-check text-emerald-400 text-lg hidden"></i>
+      </div>
+    </div>
+
+    <!-- Tema Océano Azul -->
+    <div onclick="setThemePalette('blue')" id="card-theme-blue" class="theme-card bg-blue-950/90 text-white">
+      <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80');"></div>
+      <div class="theme-card-overlay">
+        <div class="flex items-center gap-3">
+          <span class="w-6 h-6 rounded-full bg-blue-500 border-2 border-white shadow-sm shrink-0"></span>
+          <div>
+            <p class="text-xs font-bold text-white drop-shadow">Océano Profundo</p>
+            <p class="text-[10px] text-blue-200">Corporativo y tecnológico</p>
+          </div>
+        </div>
+        <i id="check-blue" class="fa-solid fa-circle-check text-blue-400 text-lg hidden"></i>
+      </div>
+    </div>
+
+    <!-- Tema Violeta Moderno -->
+    <div onclick="setThemePalette('violet')" id="card-theme-violet" class="theme-card bg-purple-950/90 text-white">
+      <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=600&q=80');"></div>
+      <div class="theme-card-overlay">
+        <div class="flex items-center gap-3">
+          <span class="w-6 h-6 rounded-full bg-violet-500 border-2 border-white shadow-sm shrink-0"></span>
+          <div>
+            <p class="text-xs font-bold text-white drop-shadow">Cyber Violeta</p>
+            <p class="text-[10px] text-violet-200">Creativo y moderno</p>
+          </div>
+        </div>
+        <i id="check-violet" class="fa-solid fa-circle-check text-violet-400 text-lg hidden"></i>
+      </div>
+    </div>
+
+    <!-- Tema Ámbar Cálido -->
+    <div onclick="setThemePalette('amber')" id="card-theme-amber" class="theme-card bg-amber-950/90 text-white">
+      <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&q=80');"></div>
+      <div class="theme-card-overlay">
+        <div class="flex items-center gap-3">
+          <span class="w-6 h-6 rounded-full bg-amber-500 border-2 border-white shadow-sm shrink-0"></span>
+          <div>
+            <p class="text-xs font-bold text-white drop-shadow">Ámbar Atardecer</p>
+            <p class="text-[10px] text-amber-200">Cálido y dinámico</p>
+          </div>
+        </div>
+        <i id="check-amber" class="fa-solid fa-circle-check text-amber-400 text-lg hidden"></i>
+      </div>
+    </div>
+
+    <!-- Tema Slate Clásico -->
+    <div onclick="setThemePalette('slate')" id="card-theme-slate" class="theme-card bg-slate-900/90 text-white">
+      <div class="theme-card-bg" style="background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=600&q=80');"></div>
+      <div class="theme-card-overlay">
+        <div class="flex items-center gap-3">
+          <span class="w-6 h-6 rounded-full bg-slate-400 border-2 border-white shadow-sm shrink-0"></span>
+          <div>
+            <p class="text-xs font-bold text-white drop-shadow">Slate Urbano</p>
+            <p class="text-[10px] text-slate-300">Elegante y neutro</p>
+          </div>
+        </div>
+        <i id="check-slate" class="fa-solid fa-circle-check text-slate-300 text-lg hidden"></i>
+      </div>
+    </div>
+
+  </div>
+</div>
       </div>
     </div>
   </div>
@@ -803,32 +914,42 @@
     }
 
     function updateThemeModalUI() {
-      const isDark = document.documentElement.classList.contains('dark');
-      const activePalette = localStorage.getItem('theme-palette') || 'emerald';
+  const isDark = document.documentElement.classList.contains('dark');
+  const activePalette = localStorage.getItem('theme-palette') || 'emerald';
 
-      // Botones Modo Claro / Oscuro
-      const btnLight = document.getElementById('btnModeLight');
-      const btnDark = document.getElementById('btnModeDark');
+  // Botones Modo Claro / Oscuro
+  const btnLight = document.getElementById('btnModeLight');
+  const btnDark = document.getElementById('btnModeDark');
 
-      if (btnLight && btnDark) {
-        if (isDark) {
-          btnDark.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-theme bg-theme-light text-theme-primary transition-all';
-          btnLight.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-theme transition-all';
-        } else {
-          btnLight.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-theme bg-theme-light text-theme-primary transition-all';
-          btnDark.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-theme transition-all';
-        }
-      }
-
-      // Checkmarks Paletas
-      ['emerald', 'blue', 'violet', 'amber', 'slate'].forEach(p => {
-        const check = document.getElementById(`check-${p}`);
-        if (check) {
-          if (p === activePalette) check.classList.remove('hidden');
-          else check.classList.add('hidden');
-        }
-      });
+  if (btnLight && btnDark) {
+    if (isDark) {
+      btnDark.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-theme bg-theme-light text-theme-primary transition-all';
+      btnLight.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-theme transition-all';
+    } else {
+      btnLight.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border-2 border-theme bg-theme-light text-theme-primary transition-all';
+      btnDark.className = 'flex items-center justify-center gap-2 p-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-theme transition-all';
     }
+  }
+
+  // Actualizar Tarjetas de Tema (Icono y Borde Activo)
+  ['emerald', 'blue', 'violet', 'amber', 'slate'].forEach(p => {
+    const check = document.getElementById(`check-${p}`);
+    const card = document.getElementById(`card-theme-${p}`);
+
+    if (check) {
+      if (p === activePalette) check.classList.remove('hidden');
+      else check.classList.add('hidden');
+    }
+
+    if (card) {
+      if (p === activePalette) {
+        card.classList.add('active-theme');
+      } else {
+        card.classList.remove('active-theme');
+      }
+    }
+  });
+}
 
 function toggleBillingCycle() {
   isAnnual = !isAnnual;
