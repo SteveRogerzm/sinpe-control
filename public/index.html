@@ -1425,7 +1425,7 @@
           (row.monto && row.monto.toString().includes(search)) ||
           (row.nombre_creacion && row.nombre_creacion.toLowerCase().includes(search)) ||
           (row.nombre_aprobacion && row.nombre_aprobacion.toLowerCase().includes(search)) ||
-          (row.nombre_facturacion && row.nombre_facturacion.toLowerCase().includes(search))
+          (row.nombre_facturacion && row.nombre_facturacion.toLowerCase().includes(search));
         
         const matchesBank = !bank || row.nombre_emisor === bank;
         const matchesStatus = !status || (row.estado || 'Pendiente') === status;
@@ -1453,6 +1453,7 @@
           <th class="p-3">Comentarios</th>
         `;
       }
+      
       recordsTable.innerHTML = '';
       let totalMonto = 0;
       
@@ -1546,42 +1547,48 @@
             : '';
 
           tr.innerHTML = `
-          <td class="p-3.5">
-            <div class="font-black text-sm sm:text-base text-slate-900 dark:text-white leading-snug">
-              ${row.cliente || 'Desconocido'}
-            </div>
-            <div class="text-xs text-slate-600 dark:text-slate-400 font-mono font-semibold mt-0.5">
-              Ref: ${row.numero_referencia || 'N/A'}
-            </div>
-            <div class="font-extrabold text-base text-theme-primary mt-1">
-              ${formattedMonto}
-            </div>
-            <div class="flex items-center gap-1.5 mt-1.5">
-              ${statusBadge}
-              ${facturadoBadge}
+            <td class="p-3.5 align-top">
+              <div class="font-black text-sm sm:text-base text-slate-900 dark:text-white leading-snug">
+                ${row.cliente || 'Desconocido'}
+              </div>
+              <div class="text-xs text-slate-600 dark:text-slate-400 font-mono font-semibold mt-0.5">
+                Ref: ${row.numero_referencia || 'N/A'}
+              </div>
+              <div class="font-extrabold text-base text-theme-primary mt-1">
+                ${formattedMonto}
+              </div>
+              <div class="flex items-center gap-1.5 mt-1.5">
+                ${statusBadge}
+                ${facturadoBadge}
               </div>
             </td>
-            <td class="p-3 align-top text-xs font-semibold text-slate-700 dark:text-slate-300">
-              ${row.nombre_emisor || 'N/A'}
+            <td class="p-3 align-top font-bold text-slate-700 dark:text-slate-300">
+              <span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-white/60 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60">
+                <i class="fa-solid fa-building-columns text-theme-primary text-xs"></i>
+                ${row.nombre_emisor || 'No especificado'}
+              </span>
             </td>
-            <td class="p-3 align-top space-y-1 text-[11px] text-slate-600 dark:text-slate-400">
+            <td class="p-3 align-top text-[11px] text-slate-600 dark:text-slate-300 space-y-1">
               <div><strong class="text-slate-800 dark:text-slate-200">Pago:</strong> ${payDateStr}</div>
-              <div><strong class="text-slate-800 dark:text-slate-200">Registro:</strong> ${createdDateStr} ${creadoPor}</div>
-              ${row.fecha_aprobacion ? `<div><strong class="text-emerald-700 dark:text-emerald-300">Aprobación:</strong> ${aprobDateStr}${aprobadoPor}</div>` : ''}
-              ${row.fecha_facturacion ? `<div><strong class="text-indigo-700 dark:text-indigo-300">Facturación:</strong> ${factDateStr}${facturadoPor}</div>` : ''}
+              <div><strong class="text-slate-800 dark:text-slate-200">Ingresado:</strong> ${createdDateStr} ${creadoPor}</div>
+              ${isAprobado ? `<div><strong class="text-emerald-600 dark:text-emerald-400">Aprobado:</strong> ${aprobDateStr}${aprobadoPor}</div>` : ''}
+              ${isFacturado ? `<div><strong class="text-indigo-600 dark:text-indigo-400">Facturado:</strong> ${factDateStr}${facturadoPor}</div>` : ''}
             </td>
-            <td class="p-3 align-top">
+            <td class="p-3 align-top min-w-[200px]">
               ${commentCell}
             </td>
             ${actionsCell}
           `;
+          
           recordsTable.appendChild(tr);
         });
       } else {
+        const noResultsColspan = currentUserPermissions.puede_gestionar_acciones ? 5 : 4;
         recordsTable.innerHTML = `
           <tr>
-            <td colspan="${currentUserPermissions.puede_gestionar_acciones ? 5 : 4}" class="p-8 text-center text-slate-500 font-medium">
-              No se encontraron registros con los filtros seleccionados.
+            <td colspan="${noResultsColspan}" class="p-8 text-center text-slate-500 dark:text-slate-400 font-medium">
+              <i class="fa-solid fa-inbox text-3xl mb-2 block opacity-40"></i>
+              No se encontraron comprobantes que coincidan con los filtros aplicados.
             </td>
           </tr>
         `;
@@ -1591,7 +1598,7 @@
       document.getElementById('totalAmount').innerText = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(totalMonto);
     }
 
-    async function updateRecordData(id, updateObj) {
+    async function updateRecordData(id, payload) {
       if (!currentSession) return;
       try {
         const response = await fetch('/api/actualizar_registro', {
@@ -1600,11 +1607,10 @@
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${currentSession.access_token}`
           },
-          body: JSON.stringify({ id, ...updateObj })
+          body: JSON.stringify({ id, ...payload })
         });
         const res = await response.json();
         if (!res.success) throw new Error(res.error);
-        
         loadRecords();
       } catch (e) {
         showAlert(`⚠️ Error al actualizar: ${e.message}`, 'error');
@@ -1613,28 +1619,16 @@
 
     async function toggleFacturadoRecord(id, isFacturado) {
       if (!currentSession) return;
-      try {
-        const action = isFacturado ? 'unmark' : 'mark';
-        const response = await fetch('/api/marcar_facturado', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${currentSession.access_token}`
-          },
-          body: JSON.stringify({ id, action })
-        });
-        const res = await response.json();
-        if (!res.success) throw new Error(res.error);
-
-        loadRecords();
-      } catch (e) {
-        showAlert(`⚠️ Error al actualizar estado de facturación: ${e.message}`, 'error');
-      }
+      const now = !isFacturado ? new Date().toISOString() : null;
+      await updateRecordData(id, { fecha_facturacion: now });
     }
 
     function openModal(url) {
+      if (!url) return showAlert('No hay URL de comprobante disponible.', 'error');
       modalExternalLink.href = url;
-      if (url.toLowerCase().includes('.pdf')) {
+      
+      const isPdf = url.toLowerCase().includes('.pdf');
+      if (isPdf) {
         modalImage.classList.add('hidden');
         modalPdf.classList.remove('hidden');
         modalPdf.src = url;
@@ -1668,8 +1662,7 @@
       if (!selectedDate) return;
 
       const facturadosFecha = rawRecordsData.filter(row => {
-        if (!row.fecha_facturacion) return false;
-        return row.fecha_facturacion.startsWith(selectedDate);
+        return row.fecha_facturacion && row.fecha_facturacion.startsWith(selectedDate);
       });
 
       let totalMonto = 0;
@@ -1677,131 +1670,130 @@
       tbody.innerHTML = '';
 
       if (facturadosFecha.length > 0) {
-        facturadosFecha.forEach(row => {
-          totalMonto += parseFloat(row.monto || 0);
-          const factTimeStr = new Date(row.fecha_facturacion).toLocaleTimeString('es-CR', { timeStyle: 'short' });
-          const formattedMonto = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(row.monto || 0);
-
+        facturadosFecha.forEach(r => {
+          totalMonto += parseFloat(r.monto || 0);
           const tr = document.createElement('tr');
-          tr.className = "hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors";
+          const horaStr = new Date(r.fecha_facturacion).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' });
+          const montoStr = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(r.monto || 0);
+
           tr.innerHTML = `
-            <td class="p-3">
-              <div class="font-bold text-slate-900 dark:text-white">${row.cliente || 'Desconocido'}</div>
-              <div class="text-[10px] text-slate-500 font-mono">Ref: ${row.numero_referencia || 'N/A'}</div>
+            <td class="p-3 font-semibold text-slate-800 dark:text-slate-200">
+              <div>${r.cliente || 'Desconocido'}</div>
+              <div class="text-[10px] text-slate-500 font-mono">Ref: ${r.numero_referencia || 'N/A'}</div>
             </td>
-            <td class="p-3 font-medium text-slate-700 dark:text-slate-300">${factTimeStr}</td>
-            <td class="p-3 text-right font-extrabold text-theme-primary">${formattedMonto}</td>
+            <td class="p-3 text-slate-600 dark:text-slate-400 font-mono text-[11px]">${horaStr}</td>
+            <td class="p-3 text-right font-bold text-theme-primary">${montoStr}</td>
           `;
           tbody.appendChild(tr);
         });
       } else {
-        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium">No hay comprobantes facturados registrados en esta fecha.</td></tr>`;
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="3" class="p-4 text-center text-slate-500 font-medium">
+              No hay comprobantes facturados registrados para esta fecha.
+            </td>
+          </tr>
+        `;
       }
 
       document.getElementById('cierreTotalCount').innerText = facturadosFecha.length;
       document.getElementById('cierreTotalMonto').innerText = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(totalMonto);
     }
 
-    // GESTIÓN DE USUARIOS
+    /* MANTENIMIENTO DE USUARIOS */
     function openUsuariosModal() {
-      resetUsuarioForm();
-      loadUsuariosList();
       usuariosModal.classList.remove('hidden');
+      loadUsuariosList();
     }
 
     function closeUsuariosModal() {
       usuariosModal.classList.add('hidden');
+      resetUsuarioForm();
     }
 
     function resetUsuarioForm() {
-      document.getElementById('usuarioForm').reset();
-      document.getElementById('usuarioForm').dataset.editId = "";
-      document.getElementById('btnSaveUsuario').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar Usuario`;
+      document.getElementById('usrNombre').value = '';
+      document.getElementById('usrCorreo').value = '';
+      document.getElementById('usrCorreo').disabled = false;
+      document.getElementById('permCargar').checked = true;
+      document.getElementById('permEditarComentarios').checked = true;
+      document.getElementById('permGestionarAcciones').checked = true;
     }
 
     async function loadUsuariosList() {
+      if (!currentSession) return;
       const tbody = document.getElementById('usuariosTableBody');
-      tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium"><i class="fa-solid fa-spinner animate-spin mr-1"></i> Cargando usuarios...</td></tr>`;
+      tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium">Cargando usuarios...</td></tr>';
 
       try {
-        const res = await fetch('/api/obtener_usuarios', {
+        const res = await fetch('/api/usuarios', {
           headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
         });
-        const resData = await res.json();
-        
-        if (!resData.success) throw new Error(resData.error);
-        
-        usuariosCache = resData.data || [];
-        renderUsuariosTable(usuariosCache);
+        const data = await res.json();
+
+        if (!data.success) throw new Error(data.error);
+
+        usuariosCache = data.data || [];
+        tbody.innerHTML = '';
+
+        if (usuariosCache.length > 0) {
+          usuariosCache.forEach(u => {
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors";
+            
+            let badges = [];
+            if (u.puede_cargar_comprobantes) badges.push('<span class="px-1.5 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold">Cargar</span>');
+            if (u.puede_editar_comentarios) badges.push('<span class="px-1.5 py-0.5 rounded text-[10px] bg-blue-500/20 text-blue-700 dark:text-blue-300 font-bold">Comentarios</span>');
+            if (u.puede_gestionar_acciones) badges.push('<span class="px-1.5 py-0.5 rounded text-[10px] bg-purple-500/20 text-purple-700 dark:text-purple-300 font-bold">Gestionar Acciones</span>');
+
+            tr.innerHTML = `
+              <td class="p-3 font-semibold text-slate-800 dark:text-slate-200">
+                <div>${u.nombre_usuario || 'Sin nombre'}</div>
+                <div class="text-[11px] text-slate-500 font-mono">${u.email}</div>
+              </td>
+              <td class="p-3">
+                <div class="flex items-center gap-1 flex-wrap">${badges.join(' ')}</div>
+              </td>
+              <td class="p-3 text-center">
+                <div class="flex items-center justify-center gap-1">
+                  <button onclick="editUsuario('${u.email}')" class="px-2 py-1 text-[11px] font-bold bg-purple-500/20 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-500/30 transition-colors">
+                    <i class="fa-solid fa-pen"></i> Editar
+                  </button>
+                  <button onclick="deleteUsuario('${u.email}')" class="px-2 py-1 text-[11px] font-bold bg-red-500/20 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-500/30 transition-colors">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium">No hay usuarios registrados.</td></tr>';
+        }
       } catch (e) {
         tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500 font-medium">Error al cargar usuarios: ${e.message}</td></tr>`;
       }
     }
 
-    function renderUsuariosTable(usuarios) {
-      const tbody = document.getElementById('usuariosTableBody');
-      tbody.innerHTML = '';
-
-      if (usuarios.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium">No hay usuarios registrados.</td></tr>`;
-        return;
-      }
-
-      usuarios.forEach(u => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors";
-
-        const permCargar = u.puede_cargar_comprobantes ? `<span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">Cargar</span>` : '';
-        const permComentarios = u.puede_editar_comentarios ? `<span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-500/30">Comentar</span>` : '';
-        const permAcciones = u.puede_gestionar_acciones ? `<span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/30">Acciones</span>` : '';
-
-        tr.innerHTML = `
-          <td class="p-3">
-            <div class="font-bold text-slate-900 dark:text-white text-xs">${u.nombre || 'Sin Nombre'}</div>
-            <div class="text-[11px] text-slate-600 dark:text-slate-400 font-mono">${u.email}</div>
-          </td>
-          <td class="p-3">
-            <div class="flex items-center gap-1.5 flex-wrap">
-              ${permCargar}
-              ${permComentarios}
-              ${permAcciones}
-              ${(!u.puede_cargar_comprobantes && !u.puede_editar_comentarios && !u.puede_gestionar_acciones) ? '<span class="text-slate-400 text-xs">Sin permisos</span>' : ''}
-            </div>
-          </td>
-          <td class="p-3 text-center">
-            <div class="flex items-center justify-center gap-1">
-              <button onclick="editUsuario('${u.id}')" class="p-1.5 text-xs font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 rounded-lg transition-colors" title="Editar">
-                <i class="fa-solid fa-pen"></i>
-              </button>
-              <button onclick="deleteUsuario('${u.id}', '${u.email}')" class="p-1.5 text-xs font-bold bg-red-500/20 text-red-700 dark:text-red-300 border border-red-500/30 hover:bg-red-500/30 rounded-lg transition-colors" title="Eliminar">
-                <i class="fa-solid fa-trash"></i>
-              </button>
-            </div>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function editUsuario(id) {
-      const u = usuariosCache.find(item => item.id === id);
+    function editUsuario(email) {
+      const u = usuariosCache.find(item => item.email === email);
       if (!u) return;
 
-      document.getElementById('usrNombre').value = u.nombre || '';
-      document.getElementById('usrCorreo').value = u.email || '';
+      document.getElementById('usrNombre').value = u.nombre_usuario || '';
+      document.getElementById('usrCorreo').value = u.email;
+      document.getElementById('usrCorreo').disabled = true;
+
       document.getElementById('permCargar').checked = !!u.puede_cargar_comprobantes;
       document.getElementById('permEditarComentarios').checked = !!u.puede_editar_comentarios;
       document.getElementById('permGestionarAcciones').checked = !!u.puede_gestionar_acciones;
-
-      document.getElementById('usuarioForm').dataset.editId = id;
-      document.getElementById('btnSaveUsuario').innerHTML = `<i class="fa-solid fa-arrows-rotate"></i> Actualizar Usuario`;
     }
 
     async function saveUsuario(e) {
       e.preventDefault();
-      const id = document.getElementById('usuarioForm').dataset.editId;
-      const nombre = document.getElementById('usrNombre').value.trim();
-      const email = document.getElementById('usrCorreo').value.trim();
+      if (!currentSession) return;
+
+      const nombre = document.getElementById('usrNombre').value;
+      const email = document.getElementById('usrCorreo').value;
       const puede_cargar_comprobantes = document.getElementById('permCargar').checked;
       const puede_editar_comentarios = document.getElementById('permEditarComentarios').checked;
       const puede_gestionar_acciones = document.getElementById('permGestionarAcciones').checked;
@@ -1811,57 +1803,58 @@
       btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Guardando...`;
 
       try {
-        const response = await fetch('/api/guardar_usuario', {
+        const response = await fetch('/api/usuarios', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${currentSession.access_token}`
           },
           body: JSON.stringify({
-            id,
-            nombre,
             email,
+            nombre_usuario: nombre,
             puede_cargar_comprobantes,
             puede_editar_comentarios,
             puede_gestionar_acciones
           })
         });
 
-        const resData = await response.json();
-        if (!resData.success) throw new Error(resData.error);
+        const res = await response.json();
+        if (!res.success) throw new Error(res.error);
 
         resetUsuarioForm();
         loadUsuariosList();
       } catch (err) {
-        alert(`Error al guardar el usuario: ${err.message}`);
+        alert(`Error al guardar usuario: ${err.message}`);
       } finally {
         btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar Usuario`;
       }
     }
 
-    async function deleteUsuario(id, email) {
-      if (!confirm(`¿Estás seguro de que deseas eliminar los permisos del usuario ${email}?`)) return;
+    async function deleteUsuario(email) {
+      if (!confirm(`¿Estás seguro de eliminar el acceso para ${email}?`)) return;
+      if (!currentSession) return;
 
       try {
-        const response = await fetch('/api/eliminar_usuario', {
-          method: 'POST',
+        const response = await fetch('/api/usuarios', {
+          method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${currentSession.access_token}`
           },
-          body: JSON.stringify({ id })
+          body: JSON.stringify({ email })
         });
 
-        const resData = await response.json();
-        if (!resData.success) throw new Error(resData.error);
+        const res = await response.json();
+        if (!res.success) throw new Error(res.error);
 
         loadUsuariosList();
       } catch (err) {
-        alert(`Error al eliminar el usuario: ${err.message}`);
+        alert(`Error al eliminar usuario: ${err.message}`);
       }
     }
 
-    // Inicializar aplicación
+    // Inicializar autenticación al cargar
     window.addEventListener('DOMContentLoaded', initAuth);
   </script>
 </body>
