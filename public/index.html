@@ -376,93 +376,131 @@ html.theme-slate.dark {
       </div>
 
       <div class="glass-card rounded-2xl overflow-hidden" id="tourTablaRegistros">
-        <!-- BARRA SUPERIOR Y FILTROS DE LA TABLA -->
-        <div class="p-4 border-b border-theme/30 space-y-3" id="tourPanelFiltros">
-          <div class="flex flex-wrap items-center justify-between gap-3">
-            <h3 class="font-bold text-sm flex items-center gap-2">
-              <i class="fa-solid fa-list-check text-theme-primary"></i> Histórico de Transacciones
-            </h3>
-            <div class="flex items-center gap-2">
-              <button onclick="resetFilters()" class="text-xs bg-white/60 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-700 font-bold px-2.5 py-1.5 rounded-lg border border-theme/40 transition-all shadow-sm">
-                <i class="fa-solid fa-filter-circle-xmark mr-1"></i> Limpiar Filtros
-              </button>
-              <button id="refreshBtn" onclick="loadRecords()" class="text-xs bg-theme-primary hover:bg-theme-primary-hover text-white font-bold px-3 py-1.5 rounded-lg transition-all shadow-sm">
-                <i class="fa-solid fa-rotate-right mr-1"></i> Actualizar
-              </button>
-            </div>
-          </div>
+  <!-- BARRA SUPERIOR Y FILTROS DE LA TABLA -->
+  <div class="p-4 border-b border-theme/30 space-y-3" id="tourPanelFiltros">
+    
+    <!-- Encabezado de la Sección -->
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h3 class="font-bold text-sm flex items-center gap-2">
+        <i class="fa-solid fa-list-check text-theme-primary"></i> Histórico de Transacciones
+      </h3>
+      <div class="flex items-center gap-2">
+        <button onclick="resetFilters()" class="text-xs bg-white/60 dark:bg-slate-800/60 hover:bg-white dark:hover:bg-slate-700 font-bold px-2.5 py-1.5 rounded-lg border border-theme/40 transition-all shadow-sm">
+          <i class="fa-solid fa-filter-circle-xmark mr-1"></i> Limpiar Filtros
+        </button>
+        <button id="refreshBtn" onclick="loadRecords()" class="text-xs bg-theme-primary hover:bg-theme-primary-hover text-white font-bold px-3 py-1.5 rounded-lg transition-all shadow-sm">
+          <i class="fa-solid fa-rotate-right mr-1"></i> Actualizar
+        </button>
+      </div>
+    </div>
 
-          <!-- LÍNEA 1: Búsqueda, Banco, Checkboxes de Estado -->
-          <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center bg-white/30 dark:bg-slate-900/40 p-2.5 rounded-xl border border-theme/30">
-            <div class="sm:col-span-5 md:col-span-4">
-              <input type="text" id="searchFilter" placeholder="🔍 Buscar cliente, ref, monto..." class="w-full text-xs p-2 rounded-lg border border-theme/40 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" oninput="renderTable()">
-            </div>
-
-            <div class="sm:col-span-4 md:col-span-3">
-              <select id="bankFilter" class="w-full text-xs p-2 rounded-lg border border-theme/40 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" onchange="renderTable()">
-                <option value="">Todos los Bancos</option>
-              </select>
-            </div>
-
-            <div class="sm:col-span-12 md:col-span-5 flex flex-wrap items-center gap-3 text-xs font-semibold">
-              <label class="inline-flex items-center gap-1 cursor-pointer">
-                <input type="checkbox" id="chkPendiente" checked onchange="renderTable()" class="rounded border-theme text-theme-primary focus:ring-theme-primary">
-                <span>Pendiente</span>
-              </label>
-              <label class="inline-flex items-center gap-1 cursor-pointer">
-                <input type="checkbox" id="chkAprobado" onchange="renderTable()" class="rounded border-theme text-theme-primary focus:ring-theme-primary">
-                <span>Aprobado</span>
-              </label>
-              <label class="inline-flex items-center gap-1 cursor-pointer">
-                <input type="checkbox" id="chkRechazado" onchange="renderTable()" class="rounded border-theme text-theme-primary focus:ring-theme-primary">
-                <span>Rechazado</span>
-              </label>
-              <label class="inline-flex items-center gap-1 cursor-pointer">
-                <input type="checkbox" id="chkFacturado" onchange="renderTable()" class="rounded border-theme text-theme-primary focus:ring-theme-primary">
-                <span>Facturado</span>
-              </label>
-            </div>
-          </div>
-
-          <!-- LÍNEA 2 (Salto de línea): Inputs pequeños de Fecha -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
-            <div>
-              <label class="block text-[9px] font-bold uppercase text-slate-600 dark:text-slate-400 mb-0.5">F. Ingreso</label>
-              <input type="date" id="createdFilter" class="w-full text-[11px] p-1.5 rounded-lg border border-theme/40 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" onchange="renderTable()">
-            </div>
-
-            <div>
-              <label class="block text-[9px] font-bold uppercase text-slate-600 dark:text-slate-400 mb-0.5">F. Pago</label>
-              <input type="date" id="txFilter" class="w-full text-[11px] p-1.5 rounded-lg border border-theme/40 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" onchange="renderTable()">
-            </div>
-
-            <div>
-              <label class="block text-[9px] font-bold uppercase text-slate-600 dark:text-slate-400 mb-0.5">F. Aprobación</label>
-              <input type="date" id="aprobFilter" class="w-full text-[11px] p-1.5 rounded-lg border border-theme/40 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" onchange="renderTable()">
-            </div>
-
-            <div>
-              <label class="block text-[9px] font-bold uppercase text-slate-600 dark:text-slate-400 mb-0.5">F. Facturado</label>
-              <input type="date" id="factFilter" class="w-full text-[11px] p-1.5 rounded-lg border border-theme/40 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" onchange="renderTable()">
-            </div>
+    <!-- PANEL PRINCIPAL DE FILTROS -->
+    <div class="bg-white/30 dark:bg-slate-900/40 p-3 rounded-xl border border-theme/30 space-y-3">
+      
+      <!-- Fila Superior: Búsqueda y Banco -->
+      <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+        <div class="sm:col-span-7 md:col-span-8">
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-2.5 pointer-events-none opacity-50 text-xs">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+            <input type="text" id="searchFilter" placeholder="Buscar por cliente, referencia o monto..." class="w-full text-xs pl-8 pr-3 py-2 rounded-lg border border-theme/40 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme transition-all" oninput="renderTable()">
           </div>
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
-            <thead>
-              <tr class="bg-white/40 dark:bg-slate-900/50 uppercase text-[11px] font-bold tracking-wider border-b border-theme/30">
-                <th class="p-3">Detalle del SINPE</th>
-                <th class="p-3">Banco</th>
-                <th class="p-3">Trazabilidad / Fechas</th>
-                <th class="p-3">Comentarios</th>
-                <th class="p-3 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="recordsTable" class="divide-y divide-theme/20 text-xs"></tbody>
-          </table>
+        <div class="sm:col-span-5 md:col-span-4">
+          <select id="bankFilter" class="w-full text-xs p-2 rounded-lg border border-theme/40 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme transition-all" onchange="renderTable()">
+            <option value="">Todos los Bancos</option>
+          </select>
         </div>
       </div>
+
+      <!-- Fila Inferior: Selección Múltiple de Estados (Chip Selectors) -->
+      <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-theme/10">
+        <span class="text-[11px] font-bold opacity-70 mr-1">Estado:</span>
+        
+        <!-- Checkbox Pendiente -->
+        <label class="cursor-pointer select-none">
+          <input type="checkbox" id="chkPendiente" checked onchange="renderTable()" class="peer sr-only">
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300 peer-checked:bg-amber-500 peer-checked:text-white transition-all flex items-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-clock text-[10px]"></i> Pendiente
+          </span>
+        </label>
+
+        <!-- Checkbox Aprobado -->
+        <label class="cursor-pointer select-none">
+          <input type="checkbox" id="chkAprobado" onchange="renderTable()" class="peer sr-only">
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 peer-checked:bg-emerald-500 peer-checked:text-white transition-all flex items-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-circle-check text-[10px]"></i> Aprobado
+          </span>
+        </label>
+
+        <!-- Checkbox Rechazado -->
+        <label class="cursor-pointer select-none">
+          <input type="checkbox" id="chkRechazado" onchange="renderTable()" class="peer sr-only">
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-700 dark:text-rose-300 peer-checked:bg-rose-500 peer-checked:text-white transition-all flex items-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-circle-xmark text-[10px]"></i> Rechazado
+          </span>
+        </label>
+
+        <!-- Checkbox Facturado -->
+        <label class="cursor-pointer select-none">
+          <input type="checkbox" id="chkFacturado" onchange="renderTable()" class="peer sr-only">
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-300 peer-checked:bg-blue-500 peer-checked:text-white transition-all flex items-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-file-invoice text-[10px]"></i> Facturado
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- FILTROS AVANZADOS POR FECHA (DESPLEGABLE ACORDEÓN) -->
+    <details class="group">
+      <summary class="list-none cursor-pointer text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-theme-primary flex items-center gap-1.5 transition-colors w-max">
+        <i class="fa-solid fa-sliders text-theme-primary transition-transform group-open:rotate-90"></i>
+        <span>Filtros de Fecha Específicos</span>
+        <i class="fa-solid fa-chevron-down text-[10px] opacity-60 transition-transform group-open:rotate-180 ml-1"></i>
+      </summary>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2.5 mt-2 border-t border-theme/20">
+        <div>
+          <label class="block text-[9px] font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">F. Ingreso</label>
+          <input type="date" id="createdFilter" class="w-full text-[11px] p-1.5 rounded-lg border border-theme/40 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" onchange="renderTable()">
+        </div>
+
+        <div>
+          <label class="block text-[9px] font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">F. Pago</label>
+          <input type="date" id="txFilter" class="w-full text-[11px] p-1.5 rounded-lg border border-theme/40 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" onchange="renderTable()">
+        </div>
+
+        <div>
+          <label class="block text-[9px] font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">F. Aprobación</label>
+          <input type="date" id="aprobFilter" class="w-full text-[11px] p-1.5 rounded-lg border border-theme/40 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" onchange="renderTable()">
+        </div>
+
+        <div>
+          <label class="block text-[9px] font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">F. Facturado</label>
+          <input type="date" id="factFilter" class="w-full text-[11px] p-1.5 rounded-lg border border-theme/40 bg-white/80 dark:bg-slate-900/80 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" onchange="renderTable()">
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <!-- TABLA DE RESULTADOS -->
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-white/40 dark:bg-slate-900/50 uppercase text-[11px] font-bold tracking-wider border-b border-theme/30">
+          <th class="p-3">Detalle del SINPE</th>
+          <th class="p-3">Banco</th>
+          <th class="p-3">Trazabilidad / Fechas</th>
+          <th class="p-3">Comentarios</th>
+          <th class="p-3 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="recordsTable" class="divide-y divide-theme/20 text-xs"></tbody>
+    </table>
+  </div>
+</div>
     </div>
   </div>
 
