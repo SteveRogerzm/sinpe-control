@@ -4,15 +4,20 @@ error_reporting(0);
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/auth_check.php';
 
-// Validar que el usuario en sesión tenga acceso
-$usuarioActual = verificarAcceso();
-
 try {
+    // Validar permisos del usuario en sesión
+    $usuarioActual = verificarAcceso();
+    if (!$usuarioActual || empty($usuarioActual['puede_gestionar_acciones'])) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'No tiene permisos para ver la lista de usuarios.']);
+        exit;
+    }
+
     $rawSupabaseUrl = getenv('SUPABASE_URL');
     $supabaseKey    = getenv('SUPABASE_SERVICE_ROLE_KEY');
 
     if (!$rawSupabaseUrl || !$supabaseKey) {
-        throw new Exception("Faltan variables de entorno.");
+        throw new Exception("Faltan variables de entorno de Supabase.");
     }
 
     $cleanBaseUrl = preg_replace('/\/rest\/v1\/?$/', '', rtrim(trim($rawSupabaseUrl), '/'));
