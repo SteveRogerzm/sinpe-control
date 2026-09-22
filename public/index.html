@@ -12,7 +12,6 @@
   </script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Driver.js CSS y JS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css"/>
   <script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js"></script>
   <style>
@@ -24,9 +23,6 @@
       min-height: 100vh;
       transition: color 0.3s ease;
     }
-
-    /* --- ESTILO GLASSMORPHISM Y PALETAS SIN IMÁGENES DE FONDO --- */
-
     #app-bg {
       position: fixed;
       inset: 0;
@@ -41,7 +37,6 @@
       transition: background 0.3s ease;
     }
 
-    /* Esmeralda */
     html.theme-emerald {
       --app-bg-gradient: linear-gradient(135deg, #e6fffa 0%, #e6f4ea 50%, #d1fae5 100%);
       --theme-surface: rgba(255, 255, 255, 0.85);
@@ -52,9 +47,6 @@
       --glass-overlay: rgba(236, 253, 245, 0.45);
       --card-preview-bg: linear-gradient(135deg, #059669 0%, #047857 100%);
     }
-    
-
-    /* Océano Azul */
     html.theme-blue {
       --app-bg-gradient: linear-gradient(135deg, #ebf8ff 0%, #e0f2fe 50%, #dbeafe 100%);
       --theme-surface: rgba(255, 255, 255, 0.85);
@@ -65,8 +57,6 @@
       --glass-overlay: rgba(239, 246, 255, 0.45);
       --card-preview-bg: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
     }
-   
-    /* Cyber Violeta */
     html.theme-violet {
       --app-bg-gradient: linear-gradient(135deg, #f3e8ff 0%, #fae8ff 50%, #f5f3ff 100%);
       --theme-surface: rgba(255, 255, 255, 0.85);
@@ -77,9 +67,6 @@
       --glass-overlay: rgba(245, 243, 255, 0.45);
       --card-preview-bg: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
     }
-   
-
-    /* Ámbar Atardecer */
     html.theme-amber {
       --app-bg-gradient: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fef3c7 100%);
       --theme-surface: rgba(255, 255, 255, 0.85);
@@ -90,9 +77,6 @@
       --glass-overlay: rgba(255, 251, 235, 0.45);
       --card-preview-bg: linear-gradient(135deg, #d97706 0%, #b45309 100%);
     }
-   
-
-    /* Slate Urbano */
     html.theme-slate {
       --app-bg-gradient: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
       --theme-surface: rgba(255, 255, 255, 0.85);
@@ -103,51 +87,45 @@
       --glass-overlay: rgba(248, 250, 252, 0.45);
       --card-preview-bg: linear-gradient(135deg, #475569 0%, #334155 100%);
     }
-   /* Esmeralda */
-html.theme-emerald.dark {
-  --app-bg-gradient: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #021a14 100%);
-  --theme-surface: rgba(4, 47, 38, 0.92);
-  --theme-text-main: #f0fdf4;
-  --theme-primary: #10b981;
-  --theme-primary-hover: #059669;
-  --theme-border: rgba(52, 211, 153, 0.25);
-  --glass-overlay: rgba(2, 44, 34, 0.85);
-}
+    html.theme-emerald.dark {
+      --app-bg-gradient: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #021a14 100%);
+      --theme-surface: rgba(4, 47, 38, 0.92);
+      --theme-text-main: #f0fdf4;
+      --theme-primary: #10b981;
+      --theme-primary-hover: #059669;
+      --theme-border: rgba(52, 211, 153, 0.25);
+      --glass-overlay: rgba(2, 44, 34, 0.85);
+    }
 
-/* Océano Azul */
-html.theme-blue.dark {
-  --app-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #091224 100%);
-  --theme-surface: rgba(15, 23, 42, 0.92);
-  --theme-text-main: #f0f9ff;
-  --theme-primary: #3b82f6;
-  --theme-primary-hover: #2563eb;
-  --theme-border: rgba(96, 165, 250, 0.25);
-  --glass-overlay: rgba(15, 23, 42, 0.85);
-}
+    html.theme-blue.dark {
+      --app-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #091224 100%);
+      --theme-surface: rgba(15, 23, 42, 0.92);
+      --theme-text-main: #f0f9ff;
+      --theme-primary: #3b82f6;
+      --theme-primary-hover: #2563eb;
+      --theme-border: rgba(96, 165, 250, 0.25);
+      --glass-overlay: rgba(15, 23, 42, 0.85);
+    }
 
-/* Cyber Violeta */
-html.theme-violet.dark {
-  --app-bg-gradient: linear-gradient(135deg, #2e1065 0%, #4c1d95 50%, #170738 100%);
-  --theme-surface: rgba(30, 18, 54, 0.92);
-  --theme-text-main: #faf5ff;
-  --theme-primary: #a78bfa;
-  --theme-primary-hover: #8b5cf6;
-  --theme-border: rgba(192, 132, 252, 0.25);
-  --glass-overlay: rgba(46, 16, 101, 0.85);
-}
+    html.theme-violet.dark {
+      --app-bg-gradient: linear-gradient(135deg, #2e1065 0%, #4c1d95 50%, #170738 100%);
+      --theme-surface: rgba(30, 18, 54, 0.92);
+      --theme-text-main: #faf5ff;
+      --theme-primary: #a78bfa;
+      --theme-primary-hover: #8b5cf6;
+      --theme-border: rgba(192, 132, 252, 0.25);
+      --glass-overlay: rgba(46, 16, 101, 0.85);
+    }
 
-/* Slate Urbano */
-html.theme-slate.dark {
-  --app-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #020617 100%);
-  --theme-surface: rgba(15, 23, 42, 0.94);
-  --theme-text-main: #f8fafc;
-  --theme-primary: #94a3b8;
-  --theme-primary-hover: #64748b;
-  --theme-border: rgba(203, 213, 225, 0.2);
-  --glass-overlay: rgba(15, 23, 42, 0.85);
-}
-
-    /* TARJETAS Y MODALES CON EFECTO GLASSMORPHISM */
+    html.theme-slate.dark {
+      --app-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #020617 100%);
+      --theme-surface: rgba(15, 23, 42, 0.94);
+      --theme-text-main: #f8fafc;
+      --theme-primary: #94a3b8;
+      --theme-primary-hover: #64748b;
+      --theme-border: rgba(203, 213, 225, 0.2);
+      --glass-overlay: rgba(15, 23, 42, 0.85);
+    }
     .glass-card {
       background: var(--theme-surface);
       backdrop-filter: blur(12px);
@@ -165,15 +143,11 @@ html.theme-slate.dark {
       border-bottom: 1px solid var(--theme-border);
       transition: background-color 0.3s ease, border-color 0.3s ease;
     }
-    /* --- MEJORAS DE CONTRASTE EN MODO OSCURO PARA PANELES Y TARJETAS --- */
     html.dark .glass-card {
-      /* Fondo más oscuro y con mayor opacidad para separarlo del degradado del fondo */
-      background: rgba(15, 23, 42, 0.88) !important; /* Base slate-900 súper definida */
+      background: rgba(15, 23, 42, 0.88) !important;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      /* Bordes más brillantes y definidos en modo oscuro */
       border: 1px solid rgba(255, 255, 255, 0.12) !important;
-      /* Sombra externa con resplandor para dar el efecto de elevación 3D */
       box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 0 15px 0 rgba(255, 255, 255, 0.03) !important;
     }
     
@@ -183,19 +157,16 @@ html.theme-slate.dark {
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
     
-    /* Mejora la visibilidad de los contenedores internos/filtros dentro de la tabla */
     html.dark .bg-white\/30,
     html.dark .bg-white\/40 {
-      background-color: rgba(30, 41, 59, 0.7) !important; /* bg-slate-800 con opacidad */
+      background-color: rgba(30, 41, 59, 0.7) !important;
       border-color: rgba(255, 255, 255, 0.08) !important;
     }
     
-    /* Mejora la lectura del texto secundario en modo oscuro */
     html.dark .text-slate-600,
     html.dark .text-slate-700 {
-      color: #cbd5e1 !important; /* slate-300 para alta legibilidad */
+      color: #cbd5e1 !important;
     }
-    /* Utilidades adaptativas */
     .bg-theme-surface { background-color: var(--theme-surface) !important; }
     .text-theme-main { color: var(--theme-text-main) !important; }
     .bg-theme-primary { background-color: var(--theme-primary) !important; }
@@ -204,7 +175,6 @@ html.theme-slate.dark {
     .border-theme { border-color: var(--theme-border) !important; }
     .focus\:border-theme:focus { border-color: var(--theme-primary) !important; }
 
-    /* Estilos para Tarjetas de Tema */
     .theme-card {
       position: relative;
       overflow: hidden;
@@ -243,13 +213,11 @@ html.theme-slate.dark {
 </head>
 <body class="min-h-screen transition-colors duration-200 relative">
 
-<!-- Capas de fondo con degradados dinámicos libres de imágenes -->
 <div id="app-bg"></div>
 <div id="app-bg-overlay"></div>
 
 <header class="glass-header sticky top-0 z-40 transition-colors">
   <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
-    <!-- Logo -->
     <div class="flex items-center gap-2.5 shrink-0">
       <div class="bg-theme-primary text-white p-2 rounded-xl shadow-md transition-colors">
         <i class="fa-solid fa-wallet text-lg sm:text-xl"></i>
@@ -258,8 +226,6 @@ html.theme-slate.dark {
         SINPE<span class="text-theme-primary transition-colors">Control</span>
       </h1>
     </div>
-    
-    <!-- Barra de Navegación / Acciones -->
     <div class="flex items-center gap-2 sm:gap-3 shrink-0 ml-auto" id="authNav">
       <div id="userNavGroup" class="hidden flex items-center gap-1.5 p-1 bg-white/40 dark:bg-slate-900/40 border border-theme/30 rounded-2xl backdrop-blur-md shadow-sm">
         <button id="usuariosBtn" onclick="openUsuariosModal()" class="text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-theme-primary hover:bg-white/80 dark:hover:bg-slate-800/80 px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5" title="Gestión de Usuarios">
@@ -287,11 +253,7 @@ html.theme-slate.dark {
           <span>Planes</span>
         </button>
       </div>
-
-      <!-- Nombre del Usuario Activo -->
       <span id="userName" class="text-xs font-bold text-slate-700 dark:text-slate-200 hidden lg:inline-block truncate max-w-[150px]"></span>
-      
-      <!-- Botón de Salir -->
       <button id="logoutBtn" class="hidden text-xs bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-semibold px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 border border-red-200 dark:border-red-900/50" title="Cerrar Sesión">
         <i class="fa-solid fa-right-from-bracket"></i>
         <span class="hidden sm:inline">Salir</span>
@@ -299,7 +261,6 @@ html.theme-slate.dark {
     </div>
   </div>
 </header>
-<!-- Pantalla de Login -->
 <div id="loginScreen" class="hidden max-w-md mx-auto mt-20 p-8 glass-card rounded-3xl shadow-xl text-center">
   <div class="bg-theme-primary text-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
     <i class="fa-solid fa-lock text-2xl"></i>
@@ -311,8 +272,6 @@ html.theme-slate.dark {
     <span>Continuar con Google</span>
   </button>
 </div>
-
-<!-- Pantalla de Acceso Denegado -->
 <div id="deniedScreen" class="hidden max-w-md mx-auto mt-20 p-8 glass-card rounded-3xl shadow-xl text-center">
   <div class="bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
     <i class="fa-solid fa-user-slash text-2xl"></i>
@@ -323,8 +282,6 @@ html.theme-slate.dark {
     Probar con otra cuenta
   </button>
 </div>
-
-<!-- Aplicación Principal -->
 <main id="appScreen" class="hidden max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
     <div class="lg:col-span-3 xl:col-span-3 flex flex-col gap-6">
@@ -376,10 +333,7 @@ html.theme-slate.dark {
       </div>
 
       <div class="glass-card rounded-2xl overflow-hidden" id="tourTablaRegistros">
-  <!-- BARRA SUPERIOR Y FILTROS DE LA TABLA -->
   <div class="p-4 border-b border-theme/30 space-y-3" id="tourPanelFiltros">
-    
-    <!-- Encabezado de la Sección -->
     <div class="flex flex-wrap items-center justify-between gap-3">
       <h3 class="font-bold text-sm flex items-center gap-2">
         <i class="fa-solid fa-list-check text-theme-primary"></i> Histórico de Transacciones
@@ -393,11 +347,7 @@ html.theme-slate.dark {
         </button>
       </div>
     </div>
-
-    <!-- PANEL PRINCIPAL DE FILTROS -->
     <div class="bg-white/30 dark:bg-slate-900/40 p-3 rounded-xl border border-theme/30 space-y-3">
-      
-      <!-- Fila Superior: Búsqueda y Banco -->
       <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
         <div class="sm:col-span-7 md:col-span-8">
           <div class="relative">
@@ -414,36 +364,26 @@ html.theme-slate.dark {
           </select>
         </div>
       </div>
-
-      <!-- Fila Inferior: Selección Múltiple de Estados (Chip Selectors) -->
       <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-theme/10">
         <span class="text-[11px] font-bold opacity-70 mr-1">Estado:</span>
-        
-        <!-- Checkbox Pendiente -->
         <label class="cursor-pointer select-none">
           <input type="checkbox" id="chkPendiente" checked onchange="renderTable()" class="peer sr-only">
           <span class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300 peer-checked:bg-amber-500 peer-checked:text-white transition-all flex items-center gap-1.5 shadow-sm">
             <i class="fa-solid fa-clock text-[10px]"></i> Pendiente
           </span>
         </label>
-
-        <!-- Checkbox Aprobado -->
         <label class="cursor-pointer select-none">
           <input type="checkbox" id="chkAprobado" onchange="renderTable()" class="peer sr-only">
           <span class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 peer-checked:bg-emerald-500 peer-checked:text-white transition-all flex items-center gap-1.5 shadow-sm">
             <i class="fa-solid fa-circle-check text-[10px]"></i> Aprobado
           </span>
         </label>
-
-        <!-- Checkbox Rechazado -->
         <label class="cursor-pointer select-none">
           <input type="checkbox" id="chkRechazado" onchange="renderTable()" class="peer sr-only">
           <span class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-700 dark:text-rose-300 peer-checked:bg-rose-500 peer-checked:text-white transition-all flex items-center gap-1.5 shadow-sm">
             <i class="fa-solid fa-circle-xmark text-[10px]"></i> Rechazado
           </span>
         </label>
-
-        <!-- Checkbox Facturado -->
         <label class="cursor-pointer select-none">
           <input type="checkbox" id="chkFacturado" onchange="renderTable()" class="peer sr-only">
           <span class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-300 peer-checked:bg-blue-500 peer-checked:text-white transition-all flex items-center gap-1.5 shadow-sm">
@@ -452,8 +392,6 @@ html.theme-slate.dark {
         </label>
       </div>
     </div>
-
-    <!-- FILTROS AVANZADOS POR FECHA (DESPLEGABLE ACORDEÓN) -->
     <details class="group">
       <summary class="list-none cursor-pointer text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-theme-primary flex items-center gap-1.5 transition-colors w-max">
         <i class="fa-solid fa-sliders text-theme-primary transition-transform group-open:rotate-90"></i>
@@ -484,8 +422,6 @@ html.theme-slate.dark {
       </div>
     </details>
   </div>
-
-  <!-- TABLA DE RESULTADOS -->
   <div class="overflow-x-auto">
     <table class="w-full text-left border-collapse">
       <thead>
@@ -503,8 +439,6 @@ html.theme-slate.dark {
 </div>
     </div>
   </div>
-
-  <!-- SECCIÓN DE PLANES Y PRECIOS -->
   <section id="planesSection" class="hidden border-t border-theme/30 pt-10">
     <div class="text-center max-w-2xl mx-auto mb-10">
       <span class="text-xs font-bold uppercase tracking-widest text-theme-primary bg-white/80 dark:bg-slate-800/80 px-3.5 py-1.5 rounded-full border border-theme shadow-sm">
@@ -539,8 +473,6 @@ html.theme-slate.dark {
         </span>
       </div>
     </div>
-
-    <!-- PLANES DE ALQUILER -->
     <div id="viewAlquiler" class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
       <div class="glass-card rounded-3xl p-6 shadow-md flex flex-col justify-between">
         <div>
@@ -616,8 +548,6 @@ html.theme-slate.dark {
         </div>
       </div>
     </div>
-
-    <!-- PLANES DE COMPRA DEFINITIVA -->
     <div id="viewCompra" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
       <div class="glass-card rounded-3xl p-6 shadow-md flex flex-col justify-between">
         <div>
@@ -662,8 +592,6 @@ html.theme-slate.dark {
     </div>
   </section>
 </main>
-
-<!-- MODAL DE SELECCIÓN DE TEMAS Y MODO OSCURO -->
 <div id="themeModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
   <div class="glass-card rounded-3xl shadow-2xl max-w-md w-full overflow-hidden flex flex-col border border-theme">
     <div class="p-4 border-b border-theme/40 flex items-center justify-between bg-white/20 dark:bg-slate-900/20">
@@ -770,8 +698,6 @@ html.theme-slate.dark {
     </div>
   </div>
 </div>
-
-<!-- MODAL PARA VER EL COMPROBANTE -->
 <div id="viewerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
   <div class="glass-card rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-theme">
     <div class="p-4 border-b border-theme/40 flex items-center justify-between bg-white/20 dark:bg-slate-900/20">
@@ -793,8 +719,6 @@ html.theme-slate.dark {
     </div>
   </div>
 </div>
-
-<!-- MODAL DE CIERRE DIARIO -->
 <div id="cierreModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
   <div class="glass-card rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-theme">
     <div class="p-4 border-b border-theme/40 flex items-center justify-between bg-white/20 dark:bg-slate-900/20">
@@ -805,13 +729,11 @@ html.theme-slate.dark {
         <i class="fa-solid fa-xmark text-lg"></i>
       </button>
     </div>
-    
     <div class="p-6 overflow-auto space-y-4">
       <div class="flex items-center gap-4 bg-white/30 dark:bg-slate-900/30 p-3 rounded-2xl border border-theme/40">
         <label class="text-xs font-bold uppercase whitespace-nowrap opacity-80">Fecha de Facturación:</label>
         <input type="date" id="cierreFechaInput" class="text-xs p-2 rounded-xl border border-theme/40 bg-white/60 dark:bg-slate-800/60 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme" onchange="calcularCierre()">
       </div>
-
       <div class="grid grid-cols-2 gap-4">
         <div class="glass-card p-4 rounded-2xl border border-theme">
           <span class="text-[10px] font-bold uppercase opacity-80">Total Comprobantes</span>
@@ -822,7 +744,6 @@ html.theme-slate.dark {
           <div id="cierreTotalMonto" class="text-2xl font-black text-theme-primary mt-1">₡0.00</div>
         </div>
       </div>
-
       <div class="border rounded-2xl overflow-hidden border-theme/40 max-h-[300px] overflow-y-auto">
         <table class="w-full text-left border-collapse text-xs">
           <thead class="bg-white/40 dark:bg-slate-900/60 uppercase font-bold">
@@ -838,8 +759,6 @@ html.theme-slate.dark {
     </div>
   </div>
 </div>
-
-<!-- MODAL DE MANTENIMIENTO DE USUARIOS -->
 <div id="usuariosModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
   <div class="glass-card rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-theme">
     <div class="p-4 border-b border-theme/40 flex items-center justify-between bg-white/20 dark:bg-slate-900/20">
@@ -850,29 +769,24 @@ html.theme-slate.dark {
         <i class="fa-solid fa-xmark text-lg"></i>
       </button>
     </div>
-    
    <div class="p-6 overflow-auto space-y-6">
     <form id="usuarioForm" onsubmit="saveUsuario(event)" class="bg-white/30 dark:bg-slate-900/30 p-4 rounded-2xl border border-theme/40 space-y-4">
       <h4 class="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
         <i class="fa-solid fa-user-plus text-theme-primary"></i> Registrar / Editar Usuario
       </h4>
-  
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-xs font-bold mb-1 opacity-80">Nombre de Usuario</label>
           <input type="text" id="usrNombre" required placeholder="Ej: Juan Pérez" class="w-full text-xs p-2.5 rounded-xl border border-theme/40 bg-white/60 dark:bg-slate-800/60 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme">
         </div>
-  
         <div>
           <label class="block text-xs font-bold mb-1 opacity-80">Correo Gmail Autorizado</label>
           <input type="email" id="usrCorreo" required placeholder="ejemplo@gmail.com" class="w-full text-xs p-2.5 rounded-xl border border-theme/40 bg-white/60 dark:bg-slate-800/60 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme">
         </div>
       </div>
-  
       <div>
         <label class="block text-xs font-bold mb-2 opacity-80">Roles y Permisos asignados:</label>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          <!-- Roles principales -->
           <label class="flex items-center gap-2 bg-amber-500/10 dark:bg-amber-500/20 p-2.5 rounded-xl border border-amber-500/30 cursor-pointer hover:bg-amber-500/20 transition-colors">
             <input type="checkbox" id="permAdmin" class="w-4 h-4 rounded border-amber-500 text-amber-600 focus:ring-amber-500">
             <span class="text-xs font-bold text-amber-700 dark:text-amber-300"><i class="fa-solid fa-user-shield mr-1"></i> Administrador</span>
@@ -882,25 +796,20 @@ html.theme-slate.dark {
             <input type="checkbox" id="permCajero" class="w-4 h-4 rounded border-indigo-500 text-indigo-600 focus:ring-indigo-500">
             <span class="text-xs font-bold text-indigo-700 dark:text-indigo-300"><i class="fa-solid fa-cash-register mr-1"></i> Cajero</span>
           </label>
-  
-          <!-- Permisos de operacion -->
           <label class="flex items-center gap-2 bg-white/40 dark:bg-slate-800/40 p-2.5 rounded-xl border border-theme/40 cursor-pointer hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors">
             <input type="checkbox" id="permCargar" class="w-4 h-4 rounded border-theme text-theme-primary focus:ring-theme-primary">
             <span class="text-xs font-bold">Cargar Comprobantes</span>
           </label>
-  
           <label class="flex items-center gap-2 bg-white/40 dark:bg-slate-800/40 p-2.5 rounded-xl border border-theme/40 cursor-pointer hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors">
             <input type="checkbox" id="permEditarComentarios" class="w-4 h-4 rounded border-theme text-theme-primary focus:ring-theme-primary">
             <span class="text-xs font-bold">Editar Comentarios</span>
           </label>
-  
           <label class="flex items-center gap-2 bg-white/40 dark:bg-slate-800/40 p-2.5 rounded-xl border border-theme/40 cursor-pointer hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors">
             <input type="checkbox" id="permGestionarAcciones" class="w-4 h-4 rounded border-theme text-theme-primary focus:ring-theme-primary">
             <span class="text-xs font-bold">Gestionar Acciones</span>
           </label>
         </div>
       </div>
-  
       <div class="flex justify-end gap-2 pt-2">
         <button type="button" onclick="resetUsuarioForm()" class="px-3 py-2 text-xs font-bold bg-slate-200/80 dark:bg-slate-700/80 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-xl transition-colors">
           Limpiar Formulario
@@ -910,7 +819,6 @@ html.theme-slate.dark {
         </button>
       </div>
     </form>
-  
     <div class="border rounded-2xl overflow-hidden border-theme/40">
       <div class="p-3 bg-white/40 dark:bg-slate-900/60 border-b border-theme/40 font-bold text-xs flex items-center justify-between">
         <span>Usuarios Registrados</span>
@@ -936,7 +844,6 @@ html.theme-slate.dark {
   </div>
   </div>
 </div>
-
 <script>
   const SUPABASE_URL = "https://mxmufexoistlgnwycbiz.supabase.co"; 
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14bXVmZXhvaXN0bGdud3ljYml6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0NTI4MDcsImV4cCI6MjEwNDAyODgwN30.eQYkVAgpsd4XVc5YkFl85FuDE5YvjTxMgj0gX25wB0w"; 
@@ -961,8 +868,6 @@ html.theme-slate.dark {
     pro: { monthly: "₡35,000", annualEquiv: "₡29,167", annualTotal: "₡350,000" },
     empresarial: { monthly: "₡60,000", annualEquiv: "₡50,000", annualTotal: "₡600,000" }
   };
-
-  /* --- GESTIÓN DINÁMICA DE APARIENCIA Y TEMAS EN TIEMPO REAL --- */
   function applyDynamicBackground() {
     const html = document.documentElement;
     const appBg = document.getElementById('app-bg');
@@ -973,7 +878,6 @@ html.theme-slate.dark {
       }
     }
   }
-
   function setDarkMode(isDark) {
     const html = document.documentElement;
     if (isDark) {
@@ -990,7 +894,6 @@ html.theme-slate.dark {
       updateThemeModalUI();
     }, 10);
   }
-
   function setThemePalette(paletteName) {
     const html = document.documentElement;
     html.classList.remove('theme-emerald', 'theme-blue', 'theme-violet', 'theme-amber', 'theme-slate');
@@ -1002,7 +905,6 @@ html.theme-slate.dark {
       updateThemeModalUI();
     }, 10);
   }
-
   function initTheme() {
     const savedPalette = localStorage.getItem('theme-palette') || 'emerald';
     const savedTheme = localStorage.getItem('theme') || 'light';
@@ -1165,7 +1067,6 @@ html.theme-slate.dark {
     }
   }
 
-  // Elementos DOM
   const loginScreen = document.getElementById('loginScreen');
   const deniedScreen = document.getElementById('deniedScreen');
   const deniedEmail = document.getElementById('deniedEmail');
@@ -1181,7 +1082,6 @@ html.theme-slate.dark {
   const recordsTable = document.getElementById('recordsTable');
   const cierreBtn = document.getElementById('cierreBtn');
 
-  // Filtros
   const searchFilter = document.getElementById('searchFilter');
   const bankFilter = document.getElementById('bankFilter');
   const chkPendiente = document.getElementById('chkPendiente');
@@ -1194,7 +1094,6 @@ html.theme-slate.dark {
   const aprobFilter = document.getElementById('aprobFilter');
   const factFilter = document.getElementById('factFilter');
 
-  // Modales
   const viewerModal = document.getElementById('viewerModal');
   const modalImage = document.getElementById('modalImage');
   const modalPdf = document.getElementById('modalPdf');
@@ -1254,7 +1153,6 @@ html.theme-slate.dark {
       logoutBtn.classList.remove('hidden');
       if (userNavGroup) userNavGroup.classList.remove('hidden');
 
-      // 1. Botón Usuarios: SOLO si es admin
       if (usuariosBtn) {
         if (currentUserPermissions.es_admin) {
           usuariosBtn.classList.remove('hidden');
@@ -1262,8 +1160,6 @@ html.theme-slate.dark {
           usuariosBtn.classList.add('hidden');
         }
       }
-
-      // 2. Botón Cierre: SOLO si es cajero O si puede gestionar acciones
       if (cierreBtn) {
         if (currentUserPermissions.es_cajero || currentUserPermissions.puede_gestionar_acciones) {
           cierreBtn.classList.remove('hidden');
@@ -1271,8 +1167,6 @@ html.theme-slate.dark {
           cierreBtn.classList.add('hidden');
         }
       }
-
-      // 3. Panel/Botón de Cargar: SOLO si tiene permiso de cargar
       if (uploadSection) {
         if (currentUserPermissions.puede_cargar_comprobantes) {
           uploadSection.classList.remove('hidden');
@@ -1787,9 +1681,8 @@ async function checkUserPermissions() {
     e.preventDefault();
     if (!currentSession) return;
   
-    // Se agregan es_admin y es_cajero al JSON para evitar que se limpien en BD
     const payload = {
-      id: usuarioEditandoId, // null para nuevo, UUID para edición
+      id: usuarioEditandoId,
       nombre_usuario: document.getElementById('usrNombre').value.trim(),
       email: document.getElementById('usrCorreo').value.trim(),
       es_admin: document.getElementById('permAdmin').checked,
@@ -1856,7 +1749,6 @@ async function checkUserPermissions() {
       const tr = document.createElement('tr');
       tr.className = "hover:bg-white/30 dark:hover:bg-slate-800/30 transition-colors border-b border-theme/20";
       
-      // Badges visuales para Roles y Permisos
       const pAdmin = u.es_admin ? '<span class="px-2 py-0.5 text-[10px] bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 rounded-md font-bold mr-1"><i class="fa-solid fa-user-shield mr-1"></i>Admin</span>' : '';
       const pCajero = u.es_cajero ? '<span class="px-2 py-0.5 text-[10px] bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30 rounded-md font-bold mr-1"><i class="fa-solid fa-cash-register mr-1"></i>Cajero</span>' : '';
       const pCargar = u.puede_cargar_comprobantes ? '<span class="px-2 py-0.5 text-[10px] bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 rounded-md font-bold mr-1">Cargar</span>' : '';
@@ -1890,8 +1782,6 @@ async function checkUserPermissions() {
     usuarioEditandoId = user.id;
     document.getElementById('usrNombre').value = user.nombre_usuario || '';
     document.getElementById('usrCorreo').value = user.email || '';
-    
-    // Carga el estado de es_admin y es_cajero al seleccionar para editar
     document.getElementById('permAdmin').checked = !!user.es_admin;
     document.getElementById('permCajero').checked = !!user.es_cajero;
     document.getElementById('permCargar').checked = !!user.puede_cargar_comprobantes;
@@ -1901,8 +1791,6 @@ async function checkUserPermissions() {
     const btn = document.getElementById('btnSaveUsuario');
     if (btn) btn.innerHTML = `<i class="fa-solid fa-user-pen"></i> Actualizar Usuario`;
   }
-
-  // Inicializar autenticación al cargar
   window.addEventListener('DOMContentLoaded', initAuth);
 </script>
 </body>
