@@ -938,10 +938,12 @@ html.theme-slate.dark {
   let usuariosCache = [];
 
   let currentUserPermissions = {
-    puede_cargar_comprobantes: true,
-    puede_editar_comentarios: true,
-    puede_gestionar_acciones: true
-  };
+  es_admin: false,
+  es_cajero: false,
+  puede_cargar_comprobantes: false,
+  puede_editar_comentarios: false,
+  puede_gestionar_acciones: false
+};
   const prices = {
     basico: { monthly: "₡20,000", annualEquiv: "₡16,667", annualTotal: "₡200,000" },
     pro: { monthly: "₡35,000", annualEquiv: "₡29,167", annualTotal: "₡350,000" },
@@ -1221,73 +1223,110 @@ html.theme-slate.dark {
   }
 
   async function handleSession(session) {
-    currentSession = session;
-    const userNavGroup = document.getElementById('userNavGroup');
-    const planesSection = document.getElementById('planesSection');
-  
-    if (session) {
-      loginScreen.classList.add('hidden');
-      const hasPermission = await checkUserPermissions();
-  
-      if (hasPermission) {
-        const displayName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email;
-        userName.innerText = displayName;
-        
-        userName.classList.remove('hidden');
-        logoutBtn.classList.remove('hidden');
-        cierreBtn.classList.remove('hidden');
-        if (userNavGroup) userNavGroup.classList.remove('hidden');
-        
-        deniedScreen.classList.add('hidden');
-        appScreen.classList.remove('hidden');
-      } else {
-        userName.classList.add('hidden');
-        logoutBtn.classList.add('hidden');
-        cierreBtn.classList.add('hidden');
-        if (userNavGroup) userNavGroup.classList.add('hidden');
-        if (planesSection) planesSection.classList.add('hidden');
-        
-        appScreen.classList.add('hidden');
-        deniedEmail.innerText = session.user.email;
-        deniedScreen.classList.remove('hidden');
+  currentSession = session;
+  const userNavGroup = document.getElementById('userNavGroup');
+  const planesSection = document.getElementById('planesSection');
+  const usuariosBtn = document.getElementById('usuariosBtn');
+  const cierreBtn = document.getElementById('cierreBtn');
+  const uploadSection = document.getElementById('tourPanelCarga');
+
+  if (session) {
+    loginScreen.classList.add('hidden');
+    const hasPermission = await checkUserPermissions();
+
+    if (hasPermission) {
+      const displayName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email;
+      userName.innerText = displayName;
+      
+      userName.classList.remove('hidden');
+      logoutBtn.classList.remove('hidden');
+      if (userNavGroup) userNavGroup.classList.remove('hidden');
+
+      // 1. Botón Usuarios: SOLO si es admin
+      if (usuariosBtn) {
+        if (currentUserPermissions.es_admin) {
+          usuariosBtn.classList.remove('hidden');
+        } else {
+          usuariosBtn.classList.add('hidden');
+        }
       }
+
+      // 2. Botón Cierre: SOLO si es cajero O si puede gestionar acciones
+      if (cierreBtn) {
+        if (currentUserPermissions.es_cajero || currentUserPermissions.puede_gestionar_acciones) {
+          cierreBtn.classList.remove('hidden');
+        } else {
+          cierreBtn.classList.add('hidden');
+        }
+      }
+
+      // 3. Panel/Botón de Cargar: SOLO si tiene permiso de cargar
+      if (uploadSection) {
+        if (currentUserPermissions.puede_cargar_comprobantes) {
+          uploadSection.classList.remove('hidden');
+        } else {
+          uploadSection.classList.add('hidden');
+        }
+      }
+
+      deniedScreen.classList.add('hidden');
+      appScreen.classList.remove('hidden');
     } else {
       userName.classList.add('hidden');
       logoutBtn.classList.add('hidden');
-      cierreBtn.classList.add('hidden');
+      if (cierreBtn) cierreBtn.classList.add('hidden');
+      if (usuariosBtn) usuariosBtn.classList.add('hidden');
       if (userNavGroup) userNavGroup.classList.add('hidden');
       if (planesSection) planesSection.classList.add('hidden');
       
       appScreen.classList.add('hidden');
-      deniedScreen.classList.add('hidden');
-      loginScreen.classList.remove('hidden');
+      deniedEmail.innerText = session.user.email;
+      deniedScreen.classList.remove('hidden');
     }
+  } else {
+    userName.classList.add('hidden');
+    logoutBtn.classList.add('hidden');
+    if (cierreBtn) cierreBtn.classList.add('hidden');
+    if (usuariosBtn) usuariosBtn.classList.add('hidden');
+    if (userNavGroup) userNavGroup.classList.add('hidden');
+    if (planesSection) planesSection.classList.add('hidden');
+    
+    appScreen.classList.add('hidden');
+    deniedScreen.classList.add('hidden');
+    loginScreen.classList.remove('hidden');
   }
+}
 
-  async function checkUserPermissions() {
-    try {
-      const res = await fetch('/api/obtener_registros', {
-        headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
-      });
-      
-      if (res.status === 401 || res.status === 403) return false;
-  
-      const resData = await res.json();
-      if (resData.error) return false;
-  
-      if (resData.permisos) {
-        currentUserPermissions = resData.permisos;
-      }
-  
-      rawRecordsData = resData.data || [];
-      populateBankFilter(rawRecordsData);
-      renderTable();
-      return true;
-    } catch (e) {
-      console.error('Error al verificar permisos:', e);
-      return false;
+async function checkUserPermissions() {
+  try {
+    const res = await fetch('/api/obtener_registros', {
+      headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+    });
+    
+    if (res.status === 401 || res.status === 403) return false;
+
+    const resData = await res.json();
+    if (resData.error) return false;
+
+    if (resData.permisos) {
+      currentUserPermissions = {
+        es_admin: !!resData.permisos.es_admin,
+        es_cajero: !!resData.permisos.es_cajero,
+        puede_cargar_comprobantes: !!resData.permisos.puede_cargar_comprobantes,
+        puede_editar_comentarios: !!resData.permisos.puede_editar_comentarios,
+        puede_gestionar_acciones: !!resData.permisos.puede_gestionar_acciones
+      };
     }
+
+    rawRecordsData = resData.data || [];
+    populateBankFilter(rawRecordsData);
+    renderTable();
+    return true;
+  } catch (e) {
+    console.error('Error al verificar permisos:', e);
+    return false;
   }
+}
 
   loginBtn.addEventListener('click', () => supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin } }));
   logoutBtn.addEventListener('click', async () => {
