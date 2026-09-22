@@ -4,15 +4,20 @@ error_reporting(0);
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/auth_check.php';
 
-// Validar que el usuario en sesión tenga acceso
-$usuarioActual = verificarAcceso();
-
 try {
+    // 1. Validar que el usuario en sesión exista y tenga permisos de administración
+    $usuarioActual = verificarAcceso();
+    if (!$usuarioActual || empty($usuarioActual['puede_gestionar_acciones'])) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'No tiene permisos suficientes para administrar usuarios.']);
+        exit;
+    }
+
     $rawSupabaseUrl = getenv('SUPABASE_URL');
     $supabaseKey    = getenv('SUPABASE_SERVICE_ROLE_KEY');
 
     if (!$rawSupabaseUrl || !$supabaseKey) {
-        throw new Exception("Faltan variables de entorno.");
+        throw new Exception("Faltan variables de entorno de Supabase.");
     }
 
     $jsonContent = file_get_contents('php://input');
@@ -22,23 +27,28 @@ try {
         $input = $_POST;
     }
 
-    $nombreUsuario = trim($input['nombre_usuario'] ?? '');
-    $correo        = trim(strtolower($input['correo'] ?? ''));
-    $pCargar       = isset($input['puede_cargar_comprobantes']) ? (bool)$input['puede_cargar_comprobantes'] : false;
-    $pComentarios   = isset($input['puede_editar_comentarios']) ? (bool)$input['puede_editar_comentarios'] : false;
-    $pAcciones     = isset($input['puede_gestionar_acciones']) ? (bool)$input['puede_gestionar_acciones'] : false;
+    $id             = !empty($input['id']) ? trim($input['id']) : null;
+    $nombreUsuario  = trim($input['nombre_usuario'] ?? '');
+    $email          = trim(strtolower($input['email'] ?? ''));
+    $pCargar        = !empty($input['puede_cargar_comprobantes']);
+    $pComentarios   = !empty($input['puede_editar_comentarios']);
+    $pAcciones      = !empty($input['puede_gestionar_acciones']);
 
-    if (empty($correo) || empty($nombreUsuario)) {
+    if (empty($email) || empty($nombreUsuario)) {
         throw new Exception("El nombre de usuario y el correo electrónico son obligatorios.");
     }
 
     $payload = [
         'nombre_usuario'            => $nombreUsuario,
-        'correo'                  => $correo,
+        'email'                     => $email,
         'puede_cargar_comprobantes' => $pCargar,
         'puede_editar_comentarios'  => $pComentarios,
         'puede_gestionar_acciones'  => $pAcciones
     ];
+
+    if ($id) {
+        $payload['id'] = $id;
+    }
 
     $cleanBaseUrl = preg_replace('/\/rest\/v1\/?$/', '', rtrim(trim($rawSupabaseUrl), '/'));
     $dbUrl = $cleanBaseUrl . "/rest/v1/usuarios";
@@ -51,7 +61,7 @@ try {
         "apikey: " . trim($supabaseKey),
         "Authorization: Bearer " . trim($supabaseKey),
         "Content-Type: application/json",
-        "Prefer: return=representation, resolution=merge-duplicates" // Realiza UPSERT por la clave primaria (correo)
+        "Prefer: return=representation, resolution=merge-duplicates"
     ]);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
