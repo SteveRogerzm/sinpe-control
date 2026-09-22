@@ -5,11 +5,11 @@ header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/auth_check.php';
 
 try {
-    // Validar permisos del usuario en sesión
+    // Validar que el usuario en sesión sea Administrador
     $usuarioActual = verificarAcceso();
-    if (!$usuarioActual || empty($usuarioActual['puede_gestionar_acciones'])) {
+    if (!$usuarioActual || empty($usuarioActual['es_admin'])) {
         http_response_code(403);
-        echo json_encode(['success' => false, 'error' => 'No tiene permisos para ver la lista de usuarios.']);
+        echo json_encode(['success' => false, 'error' => 'No tiene permisos de administrador para consultar usuarios.']);
         exit;
     }
 
