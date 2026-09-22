@@ -851,77 +851,89 @@ html.theme-slate.dark {
       </button>
     </div>
     
-    <div class="p-6 overflow-auto space-y-6">
-      <form id="usuarioForm" onsubmit="saveUsuario(event)" class="bg-white/30 dark:bg-slate-900/30 p-4 rounded-2xl border border-theme/40 space-y-4">
-        <h4 class="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
-          <i class="fa-solid fa-user-plus text-theme-primary"></i> Registrar / Editar Usuario
-        </h4>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-bold mb-1 opacity-80">Nombre de Usuario</label>
-            <input type="text" id="usrNombre" required placeholder="Ej: Juan Pérez" class="w-full text-xs p-2.5 rounded-xl border border-theme/40 bg-white/60 dark:bg-slate-800/60 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme">
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold mb-1 opacity-80">Correo Gmail Autorizado</label>
-            <input type="email" id="usrCorreo" required placeholder="ejemplo@gmail.com" class="w-full text-xs p-2.5 rounded-xl border border-theme/40 bg-white/60 dark:bg-slate-800/60 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme">
-          </div>
-        </div>
-
+   <div class="p-6 overflow-auto space-y-6">
+    <form id="usuarioForm" onsubmit="saveUsuario(event)" class="bg-white/30 dark:bg-slate-900/30 p-4 rounded-2xl border border-theme/40 space-y-4">
+      <h4 class="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
+        <i class="fa-solid fa-user-plus text-theme-primary"></i> Registrar / Editar Usuario
+      </h4>
+  
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-bold mb-2 opacity-80">Permisos asignados:</label>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <label class="flex items-center gap-2 bg-white/40 dark:bg-slate-800/40 p-2.5 rounded-xl border border-theme/40 cursor-pointer hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors">
-              <input type="checkbox" id="permCargar" class="w-4 h-4 rounded border-theme text-theme-primary focus:ring-theme-primary">
-              <span class="text-xs font-bold">Cargar Comprobantes</span>
-            </label>
-
-            <label class="flex items-center gap-2 bg-white/40 dark:bg-slate-800/40 p-2.5 rounded-xl border border-theme/40 cursor-pointer hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors">
-              <input type="checkbox" id="permEditarComentarios" class="w-4 h-4 rounded border-theme text-theme-primary focus:ring-theme-primary">
-              <span class="text-xs font-bold">Editar Comentarios</span>
-            </label>
-
-            <label class="flex items-center gap-2 bg-white/40 dark:bg-slate-800/40 p-2.5 rounded-xl border border-theme/40 cursor-pointer hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors">
-              <input type="checkbox" id="permGestionarAcciones" class="w-4 h-4 rounded border-theme text-theme-primary focus:ring-theme-primary">
-              <span class="text-xs font-bold">Gestionar Acciones</span>
-            </label>
-          </div>
+          <label class="block text-xs font-bold mb-1 opacity-80">Nombre de Usuario</label>
+          <input type="text" id="usrNombre" required placeholder="Ej: Juan Pérez" class="w-full text-xs p-2.5 rounded-xl border border-theme/40 bg-white/60 dark:bg-slate-800/60 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme">
         </div>
-
-        <div class="flex justify-end gap-2 pt-2">
-          <button type="button" onclick="resetUsuarioForm()" class="px-3 py-2 text-xs font-bold bg-slate-200/80 dark:bg-slate-700/80 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-xl transition-colors">
-            Limpiar Formulario
-          </button>
-          <button type="submit" id="btnSaveUsuario" class="px-4 py-2 text-xs font-bold bg-theme-primary hover:bg-theme-primary-hover text-white rounded-xl shadow-md transition-all flex items-center gap-1.5">
-            <i class="fa-solid fa-floppy-disk"></i> Guardar Usuario
-          </button>
-        </div>
-      </form>
-
-      <div class="border rounded-2xl overflow-hidden border-theme/40">
-        <div class="p-3 bg-white/40 dark:bg-slate-900/60 border-b border-theme/40 font-bold text-xs flex items-center justify-between">
-          <span>Usuarios Registrados</span>
-          <button onclick="loadUsuariosList()" class="text-[11px] font-bold text-theme-primary hover:underline">
-            <i class="fa-solid fa-rotate-right mr-1"></i> Refrescar Listado
-          </button>
-        </div>
-        <div class="max-h-[300px] overflow-y-auto">
-          <table class="w-full text-left border-collapse text-xs">
-            <thead class="bg-white/30 dark:bg-slate-900/40 uppercase text-[10px] font-bold tracking-wider opacity-80">
-              <tr>
-                <th class="p-3">Usuario / Correo Gmail</th>
-                <th class="p-3">Permisos Habilitados</th>
-                <th class="p-3 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="usuariosTableBody" class="divide-y divide-theme/20">
-              <tr><td colspan="3" class="p-4 text-center opacity-70 font-medium">Cargando usuarios...</td></tr>
-            </tbody>
-          </table>
+  
+        <div>
+          <label class="block text-xs font-bold mb-1 opacity-80">Correo Gmail Autorizado</label>
+          <input type="email" id="usrCorreo" required placeholder="ejemplo@gmail.com" class="w-full text-xs p-2.5 rounded-xl border border-theme/40 bg-white/60 dark:bg-slate-800/60 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-theme">
         </div>
       </div>
+  
+      <div>
+        <label class="block text-xs font-bold mb-2 opacity-80">Roles y Permisos asignados:</label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          <!-- Roles principales -->
+          <label class="flex items-center gap-2 bg-amber-500/10 dark:bg-amber-500/20 p-2.5 rounded-xl border border-amber-500/30 cursor-pointer hover:bg-amber-500/20 transition-colors">
+            <input type="checkbox" id="permAdmin" class="w-4 h-4 rounded border-amber-500 text-amber-600 focus:ring-amber-500">
+            <span class="text-xs font-bold text-amber-700 dark:text-amber-300"><i class="fa-solid fa-user-shield mr-1"></i> Administrador</span>
+          </label>
+  
+          <label class="flex items-center gap-2 bg-indigo-500/10 dark:bg-indigo-500/20 p-2.5 rounded-xl border border-indigo-500/30 cursor-pointer hover:bg-indigo-500/20 transition-colors">
+            <input type="checkbox" id="permCajero" class="w-4 h-4 rounded border-indigo-500 text-indigo-600 focus:ring-indigo-500">
+            <span class="text-xs font-bold text-indigo-700 dark:text-indigo-300"><i class="fa-solid fa-cash-register mr-1"></i> Cajero</span>
+          </label>
+  
+          <!-- Permisos de operacion -->
+          <label class="flex items-center gap-2 bg-white/40 dark:bg-slate-800/40 p-2.5 rounded-xl border border-theme/40 cursor-pointer hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors">
+            <input type="checkbox" id="permCargar" class="w-4 h-4 rounded border-theme text-theme-primary focus:ring-theme-primary">
+            <span class="text-xs font-bold">Cargar Comprobantes</span>
+          </label>
+  
+          <label class="flex items-center gap-2 bg-white/40 dark:bg-slate-800/40 p-2.5 rounded-xl border border-theme/40 cursor-pointer hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors">
+            <input type="checkbox" id="permEditarComentarios" class="w-4 h-4 rounded border-theme text-theme-primary focus:ring-theme-primary">
+            <span class="text-xs font-bold">Editar Comentarios</span>
+          </label>
+  
+          <label class="flex items-center gap-2 bg-white/40 dark:bg-slate-800/40 p-2.5 rounded-xl border border-theme/40 cursor-pointer hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors">
+            <input type="checkbox" id="permGestionarAcciones" class="w-4 h-4 rounded border-theme text-theme-primary focus:ring-theme-primary">
+            <span class="text-xs font-bold">Gestionar Acciones</span>
+          </label>
+        </div>
+      </div>
+  
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" onclick="resetUsuarioForm()" class="px-3 py-2 text-xs font-bold bg-slate-200/80 dark:bg-slate-700/80 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 rounded-xl transition-colors">
+          Limpiar Formulario
+        </button>
+        <button type="submit" id="btnSaveUsuario" class="px-4 py-2 text-xs font-bold bg-theme-primary hover:bg-theme-primary-hover text-white rounded-xl shadow-md transition-all flex items-center gap-1.5">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar Usuario
+        </button>
+      </div>
+    </form>
+  
+    <div class="border rounded-2xl overflow-hidden border-theme/40">
+      <div class="p-3 bg-white/40 dark:bg-slate-900/60 border-b border-theme/40 font-bold text-xs flex items-center justify-between">
+        <span>Usuarios Registrados</span>
+        <button onclick="loadUsuariosList()" class="text-[11px] font-bold text-theme-primary hover:underline">
+          <i class="fa-solid fa-rotate-right mr-1"></i> Refrescar Listado
+        </button>
+      </div>
+      <div class="max-h-[300px] overflow-y-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead class="bg-white/30 dark:bg-slate-900/40 uppercase text-[10px] font-bold tracking-wider opacity-80">
+            <tr>
+              <th class="p-3">Usuario / Correo Gmail</th>
+              <th class="p-3">Roles y Permisos</th>
+              <th class="p-3 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="usuariosTableBody" class="divide-y divide-theme/20">
+            <tr><td colspan="3" class="p-4 text-center opacity-70 font-medium">Cargando usuarios...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+  </div>
   </div>
 </div>
 
@@ -1754,131 +1766,141 @@ async function checkUserPermissions() {
   }
 
   function openUsuariosModal() {
-  resetUsuarioForm();
-  loadUsuariosList();
-  document.getElementById('usuariosModal').classList.remove('hidden');
-}
-
-function closeUsuariosModal() {
-  document.getElementById('usuariosModal').classList.add('hidden');
-  resetUsuarioForm();
-}
-
-function resetUsuarioForm() {
-  usuarioEditandoId = null;
-  document.getElementById('usuarioForm').reset();
-  const btn = document.getElementById('btnSaveUsuario');
-  if (btn) btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar Usuario`;
-}
-
-async function saveUsuario(e) {
-  e.preventDefault();
-  if (!currentSession) return;
-
-  const payload = {
-    id: usuarioEditandoId, // null para nuevo, UUID para edición
-    nombre_usuario: document.getElementById('usrNombre').value.trim(),
-    email: document.getElementById('usrCorreo').value.trim(),
-    puede_cargar_comprobantes: document.getElementById('permCargar').checked,
-    puede_editar_comentarios: document.getElementById('permEditarComentarios').checked,
-    puede_gestionar_acciones: document.getElementById('permGestionarAcciones').checked
-  };
-
-  try {
-    const res = await fetch('/api/guardar_usuario', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${currentSession.access_token}`
-      },
-      body: JSON.stringify(payload)
-    });
-    
-    const data = await res.json();
-    if (!data.success) throw new Error(data.error);
-
-    showAlert('✅ Usuario guardado correctamente.', 'success');
     resetUsuarioForm();
     loadUsuariosList();
-  } catch (err) {
-    showAlert(`⚠️ Error al guardar usuario: ${err.message}`, 'error');
+    document.getElementById('usuariosModal').classList.remove('hidden');
   }
-}
-
-async function loadUsuariosList() {
-  const tbody = document.getElementById('usuariosTableBody');
-  tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center opacity-70 font-medium"><i class="fa-solid fa-spinner animate-spin mr-2"></i>Cargando usuarios...</td></tr>`;
-
-  try {
-    const res = await fetch('/api/obtener_usuarios', {
-      headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
-    });
-    const result = await res.json();
-
-    if (!result.success || !result.data) {
-      tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500 font-semibold">${result.error || 'Error al cargar la lista de usuarios.'}</td></tr>`;
+  
+  function closeUsuariosModal() {
+    document.getElementById('usuariosModal').classList.add('hidden');
+    resetUsuarioForm();
+  }
+  
+  function resetUsuarioForm() {
+    usuarioEditandoId = null;
+    document.getElementById('usuarioForm').reset();
+    const btn = document.getElementById('btnSaveUsuario');
+    if (btn) btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar Usuario`;
+  }
+  
+  async function saveUsuario(e) {
+    e.preventDefault();
+    if (!currentSession) return;
+  
+    // Se agregan es_admin y es_cajero al JSON para evitar que se limpien en BD
+    const payload = {
+      id: usuarioEditandoId, // null para nuevo, UUID para edición
+      nombre_usuario: document.getElementById('usrNombre').value.trim(),
+      email: document.getElementById('usrCorreo').value.trim(),
+      es_admin: document.getElementById('permAdmin').checked,
+      es_cajero: document.getElementById('permCajero').checked,
+      puede_cargar_comprobantes: document.getElementById('permCargar').checked,
+      puede_editar_comentarios: document.getElementById('permEditarComentarios').checked,
+      puede_gestionar_acciones: document.getElementById('permGestionarAcciones').checked
+    };
+  
+    try {
+      const res = await fetch('/api/guardar_usuario', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentSession.access_token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error);
+  
+      showAlert('✅ Usuario guardado correctamente.', 'success');
+      resetUsuarioForm();
+      loadUsuariosList();
+    } catch (err) {
+      showAlert(`⚠️ Error al guardar usuario: ${err.message}`, 'error');
+    }
+  }
+  
+  async function loadUsuariosList() {
+    const tbody = document.getElementById('usuariosTableBody');
+    tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center opacity-70 font-medium"><i class="fa-solid fa-spinner animate-spin mr-2"></i>Cargando usuarios...</td></tr>`;
+  
+    try {
+      const res = await fetch('/api/obtener_usuarios', {
+        headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+      });
+      const result = await res.json();
+  
+      if (!result.success || !result.data) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500 font-semibold">${result.error || 'Error al cargar la lista de usuarios.'}</td></tr>`;
+        return;
+      }
+  
+      usuariosCache = result.data;
+      renderUsuariosTable(usuariosCache);
+    } catch (err) {
+      console.error(err);
+      tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500 font-semibold">Error de conexión al obtener usuarios.</td></tr>`;
+    }
+  }
+  
+  function renderUsuariosTable(lista) {
+    const tbody = document.getElementById('usuariosTableBody');
+    tbody.innerHTML = '';
+  
+    if (lista.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center opacity-60">No hay usuarios registrados.</td></tr>`;
       return;
     }
-
-    usuariosCache = result.data;
-    renderUsuariosTable(usuariosCache);
-  } catch (err) {
-    console.error(err);
-    tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500 font-semibold">Error de conexión al obtener usuarios.</td></tr>`;
+  
+    lista.forEach(u => {
+      const tr = document.createElement('tr');
+      tr.className = "hover:bg-white/30 dark:hover:bg-slate-800/30 transition-colors border-b border-theme/20";
+      
+      // Badges visuales para Roles y Permisos
+      const pAdmin = u.es_admin ? '<span class="px-2 py-0.5 text-[10px] bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 rounded-md font-bold mr-1"><i class="fa-solid fa-user-shield mr-1"></i>Admin</span>' : '';
+      const pCajero = u.es_cajero ? '<span class="px-2 py-0.5 text-[10px] bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30 rounded-md font-bold mr-1"><i class="fa-solid fa-cash-register mr-1"></i>Cajero</span>' : '';
+      const pCargar = u.puede_cargar_comprobantes ? '<span class="px-2 py-0.5 text-[10px] bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 rounded-md font-bold mr-1">Cargar</span>' : '';
+      const pComentarios = u.puede_editar_comentarios ? '<span class="px-2 py-0.5 text-[10px] bg-blue-500/20 text-blue-700 dark:text-blue-300 rounded-md font-bold mr-1">Comentarios</span>' : '';
+      const pAcciones = u.puede_gestionar_acciones ? '<span class="px-2 py-0.5 text-[10px] bg-violet-500/20 text-violet-700 dark:text-violet-300 rounded-md font-bold">Acciones</span>' : '';
+  
+      tr.innerHTML = `
+        <td class="p-3">
+          <div class="font-bold text-slate-900 dark:text-white">${u.nombre_usuario || 'Sin nombre'}</div>
+          <div class="text-[11px] opacity-70 font-mono">${u.email}</div>
+        </td>
+        <td class="p-3">
+          <div class="flex flex-wrap gap-1">
+            ${pAdmin} ${pCajero} ${pCargar} ${pComentarios} ${pAcciones}
+          </div>
+        </td>
+        <td class="p-3 text-center">
+          <button onclick="editUsuario('${u.id}')" class="px-2.5 py-1 text-xs font-bold bg-white/80 dark:bg-slate-700/80 text-slate-800 dark:text-slate-200 border border-theme/40 hover:border-theme rounded-lg transition-colors mr-1" title="Editar">
+            <i class="fa-solid fa-pen-to-square"></i>
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
   }
-}
-
-function renderUsuariosTable(lista) {
-  const tbody = document.getElementById('usuariosTableBody');
-  tbody.innerHTML = '';
-
-  if (lista.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center opacity-60">No hay usuarios registrados.</td></tr>`;
-    return;
-  }
-
-  lista.forEach(u => {
-    const tr = document.createElement('tr');
-    tr.className = "hover:bg-white/30 dark:hover:bg-slate-800/30 transition-colors border-b border-theme/20";
+  
+  function editUsuario(id) {
+    const user = usuariosCache.find(u => u.id === id);
+    if (!user) return;
+  
+    usuarioEditandoId = user.id;
+    document.getElementById('usrNombre').value = user.nombre_usuario || '';
+    document.getElementById('usrCorreo').value = user.email || '';
     
-    const pCargar = u.puede_cargar_comprobantes ? '<span class="px-2 py-0.5 text-[10px] bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 rounded-md font-bold mr-1">Cargar</span>' : '';
-    const pComentarios = u.puede_editar_comentarios ? '<span class="px-2 py-0.5 text-[10px] bg-blue-500/20 text-blue-700 dark:text-blue-300 rounded-md font-bold mr-1">Comentarios</span>' : '';
-    const pAcciones = u.puede_gestionar_acciones ? '<span class="px-2 py-0.5 text-[10px] bg-violet-500/20 text-violet-700 dark:text-violet-300 rounded-md font-bold">Acciones</span>' : '';
-
-    tr.innerHTML = `
-      <td class="p-3">
-        <div class="font-bold text-slate-900 dark:text-white">${u.nombre_usuario || 'Sin nombre'}</div>
-        <div class="text-[11px] opacity-70 font-mono">${u.email}</div>
-      </td>
-      <td class="p-3">
-        <div class="flex flex-wrap gap-1">
-          ${pCargar} ${pComentarios} ${pAcciones}
-        </div>
-      </td>
-      <td class="p-3 text-center">
-        <button onclick="editUsuario('${u.id}')" class="px-2.5 py-1 text-xs font-bold bg-white/80 dark:bg-slate-700/80 text-slate-800 dark:text-slate-200 border border-theme/40 hover:border-theme rounded-lg transition-colors mr-1" title="Editar">
-          <i class="fa-solid fa-pen-to-square"></i>
-        </button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-function editUsuario(id) {
-  const user = usuariosCache.find(u => u.id === id);
-  if (!user) return;
-
-  usuarioEditandoId = user.id;
-  document.getElementById('usrNombre').value = user.nombre_usuario || '';
-  document.getElementById('usrCorreo').value = user.email || '';
-  document.getElementById('permCargar').checked = !!user.puede_cargar_comprobantes;
-  document.getElementById('permEditarComentarios').checked = !!user.puede_editar_comentarios;
-  document.getElementById('permGestionarAcciones').checked = !!user.puede_gestionar_acciones;
-
-  const btn = document.getElementById('btnSaveUsuario');
-  if (btn) btn.innerHTML = `<i class="fa-solid fa-user-pen"></i> Actualizar Usuario`;
-}
+    // Carga el estado de es_admin y es_cajero al seleccionar para editar
+    document.getElementById('permAdmin').checked = !!user.es_admin;
+    document.getElementById('permCajero').checked = !!user.es_cajero;
+    document.getElementById('permCargar').checked = !!user.puede_cargar_comprobantes;
+    document.getElementById('permEditarComentarios').checked = !!user.puede_editar_comentarios;
+    document.getElementById('permGestionarAcciones').checked = !!user.puede_gestionar_acciones;
+  
+    const btn = document.getElementById('btnSaveUsuario');
+    if (btn) btn.innerHTML = `<i class="fa-solid fa-user-pen"></i> Actualizar Usuario`;
+  }
 
   // Inicializar autenticación al cargar
   window.addEventListener('DOMContentLoaded', initAuth);
