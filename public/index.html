@@ -248,54 +248,57 @@ html.theme-slate.dark {
 <div id="app-bg-overlay"></div>
 
 <header class="glass-header sticky top-0 z-40 transition-colors">
-  <div class="max-w-[1600px] mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2 overflow-hidden">
-    <div class="flex items-center gap-2 min-w-0">
-      <div class="bg-theme-primary text-white p-1.5 sm:p-2 rounded-xl shrink-0 transition-colors shadow-md">
-        <i class="fa-solid fa-wallet text-base sm:text-xl"></i>
+  <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+    <!-- Logo -->
+    <div class="flex items-center gap-2.5 shrink-0">
+      <div class="bg-theme-primary text-white p-2 rounded-xl shadow-md transition-colors">
+        <i class="fa-solid fa-wallet text-lg sm:text-xl"></i>
       </div>
-      <h1 class="text-base sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-none truncate drop-shadow-sm">
+      <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-none">
         SINPE<span class="text-theme-primary transition-colors">Control</span>
       </h1>
     </div>
     
-    <div class="flex items-center gap-1.5 sm:gap-3 shrink-0 ml-auto" id="authNav">
-      <div id="userNavGroup" class="hidden flex items-center gap-1.5 sm:gap-3">
-        <button id="usuariosBtn" onclick="openUsuariosModal()" class="text-xs bg-white/70 dark:bg-slate-800/70 hover:bg-white dark:hover:bg-slate-700 text-theme-primary font-bold px-2.5 sm:px-3 py-1.5 rounded-lg border border-theme transition-all flex items-center gap-1.5 shadow-sm backdrop-blur-sm" title="Mantenimiento de Usuarios">
-          <i class="fa-solid fa-users-gear text-xs text-theme-primary"></i>
-          <span class="hidden sm:inline">Usuarios</span>
+    <!-- Barra de Navegación / Acciones -->
+    <div class="flex items-center gap-2 sm:gap-3 shrink-0 ml-auto" id="authNav">
+      <div id="userNavGroup" class="hidden flex items-center gap-1.5 p-1 bg-white/40 dark:bg-slate-900/40 border border-theme/30 rounded-2xl backdrop-blur-md shadow-sm">
+        <button id="usuariosBtn" onclick="openUsuariosModal()" class="text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-theme-primary hover:bg-white/80 dark:hover:bg-slate-800/80 px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5" title="Gestión de Usuarios">
+          <i class="fa-solid fa-users-gear text-theme-primary"></i>
+          <span class="hidden md:inline">Usuarios</span>
         </button>
 
-        <button id="themeSelectorBtn" onclick="openThemeModal()" class="text-xs bg-white/70 dark:bg-slate-800/70 hover:bg-white/90 dark:hover:bg-slate-700/90 text-slate-800 dark:text-slate-100 font-bold px-2.5 sm:px-3 py-1.5 rounded-lg border border-slate-200/60 dark:border-slate-700/60 transition-all flex items-center gap-1.5 shadow-sm backdrop-blur-sm" title="Personalizar Apariencia">
+        <button id="cierreBtn" onclick="openCierreModal()" class="text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-theme-primary hover:bg-white/80 dark:hover:bg-slate-800/80 px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5" title="Cierre Diario">
+          <i class="fa-solid fa-calculator text-theme-primary"></i>
+          <span class="hidden md:inline">Cierre</span>
+        </button>
+
+        <button id="themeSelectorBtn" onclick="openThemeModal()" class="text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-theme-primary hover:bg-white/80 dark:hover:bg-slate-800/80 px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5" title="Personalizar Apariencia">
           <i class="fa-solid fa-palette text-theme-primary"></i>
-          <span class="hidden sm:inline">Tema</span>
+          <span class="hidden md:inline">Tema</span>
         </button>
 
-        <button id="demoGuideBtn" onclick="startDemoTour()" class="text-xs bg-amber-50/80 dark:bg-amber-950/60 hover:bg-amber-100 dark:hover:bg-amber-900/80 text-amber-700 dark:text-amber-300 font-bold px-2.5 sm:px-3 py-1.5 rounded-lg border border-amber-200/60 dark:border-amber-800/60 transition-all flex items-center gap-1.5 shadow-sm backdrop-blur-sm" title="Ver Demo Guiada">
-          <i class="fa-solid fa-circle-play text-xs"></i>
-          <span>Demo</span>
+        <button id="demoGuideBtn" onclick="startDemoTour()" class="text-xs font-bold text-amber-700 dark:text-amber-300 hover:bg-amber-100/80 dark:hover:bg-amber-900/60 px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5" title="Ver Demo Guiada">
+          <i class="fa-solid fa-circle-play"></i>
+          <span class="hidden sm:inline">Demo</span>
         </button>
-    
-        <button id="planesNavBtn" onclick="togglePlanes()" class="text-xs bg-theme-primary text-white font-bold px-2.5 sm:px-3 py-1.5 rounded-lg border border-theme transition-all flex items-center gap-1.5 shadow-sm" title="Ver Planes">
-          <i class="fa-solid fa-tags text-xs"></i>
+
+        <button id="planesNavBtn" onclick="togglePlanes()" class="text-xs font-bold bg-theme-primary text-white hover:bg-theme-primary-hover px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 shadow-sm" title="Ver Planes">
+          <i class="fa-solid fa-tags"></i>
           <span>Planes</span>
         </button>
       </div>
-    
-      <span id="userName" class="text-xs font-semibold text-slate-700 dark:text-slate-200 hidden md:inline truncate max-w-[160px]"></span>
+
+      <!-- Nombre del Usuario Activo -->
+      <span id="userName" class="text-xs font-bold text-slate-700 dark:text-slate-200 hidden lg:inline-block truncate max-w-[150px]"></span>
       
-      <button id="cierreBtn" onclick="openCierreModal()" class="text-xs bg-white/70 dark:bg-slate-800/70 hover:bg-white dark:hover:bg-slate-700 text-theme-primary font-bold px-2 sm:px-3 py-1.5 rounded-lg border border-theme transition-all flex items-center gap-1 hidden shadow-sm backdrop-blur-sm">
-        <i class="fa-solid fa-calculator text-xs text-theme-primary"></i>
-        <span class="hidden xs:inline sm:inline">Cierre</span>
-      </button>
-    
-      <button id="logoutBtn" class="hidden text-xs bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-semibold px-2 sm:px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 border border-red-200 dark:border-red-900/50">
+      <!-- Botón de Salir -->
+      <button id="logoutBtn" class="hidden text-xs bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 font-semibold px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 border border-red-200 dark:border-red-900/50" title="Cerrar Sesión">
         <i class="fa-solid fa-right-from-bracket"></i>
-        <span class="hidden xs:inline sm:inline">Salir</span>
+        <span class="hidden sm:inline">Salir</span>
       </button>
     </div>
   </div>
 </header>
-
 <!-- Pantalla de Login -->
 <div id="loginScreen" class="hidden max-w-md mx-auto mt-20 p-8 glass-card rounded-3xl shadow-xl text-center">
   <div class="bg-theme-primary text-white w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
