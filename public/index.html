@@ -1673,7 +1673,7 @@
     };
 
     try {
-      const res = await fetch('/api/mantenimiento_usuarios', {
+      const res = await fetch('/api/guardar_usuario', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1695,7 +1695,7 @@
   async function loadUsuariosList() {
     if (!currentSession) return;
     try {
-      const res = await fetch('/api/mantenimiento_usuarios', {
+      const res = await fetch('/api/obtener_usuarios', {
         headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
       });
       const data = await res.json();
