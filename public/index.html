@@ -1718,52 +1718,66 @@ html.theme-slate.dark {
   }
 
   async function loadUsuariosList() {
-    if (!currentSession) return;
-    try {
-      const res = await fetch('/api/obtener_usuarios', {
-        headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
-      });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.error);
+  const tbody = document.getElementById('usuariosTableBody');
+  tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center opacity-70 font-medium"><i class="fa-solid fa-spinner animate-spin mr-2"></i>Cargando usuarios...</td></tr>`;
 
-      usuariosCache = data.usuarios || [];
-      const tbody = document.getElementById('usuariosTableBody');
-      tbody.innerHTML = '';
+  try {
+    const res = await fetch('/api/obtener_usuarios', {
+      headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+    });
+    const result = await res.json();
 
-      if (usuariosCache.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center opacity-70 font-medium">No hay usuarios registrados.</td></tr>`;
-        return;
-      }
-
-      usuariosCache.forEach(u => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-white/20 dark:hover:bg-slate-800/20";
-
-        const permBadge = (active, label) => active
-          ? `<span class="px-2 py-0.5 text-[9px] font-bold rounded-full bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-500/30">${label}</span>`
-          : `<span class="px-2 py-0.5 text-[9px] font-bold rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 opacity-60">${label}</span>`;
-
-        tr.innerHTML = `
-          <td class="p-3"><div class="font-bold">${u.nombre || 'Sin Nombre'}</div><div class="text-[10px] opacity-70">${u.email}</div></td>
-          <td class="p-3">
-            <div class="flex items-center gap-1 flex-wrap">
-              ${permBadge(u.puede_cargar_comprobantes, 'Cargar')}
-              ${permBadge(u.puede_editar_comentarios, 'Editar Comentarios')}
-              ${permBadge(u.puede_gestionar_acciones, 'Gestionar Acciones')}
-            </div>
-          </td>
-          <td class="p-3 text-center">
-            <button onclick="editUsuario('${u.email}')" class="px-2 py-1 text-xs font-bold bg-theme-primary/20 text-theme-primary border border-theme hover:bg-theme-primary/30 rounded-lg transition-colors">
-              <i class="fa-solid fa-pen-to-square"></i>
-            </button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    } catch (err) {
-      console.error("Error al cargar usuarios:", err);
+    if (!result.success || !result.data) {
+      tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500 font-semibold">Error al cargar la lista de usuarios.</td></tr>`;
+      return;
     }
+
+    usuariosCache = result.data;
+    renderUsuariosTable(usuariosCache);
+  } catch (err) {
+    console.error(err);
+    tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500 font-semibold">Error de conexión al obtener usuarios.</td></tr>`;
   }
+}
+
+// Renderizar tabla de usuarios
+function renderUsuariosTable(lista) {
+  const tbody = document.getElementById('usuariosTableBody');
+  tbody.innerHTML = '';
+
+  if (lista.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center opacity-60">No hay usuarios registrados.</td></tr>`;
+    return;
+  }
+
+  lista.forEach(u => {
+    const tr = document.createElement('tr');
+    tr.className = "hover:bg-white/30 dark:hover:bg-slate-800/30 transition-colors border-b border-theme/20";
+    
+    // Badges para permisos
+    const pCargar = u.puede_cargar_comprobantes ? '<span class="px-2 py-0.5 text-[10px] bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 rounded-md font-bold mr-1">Cargar</span>' : '';
+    const pComentarios = u.puede_editar_comentarios ? '<span class="px-2 py-0.5 text-[10px] bg-blue-500/20 text-blue-700 dark:text-blue-300 rounded-md font-bold mr-1">Comentarios</span>' : '';
+    const pAcciones = u.puede_gestionar_acciones ? '<span class="px-2 py-0.5 text-[10px] bg-violet-500/20 text-violet-700 dark:text-violet-300 rounded-md font-bold">Acciones</span>' : '';
+
+    tr.innerHTML = `
+      <td class="p-3">
+        <div class="font-bold text-slate-900 dark:text-white">${u.nombre || 'Sin nombre'}</div>
+        <div class="text-[11px] opacity-70 font-mono">${u.email}</div>
+      </td>
+      <td class="p-3">
+        <div class="flex flex-wrap gap-1">
+          ${pCargar} ${pComentarios} ${pAcciones}
+        </div>
+      </td>
+      <td class="p-3 text-center">
+        <button onclick="editUsuario('${u.id}')" class="px-2.5 py-1 text-xs font-bold bg-white/80 dark:bg-slate-700/80 text-slate-800 dark:text-slate-200 border border-theme/40 hover:border-theme rounded-lg transition-colors mr-1" title="Editar">
+          <i class="fa-solid fa-pen-to-square"></i>
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
 
   function editUsuario(email) {
     const user = usuariosCache.find(u => u.email === email);
