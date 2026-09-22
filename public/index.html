@@ -117,6 +117,16 @@
       --glass-overlay: rgba(46, 16, 101, 0.85);
     }
 
+    html.theme-amber.dark {
+      --app-bg-gradient: linear-gradient(135deg, #1f0d02 0%, #3a1705 50%, #120701 100%);
+      --theme-surface: rgba(36, 18, 8, 0.92);
+      --theme-text-main: #fffbeb;
+      --theme-primary: #f59e0b;
+      --theme-primary-hover: #d97706;
+      --theme-border: rgba(245, 158, 11, 0.25);
+      --glass-overlay: rgba(31, 13, 2, 0.85);
+    }
+
     html.theme-slate.dark {
       --app-bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #020617 100%);
       --theme-surface: rgba(15, 23, 42, 0.94);
@@ -144,28 +154,28 @@
       transition: background-color 0.3s ease, border-color 0.3s ease;
     }
     html.dark .glass-card {
-      background: rgba(15, 23, 42, 0.88) !important;
+      background: var(--theme-surface) !important;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      border: 1px solid var(--theme-border) !important;
       box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 0 15px 0 rgba(255, 255, 255, 0.03) !important;
     }
     
     html.dark header.glass-header {
-      background: rgba(15, 23, 42, 0.9) !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+      background: var(--theme-surface) !important;
+      border-bottom: 1px solid var(--theme-border) !important;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
     
     html.dark .bg-white\/30,
     html.dark .bg-white\/40 {
-      background-color: rgba(30, 41, 59, 0.7) !important;
-      border-color: rgba(255, 255, 255, 0.08) !important;
+      background-color: rgba(0, 0, 0, 0.25) !important;
+      border-color: var(--theme-border) !important;
     }
     
     html.dark .text-slate-600,
     html.dark .text-slate-700 {
-      color: #cbd5e1 !important;
+      color: #f3f4f6 !important;
     }
     .bg-theme-surface { background-color: var(--theme-surface) !important; }
     .text-theme-main { color: var(--theme-text-main) !important; }
