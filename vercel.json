@@ -13,9 +13,21 @@
       "src": "/api/obtener_registros",
       "dest": "/api/obtener_registros.php"
     },
-     {
+    {
       "src": "/api/actualizar_registro",
       "dest": "/api/actualizar_registro.php"
+    },
+    {
+      "src": "/api/obtener_usuarios",
+      "dest": "/api/obtener_usuarios.php"
+    },
+    {
+      "src": "/api/guardar_usuario",
+      "dest": "/api/guardar_usuario.php"
+    },
+    {
+      "src": "/api/eliminar_usuario",
+      "dest": "/api/eliminar_usuario.php"
     },
     {
       "src": "/(.*)",
