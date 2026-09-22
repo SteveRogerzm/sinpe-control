@@ -5,11 +5,11 @@ header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/auth_check.php';
 
 try {
-    // 1. Validar que el usuario en sesión exista y tenga permisos de administración
+    // 1. Validar que el usuario en sesión sea ADMINISTRADOR (es_admin)
     $usuarioActual = verificarAcceso();
-    if (!$usuarioActual || empty($usuarioActual['puede_gestionar_acciones'])) {
+    if (!$usuarioActual || empty($usuarioActual['es_admin'])) {
         http_response_code(403);
-        echo json_encode(['success' => false, 'error' => 'No tiene permisos suficientes para administrar usuarios.']);
+        echo json_encode(['success' => false, 'error' => 'No tiene permisos de administrador para gestionar usuarios.']);
         exit;
     }
 
@@ -30,6 +30,10 @@ try {
     $id             = !empty($input['id']) ? trim($input['id']) : null;
     $nombreUsuario  = trim($input['nombre_usuario'] ?? '');
     $email          = trim(strtolower($input['email'] ?? ''));
+    
+    // Captura de todos los permisos e identificadores de rol
+    $esAdmin        = !empty($input['es_admin']);
+    $esCajero       = !empty($input['es_cajero']);
     $pCargar        = !empty($input['puede_cargar_comprobantes']);
     $pComentarios   = !empty($input['puede_editar_comentarios']);
     $pAcciones      = !empty($input['puede_gestionar_acciones']);
@@ -41,6 +45,8 @@ try {
     $payload = [
         'nombre_usuario'            => $nombreUsuario,
         'email'                     => $email,
+        'es_admin'                  => $esAdmin,
+        'es_cajero'                 => $esCajero,
         'puede_cargar_comprobantes' => $pCargar,
         'puede_editar_comentarios'  => $pComentarios,
         'puede_gestionar_acciones'  => $pAcciones
