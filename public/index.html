@@ -1508,25 +1508,37 @@
     }
   }
 
-  async function updateRecordData(recordId, fieldsToUpdate) {
-    if (!currentSession) return;
-    try {
-      const response = await fetch('/api/actualizar_registro', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${currentSession.access_token}`
-        },
-        body: JSON.stringify({ id: recordId, ...fieldsToUpdate })
-      });
-      const res = await response.json();
-      if (!res.success) throw new Error(res.error);
-      loadRecords();
-    } catch (e) {
-      showAlert(`Error al actualizar: ${e.message}`, 'error');
-    }
-  }
 
+async function updateRecordData(id, payloadData) {
+      if (!currentSession) return;
+      try {
+        const response = await fetch('/api/actualizar_registro', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentSession.access_token}` 
+          },
+          body: JSON.stringify({ id, ...payloadData })
+        });
+        
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error(`El servidor devolvió una respuesta no válida (${response.status}).`);
+        }
+
+        const result = await response.json();
+        if (!result.success) throw new Error(result.error);
+        
+        if (payloadData.estado) showAlert(`✅ Estado actualizado a ${payloadData.estado}`, 'success');
+        if ('fecha_facturacion' in payloadData || 'facturar' in payloadData) {
+          showAlert(payloadData.facturar !== false ? '✅ Comprobante marcado como facturado' : '✅ Comprobante desmarcado como facturado', 'success');
+        }
+        
+        loadRecords();
+      } catch (err) {
+        showAlert(`⚠️ Error al actualizar: ${err.message}`, 'error');
+      }
+    }
   async function toggleFacturadoRecord(recordId, isFacturado) {
     if (isFacturado) {
       updateRecordData(recordId, { fecha_facturacion: null, nombre_facturacion: null });
