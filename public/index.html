@@ -1436,7 +1436,7 @@
         return matchesSearch && matchesBank && matchesStatus && matchesCreated && matchesTx && matchesFact;
       });
       
-      const tableHeader = document.querySelector('table thead tr');
+      const tableHeader = document.querySelector('#tourTablaRegistros table thead tr');
       if (currentUserPermissions.puede_gestionar_acciones) {
         tableHeader.innerHTML = `
           <th class="p-3">Detalle del SINPE</th>
@@ -1570,63 +1570,71 @@
             </td>
             <td class="p-3 align-top text-[11px] text-slate-600 dark:text-slate-300 space-y-1">
               <div><strong class="text-slate-800 dark:text-slate-200">Pago:</strong> ${payDateStr}</div>
-              <div><strong class="text-slate-800 dark:text-slate-200">Ingresado:</strong> ${createdDateStr} ${creadoPor}</div>
-              ${isAprobado ? `<div><strong class="text-emerald-600 dark:text-emerald-400">Aprobado:</strong> ${aprobDateStr}${aprobadoPor}</div>` : ''}
-              ${isFacturado ? `<div><strong class="text-indigo-600 dark:text-indigo-400">Facturado:</strong> ${factDateStr}${facturadoPor}</div>` : ''}
+              <div><strong class="text-slate-800 dark:text-slate-200">Ingreso:</strong> ${createdDateStr} ${creadoPor}</div>
+              ${isAprobado ? `<div><strong class="text-slate-800 dark:text-slate-200">Aprobado:</strong> ${aprobDateStr}${aprobadoPor}</div>` : ''}
+              ${isFacturado ? `<div><strong class="text-slate-800 dark:text-slate-200">Facturado:</strong> ${factDateStr}${facturadoPor}</div>` : ''}
             </td>
-            <td class="p-3 align-top min-w-[200px]">
+            <td class="p-3 align-top">
               ${commentCell}
             </td>
             ${actionsCell}
           `;
-          
           recordsTable.appendChild(tr);
         });
       } else {
-        const noResultsColspan = currentUserPermissions.puede_gestionar_acciones ? 5 : 4;
-        recordsTable.innerHTML = `
-          <tr>
-            <td colspan="${noResultsColspan}" class="p-8 text-center text-slate-500 dark:text-slate-400 font-medium">
-              <i class="fa-solid fa-inbox text-3xl mb-2 block opacity-40"></i>
-              No se encontraron comprobantes que coincidan con los filtros aplicados.
-            </td>
-          </tr>
-        `;
+        const colCount = currentUserPermissions.puede_gestionar_acciones ? 5 : 4;
+        recordsTable.innerHTML = `<tr><td colspan="${colCount}" class="p-8 text-center text-slate-500 font-medium">No se encontraron comprobantes registrados.</td></tr>`;
       }
 
       document.getElementById('totalCount').innerText = filtered.length;
       document.getElementById('totalAmount').innerText = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(totalMonto);
     }
 
-    async function updateRecordData(id, payload) {
+    async function updateRecordData(id, updateFields) {
       if (!currentSession) return;
       try {
-        const response = await fetch('/api/actualizar_registro', {
+        const res = await fetch('/api/actualizar_registro', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${currentSession.access_token}`
           },
-          body: JSON.stringify({ id, ...payload })
+          body: JSON.stringify({ id, ...updateFields })
         });
-        const res = await response.json();
-        if (!res.success) throw new Error(res.error);
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error);
         loadRecords();
       } catch (e) {
-        showAlert(`⚠️ Error al actualizar: ${e.message}`, 'error');
+        showAlert(`⚠️ Error actualizando registro: ${e.message}`, 'error');
       }
     }
 
     async function toggleFacturadoRecord(id, isFacturado) {
       if (!currentSession) return;
-      const now = !isFacturado ? new Date().toISOString() : null;
-      await updateRecordData(id, { fecha_facturacion: now });
+      try {
+        const payload = {
+          id,
+          fecha_facturacion: isFacturado ? null : new Date().toISOString()
+        };
+        const res = await fetch('/api/actualizar_registro', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentSession.access_token}`
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error);
+        loadRecords();
+      } catch (e) {
+        showAlert(`⚠️ Error actualizando estado de facturación: ${e.message}`, 'error');
+      }
     }
 
     function openModal(url) {
-      if (!url) return showAlert('No hay URL de comprobante disponible.', 'error');
+      if (!url) return;
       modalExternalLink.href = url;
-      
       const isPdf = url.toLowerCase().includes('.pdf');
       if (isPdf) {
         modalImage.classList.add('hidden');
@@ -1659,194 +1667,212 @@
 
     function calcularCierre() {
       const selectedDate = document.getElementById('cierreFechaInput').value;
-      if (!selectedDate) return;
+      const cierreTableBody = document.getElementById('cierreTableBody');
+      cierreTableBody.innerHTML = '';
+
+      if (!selectedDate) {
+        document.getElementById('cierreTotalCount').innerText = '0';
+        document.getElementById('cierreTotalMonto').innerText = '₡0.00';
+        cierreTableBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium">Selecciona una fecha.</td></tr>`;
+        return;
+      }
 
       const facturadosFecha = rawRecordsData.filter(row => {
-        return row.fecha_facturacion && row.fecha_facturacion.startsWith(selectedDate);
+        if (!row.fecha_facturacion) return false;
+        return row.fecha_facturacion.startsWith(selectedDate);
       });
 
       let totalMonto = 0;
-      const tbody = document.getElementById('cierreTableBody');
-      tbody.innerHTML = '';
-
       if (facturadosFecha.length > 0) {
-        facturadosFecha.forEach(r => {
-          totalMonto += parseFloat(r.monto || 0);
+        facturadosFecha.forEach(row => {
+          totalMonto += parseFloat(row.monto || 0);
+          const formattedMonto = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(row.monto || 0);
+          const horaStr = new Date(row.fecha_facturacion).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' });
+          
           const tr = document.createElement('tr');
-          const horaStr = new Date(r.fecha_facturacion).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' });
-          const montoStr = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(r.monto || 0);
-
+          tr.className = "hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors";
           tr.innerHTML = `
-            <td class="p-3 font-semibold text-slate-800 dark:text-slate-200">
-              <div>${r.cliente || 'Desconocido'}</div>
-              <div class="text-[10px] text-slate-500 font-mono">Ref: ${r.numero_referencia || 'N/A'}</div>
+            <td class="p-3">
+              <div class="font-bold text-slate-900 dark:text-white">${row.cliente || 'Desconocido'}</div>
+              <div class="text-[10px] text-slate-500 font-mono">Ref: ${row.numero_referencia || 'N/A'}</div>
             </td>
-            <td class="p-3 text-slate-600 dark:text-slate-400 font-mono text-[11px]">${horaStr}</td>
-            <td class="p-3 text-right font-bold text-theme-primary">${montoStr}</td>
+            <td class="p-3 font-semibold text-slate-600 dark:text-slate-300">${horaStr}</td>
+            <td class="p-3 text-right font-black text-theme-primary">${formattedMonto}</td>
           `;
-          tbody.appendChild(tr);
+          cierreTableBody.appendChild(tr);
         });
       } else {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="3" class="p-4 text-center text-slate-500 font-medium">
-              No hay comprobantes facturados registrados para esta fecha.
-            </td>
-          </tr>
-        `;
+        cierreTableBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium">No hay comprobantes facturados para este día.</td></tr>`;
       }
 
       document.getElementById('cierreTotalCount').innerText = facturadosFecha.length;
       document.getElementById('cierreTotalMonto').innerText = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' }).format(totalMonto);
     }
 
-    /* MANTENIMIENTO DE USUARIOS */
+    /* GESTIÓN DE USUARIOS Y PERMISOS */
     function openUsuariosModal() {
       usuariosModal.classList.remove('hidden');
+      resetUsuarioForm();
       loadUsuariosList();
     }
 
     function closeUsuariosModal() {
       usuariosModal.classList.add('hidden');
-      resetUsuarioForm();
     }
 
     function resetUsuarioForm() {
-      document.getElementById('usrNombre').value = '';
-      document.getElementById('usrCorreo').value = '';
-      document.getElementById('usrCorreo').disabled = false;
-      document.getElementById('permCargar').checked = true;
-      document.getElementById('permEditarComentarios').checked = true;
-      document.getElementById('permGestionarAcciones').checked = true;
+      document.getElementById('usuarioForm').reset();
+      document.getElementById('usuarioForm').removeAttribute('data-edit-id');
+      document.getElementById('btnSaveUsuario').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar Usuario`;
     }
 
     async function loadUsuariosList() {
       if (!currentSession) return;
       const tbody = document.getElementById('usuariosTableBody');
-      tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium">Cargando usuarios...</td></tr>';
+      tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium"><i class="fa-solid fa-spinner animate-spin mr-2"></i>Cargando usuarios...</td></tr>`;
 
       try {
-        const res = await fetch('/api/usuarios', {
+        const res = await fetch('/api/obtener_usuarios', {
           headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
         });
         const data = await res.json();
-
+        
         if (!data.success) throw new Error(data.error);
-
-        usuariosCache = data.data || [];
-        tbody.innerHTML = '';
-
-        if (usuariosCache.length > 0) {
-          usuariosCache.forEach(u => {
-            const tr = document.createElement('tr');
-            tr.className = "hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors";
-            
-            let badges = [];
-            if (u.puede_cargar_comprobantes) badges.push('<span class="px-1.5 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold">Cargar</span>');
-            if (u.puede_editar_comentarios) badges.push('<span class="px-1.5 py-0.5 rounded text-[10px] bg-blue-500/20 text-blue-700 dark:text-blue-300 font-bold">Comentarios</span>');
-            if (u.puede_gestionar_acciones) badges.push('<span class="px-1.5 py-0.5 rounded text-[10px] bg-purple-500/20 text-purple-700 dark:text-purple-300 font-bold">Gestionar Acciones</span>');
-
-            tr.innerHTML = `
-              <td class="p-3 font-semibold text-slate-800 dark:text-slate-200">
-                <div>${u.nombre_usuario || 'Sin nombre'}</div>
-                <div class="text-[11px] text-slate-500 font-mono">${u.email}</div>
-              </td>
-              <td class="p-3">
-                <div class="flex items-center gap-1 flex-wrap">${badges.join(' ')}</div>
-              </td>
-              <td class="p-3 text-center">
-                <div class="flex items-center justify-center gap-1">
-                  <button onclick="editUsuario('${u.email}')" class="px-2 py-1 text-[11px] font-bold bg-purple-500/20 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-500/30 transition-colors">
-                    <i class="fa-solid fa-pen"></i> Editar
-                  </button>
-                  <button onclick="deleteUsuario('${u.email}')" class="px-2 py-1 text-[11px] font-bold bg-red-500/20 text-red-700 dark:text-red-300 rounded-lg hover:bg-red-500/30 transition-colors">
-                    <i class="fa-solid fa-trash"></i>
-                  </button>
-                </div>
-              </td>
-            `;
-            tbody.appendChild(tr);
-          });
-        } else {
-          tbody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium">No hay usuarios registrados.</td></tr>';
-        }
+        
+        usuariosCache = data.usuarios || [];
+        renderUsuariosTable(usuariosCache);
       } catch (e) {
         tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500 font-medium">Error al cargar usuarios: ${e.message}</td></tr>`;
       }
     }
 
-    function editUsuario(email) {
-      const u = usuariosCache.find(item => item.email === email);
-      if (!u) return;
+    function renderUsuariosTable(lista) {
+      const tbody = document.getElementById('usuariosTableBody');
+      tbody.innerHTML = '';
 
-      document.getElementById('usrNombre').value = u.nombre_usuario || '';
-      document.getElementById('usrCorreo').value = u.email;
-      document.getElementById('usrCorreo').disabled = true;
+      if (!lista || lista.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-500 font-medium">No existen usuarios autorizados registrados.</td></tr>`;
+        return;
+      }
 
-      document.getElementById('permCargar').checked = !!u.puede_cargar_comprobantes;
-      document.getElementById('permEditarComentarios').checked = !!u.puede_editar_comentarios;
-      document.getElementById('permGestionarAcciones').checked = !!u.puede_gestionar_acciones;
+      lista.forEach(usr => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-white/40 dark:hover:bg-slate-800/40 transition-colors";
+
+        const pCargar = usr.puede_cargar_comprobantes 
+          ? `<span class="px-2 py-0.5 text-[10px] rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-bold">Cargar</span>` 
+          : '';
+        const pComent = usr.puede_editar_comentarios 
+          ? `<span class="px-2 py-0.5 text-[10px] rounded-full bg-blue-500/20 text-blue-700 dark:text-blue-300 border border-blue-500/30 font-bold">Comentarios</span>` 
+          : '';
+        const pAcciones = usr.puede_gestionar_acciones 
+          ? `<span class="px-2 py-0.5 text-[10px] rounded-full bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/30 font-bold">Acciones</span>` 
+          : '';
+
+        tr.innerHTML = `
+          <td class="p-3 align-middle">
+            <div class="font-bold text-slate-900 dark:text-white">${usr.nombre_usuario || 'Sin nombre'}</div>
+            <div class="text-[11px] text-slate-500 font-mono">${usr.email}</div>
+          </td>
+          <td class="p-3 align-middle">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              ${pCargar} ${pComent} ${pAcciones}
+              ${(!usr.puede_cargar_comprobantes && !usr.puede_editar_comentarios && !usr.puede_gestionar_acciones) ? '<span class="text-xs text-slate-400 italic">Sin permisos activos</span>' : ''}
+            </div>
+          </td>
+          <td class="p-3 align-middle text-center">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="editUsuario('${usr.id}')" class="px-2 py-1 text-xs font-bold bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/30 hover:bg-purple-500/30 rounded-lg transition-colors flex items-center gap-1" title="Editar">
+                <i class="fa-solid fa-pen text-[10px]"></i>
+              </button>
+              <button onclick="deleteUsuario('${usr.id}', '${usr.email}')" class="px-2 py-1 text-xs font-bold bg-red-500/20 text-red-700 dark:text-red-300 border border-red-500/30 hover:bg-red-500/30 rounded-lg transition-colors flex items-center gap-1" title="Eliminar">
+                <i class="fa-solid fa-trash text-[10px]"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function editUsuario(id) {
+      const usr = usuariosCache.find(u => u.id === id);
+      if (!usr) return;
+
+      document.getElementById('usrNombre').value = usr.nombre_usuario || '';
+      document.getElementById('usrCorreo').value = usr.email || '';
+      document.getElementById('permCargar').checked = !!usr.puede_cargar_comprobantes;
+      document.getElementById('permEditarComentarios').checked = !!usr.puede_editar_comentarios;
+      document.getElementById('permGestionarAcciones').checked = !!usr.puede_gestionar_acciones;
+
+      const form = document.getElementById('usuarioForm');
+      form.setAttribute('data-edit-id', id);
+      document.getElementById('btnSaveUsuario').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Actualizar Usuario`;
+      form.scrollIntoView({ behavior: 'smooth' });
     }
 
     async function saveUsuario(e) {
       e.preventDefault();
       if (!currentSession) return;
 
-      const nombre = document.getElementById('usrNombre').value;
-      const email = document.getElementById('usrCorreo').value;
-      const puede_cargar_comprobantes = document.getElementById('permCargar').checked;
-      const puede_editar_comentarios = document.getElementById('permEditarComentarios').checked;
-      const puede_gestionar_acciones = document.getElementById('permGestionarAcciones').checked;
-
+      const form = document.getElementById('usuarioForm');
+      const editId = form.getAttribute('data-edit-id');
       const btn = document.getElementById('btnSaveUsuario');
+
+      const payload = {
+        id: editId || undefined,
+        nombre_usuario: document.getElementById('usrNombre').value.trim(),
+        email: document.getElementById('usrCorreo').value.trim().toLowerCase(),
+        puede_cargar_comprobantes: document.getElementById('permCargar').checked,
+        puede_editar_comentarios: document.getElementById('permEditarComentarios').checked,
+        puede_gestionar_acciones: document.getElementById('permGestionarAcciones').checked
+      };
+
       btn.disabled = true;
       btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Guardando...`;
 
       try {
-        const response = await fetch('/api/usuarios', {
+        const endpoint = editId ? '/api/actualizar_usuario' : '/api/crear_usuario';
+        const res = await fetch(endpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${currentSession.access_token}`
           },
-          body: JSON.stringify({
-            email,
-            nombre_usuario: nombre,
-            puede_cargar_comprobantes,
-            puede_editar_comentarios,
-            puede_gestionar_acciones
-          })
+          body: JSON.stringify(payload)
         });
 
-        const res = await response.json();
-        if (!res.success) throw new Error(res.error);
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error);
 
         resetUsuarioForm();
         loadUsuariosList();
       } catch (err) {
-        alert(`Error al guardar usuario: ${err.message}`);
+        alert(`Error al guardar el usuario: ${err.message}`);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar Usuario`;
+        if (!form.getAttribute('data-edit-id')) {
+          btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar Usuario`;
+        }
       }
     }
 
-    async function deleteUsuario(email) {
-      if (!confirm(`¿Estás seguro de eliminar el acceso para ${email}?`)) return;
+    async function deleteUsuario(id, email) {
+      if (!confirm(`¿Estás seguro de que deseas eliminar el usuario ${email}?`)) return;
       if (!currentSession) return;
 
       try {
-        const response = await fetch('/api/usuarios', {
-          method: 'DELETE',
+        const res = await fetch('/api/eliminar_usuario', {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${currentSession.access_token}`
           },
-          body: JSON.stringify({ email })
+          body: JSON.stringify({ id })
         });
 
-        const res = await response.json();
-        if (!res.success) throw new Error(res.error);
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error);
 
         loadUsuariosList();
       } catch (err) {
@@ -1854,7 +1880,6 @@
       }
     }
 
-    // Inicializar autenticación al cargar
     window.addEventListener('DOMContentLoaded', initAuth);
   </script>
 </body>
