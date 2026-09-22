@@ -1187,7 +1187,8 @@ html.theme-slate.dark {
   const modalExternalLink = document.getElementById('modalExternalLink');
   const cierreModal = document.getElementById('cierreModal');
   const usuariosModal = document.getElementById('usuariosModal');
-
+  let usuarioEditandoId = null;
+  
   function showAlert(message, type = 'success') {
     alertBox.innerText = message;
     alertBox.classList.remove('hidden', 'bg-red-500/20', 'text-red-700', 'dark:text-red-300', 'bg-emerald-500/20', 'text-emerald-800', 'dark:text-emerald-200');
@@ -1714,51 +1715,58 @@ html.theme-slate.dark {
   }
 
   function openUsuariosModal() {
+  resetUsuarioForm();
+  loadUsuariosList();
+  document.getElementById('usuariosModal').classList.remove('hidden');
+}
+
+function closeUsuariosModal() {
+  document.getElementById('usuariosModal').classList.add('hidden');
+  resetUsuarioForm();
+}
+
+function resetUsuarioForm() {
+  usuarioEditandoId = null;
+  document.getElementById('usuarioForm').reset();
+  const btn = document.getElementById('btnSaveUsuario');
+  if (btn) btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Guardar Usuario`;
+}
+
+async function saveUsuario(e) {
+  e.preventDefault();
+  if (!currentSession) return;
+
+  const payload = {
+    id: usuarioEditandoId, // null para nuevo, UUID para edición
+    nombre_usuario: document.getElementById('usrNombre').value.trim(),
+    email: document.getElementById('usrCorreo').value.trim(),
+    puede_cargar_comprobantes: document.getElementById('permCargar').checked,
+    puede_editar_comentarios: document.getElementById('permEditarComentarios').checked,
+    puede_gestionar_acciones: document.getElementById('permGestionarAcciones').checked
+  };
+
+  try {
+    const res = await fetch('/api/guardar_usuario', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${currentSession.access_token}`
+      },
+      body: JSON.stringify(payload)
+    });
+    
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error);
+
+    showAlert('✅ Usuario guardado correctamente.', 'success');
+    resetUsuarioForm();
     loadUsuariosList();
-    usuariosModal.classList.remove('hidden');
+  } catch (err) {
+    showAlert(`⚠️ Error al guardar usuario: ${err.message}`, 'error');
   }
+}
 
-  function closeUsuariosModal() {
-    usuariosModal.classList.add('hidden');
-  }
-
-  function resetUsuarioForm() {
-    document.getElementById('usuarioForm').reset();
-  }
-
-  async function saveUsuario(e) {
-    e.preventDefault();
-    if (!currentSession) return;
-
-    const payload = {
-      nombre: document.getElementById('usrNombre').value,
-      email: document.getElementById('usrCorreo').value,
-      puede_cargar_comprobantes: document.getElementById('permCargar').checked,
-      puede_editar_comentarios: document.getElementById('permEditarComentarios').checked,
-      puede_gestionar_acciones: document.getElementById('permGestionarAcciones').checked
-    };
-
-    try {
-      const res = await fetch('/api/guardar_usuario', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${currentSession.access_token}`
-        },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.error);
-
-      showAlert('✅ Usuario guardado correctamente.', 'success');
-      resetUsuarioForm();
-      loadUsuariosList();
-    } catch (err) {
-      showAlert(`⚠️ Error al guardar usuario: ${err.message}`, 'error');
-    }
-  }
-
-  async function loadUsuariosList() {
+async function loadUsuariosList() {
   const tbody = document.getElementById('usuariosTableBody');
   tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center opacity-70 font-medium"><i class="fa-solid fa-spinner animate-spin mr-2"></i>Cargando usuarios...</td></tr>`;
 
@@ -1769,7 +1777,7 @@ html.theme-slate.dark {
     const result = await res.json();
 
     if (!result.success || !result.data) {
-      tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500 font-semibold">Error al cargar la lista de usuarios.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-red-500 font-semibold">${result.error || 'Error al cargar la lista de usuarios.'}</td></tr>`;
       return;
     }
 
@@ -1781,7 +1789,6 @@ html.theme-slate.dark {
   }
 }
 
-// Renderizar tabla de usuarios
 function renderUsuariosTable(lista) {
   const tbody = document.getElementById('usuariosTableBody');
   tbody.innerHTML = '';
@@ -1795,14 +1802,13 @@ function renderUsuariosTable(lista) {
     const tr = document.createElement('tr');
     tr.className = "hover:bg-white/30 dark:hover:bg-slate-800/30 transition-colors border-b border-theme/20";
     
-    // Badges para permisos
     const pCargar = u.puede_cargar_comprobantes ? '<span class="px-2 py-0.5 text-[10px] bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 rounded-md font-bold mr-1">Cargar</span>' : '';
     const pComentarios = u.puede_editar_comentarios ? '<span class="px-2 py-0.5 text-[10px] bg-blue-500/20 text-blue-700 dark:text-blue-300 rounded-md font-bold mr-1">Comentarios</span>' : '';
     const pAcciones = u.puede_gestionar_acciones ? '<span class="px-2 py-0.5 text-[10px] bg-violet-500/20 text-violet-700 dark:text-violet-300 rounded-md font-bold">Acciones</span>' : '';
 
     tr.innerHTML = `
       <td class="p-3">
-        <div class="font-bold text-slate-900 dark:text-white">${u.nombre || 'Sin nombre'}</div>
+        <div class="font-bold text-slate-900 dark:text-white">${u.nombre_usuario || 'Sin nombre'}</div>
         <div class="text-[11px] opacity-70 font-mono">${u.email}</div>
       </td>
       <td class="p-3">
@@ -1820,16 +1826,20 @@ function renderUsuariosTable(lista) {
   });
 }
 
-  function editUsuario(email) {
-    const user = usuariosCache.find(u => u.email === email);
-    if (!user) return;
+function editUsuario(id) {
+  const user = usuariosCache.find(u => u.id === id);
+  if (!user) return;
 
-    document.getElementById('usrNombre').value = user.nombre || '';
-    document.getElementById('usrCorreo').value = user.email || '';
-    document.getElementById('permCargar').checked = !!user.puede_cargar_comprobantes;
-    document.getElementById('permEditarComentarios').checked = !!user.puede_editar_comentarios;
-    document.getElementById('permGestionarAcciones').checked = !!user.puede_gestionar_acciones;
-  }
+  usuarioEditandoId = user.id;
+  document.getElementById('usrNombre').value = user.nombre_usuario || '';
+  document.getElementById('usrCorreo').value = user.email || '';
+  document.getElementById('permCargar').checked = !!user.puede_cargar_comprobantes;
+  document.getElementById('permEditarComentarios').checked = !!user.puede_editar_comentarios;
+  document.getElementById('permGestionarAcciones').checked = !!user.puede_gestionar_acciones;
+
+  const btn = document.getElementById('btnSaveUsuario');
+  if (btn) btn.innerHTML = `<i class="fa-solid fa-user-pen"></i> Actualizar Usuario`;
+}
 
   // Inicializar autenticación al cargar
   window.addEventListener('DOMContentLoaded', initAuth);
